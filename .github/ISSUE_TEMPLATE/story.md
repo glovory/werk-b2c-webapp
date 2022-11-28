@@ -2,29 +2,31 @@
 name: Story
 about: User Stories
 title: ''
-labels: ''
+labels: FEATURE, MS1, USER STORY, WEB-APP
 assignees: ''
 
 ---
 
-Epic:
+## Epic: 
 
-### Description
+## Tasks:
+- [ ] 
+- [ ] 
+- [ ] 
 
-**Feature Assignment:**
-- [ ]  () Design, 
+## Team Assignment:
+- [ ]  () Design,
 - [ ]  () Test Case, 
-- [ ]  () Backend, 
-- [ ]  () Frontend,  
+- [ ]  () Backend,  
+- [ ]  () Frontend, 
 - [ ]  () Testing, 
-- [ ]  () Deployment, 
+- [ ]  () Deployment,
 
-**Analysis Document:**
+## Requirement Document:
 N/A
 
-**Test Case:**
+## Test Case:
 N/A
-Validated by: @ , [ ]
 
-**Prototype:**
+## Prototype:
 N/A
