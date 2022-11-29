@@ -6,14 +6,17 @@ interface Props {
   children?: ReactNode
   // any props that come into the component
 }
-  
-const Layout = ({ children, ...props }: Props) => {
+
+// , ...props
+const Layout = ({ children }: Props) => {
   return (
-    <>
+    <div className="min-vh-100 d-flex flex-column">
       <Header />
-        {children}
+
+      {children}
+      
       <Footer />
-    </>
+    </div>
   );
 };
   
