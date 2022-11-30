@@ -71,7 +71,7 @@ export default function Page(){
               <hr className="my-9 border-secondary" />
 
               <p className="text-end">
-                <Button disabled={isSubmitting} type="submit" variant="warning" className="px-17">
+                <Button disabled={isSubmitting} type="submit" className="px-17">
                   {isSubmitting && <Spinner size="sm" className="me-2" />}
                   Save
                 </Button>

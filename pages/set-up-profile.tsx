@@ -90,21 +90,20 @@ export default function SetUpProfile(){
 
               <div className="d-flex align-items-start">
                 {photo ?
-                  <div>
-                    <Image
-                      className="rounded-circle object-cover"
-                      width={80}
-                      height={80}
-                      alt="Avatar"
-                      src={photo.name ? window.URL.createObjectURL(photo) : photo}
-                    />
-                  </div>
+                  <Image
+                    className="rounded-circle object-cover flex-none"
+                    width={80}
+                    height={80}
+                    alt="Avatar"
+                    src={photo.name ? window.URL.createObjectURL(photo) : photo}
+                  />
                   :
                   <div
                     className="rounded-circle d-grid place-items-center w-80px h-80px"
-                    style={{ backgroundColor: '#fbe9df' }}
+                    style={{ backgroundColor: '#d6ecfb' }}
                   >
                     <Image
+                      priority
                       src="/image/werk-logo-symbol-line.svg"
                       alt="Avatar"
                       width={40}
@@ -114,14 +113,15 @@ export default function SetUpProfile(){
                 }
                 
                 <div className="ms-5">
-                  <Button
-                    as="label"
-                    variant="outline-dark"
+                  <label
+                    // as="label"
+                    // variant="outline-dark"
+                    className="btn btn-outline btn-outline-primary btn-active-light-primary" // 
                     onKeyDown={onEnterFile}
                   >
                     Click to Upload
                     <input {...register("avatar")} onChange={onChangeFile} type="file" hidden accept=".jpg,.jpeg,.png" />
-                  </Button>
+                  </label>
                   <div className="form-text">Use a square image for best results.</div>
                 </div>
 
@@ -214,7 +214,7 @@ export default function SetUpProfile(){
               <hr className="my-9 border-secondary" />
 
               <p className="text-end">
-                <Button disabled={isSubmitting} type="submit" variant="warning" className="px-17">
+                <Button disabled={isSubmitting} type="submit" className="px-17">
                   {isSubmitting && <Spinner size="sm" className="me-2" />}
                   Save
                 </Button>
