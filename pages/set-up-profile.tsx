@@ -14,12 +14,12 @@ import Layout from '../components/layouts/Home/LayoutHome';
 import Form from '../components/form/Form';
 
 interface IFormInputs {
+  avatar: any
   fullname: string
   nickname: string
   headline: string
   bio: string
   country: string
-  avatar: any
 }
 
 const COUNTRIES = [
@@ -133,6 +133,8 @@ export default function SetUpProfile(){
               <p className="text-black-50">Write your full name.</p>
               <FormControl
                 {...register("fullname")}
+                type="text"
+                required
                 disabled={isSubmitting}
                 isInvalid={!!errors.fullname}
                 id="fullname"
@@ -148,6 +150,8 @@ export default function SetUpProfile(){
                 <InputGroup.Text as="label" htmlFor="nickname">https://werk.id/@</InputGroup.Text>
                 <FormControl
                   {...register("nickname")}
+                  type="text"
+                  required
                   disabled={isSubmitting}
                   isInvalid={!!errors.nickname}
                   id="nickname"
@@ -163,12 +167,15 @@ export default function SetUpProfile(){
               <p className="text-black-50">Write a brief introduction. This will show in talent searches.</p>
               <FormControl
                 {...register("headline")}
+                type="text"
+                required
                 disabled={isSubmitting}
                 isInvalid={!!errors.headline}
                 id="headline"
                 placeholder="e.g. I'm an Account Executive based in Jakarta"
               />
-              {errors.headline && <div className="invalid-feedback">{errors.headline.message}</div>}
+              <div className="form-text">100 characters.</div>
+              {errors.headline && <div className="invalid-feedback d-block">{errors.headline.message}</div>}
 
               <hr className="my-9 border-secondary" />
 
@@ -178,6 +185,7 @@ export default function SetUpProfile(){
               </p>
               <FormControl
                 {...register("bio")}
+                type="text"
                 disabled={isSubmitting}
                 id="bio"
                 as="textarea"
@@ -191,6 +199,7 @@ export default function SetUpProfile(){
               <p className="text-black-50">Find roles based in your country.</p>
               <FormSelect
                 {...register("country")}
+                required
                 disabled={isSubmitting}
                 isInvalid={!!errors.country}
                 id="country"

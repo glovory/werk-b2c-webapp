@@ -57,6 +57,8 @@ export default function Page(){
                 <InputGroup.Text as="label" htmlFor="nickname">https://werk.id/@</InputGroup.Text>
                 <FormControl
                   {...register("nickname")}
+                  type="text"
+                  required
                   disabled={isSubmitting}
                   isInvalid={!!errors.nickname}
                   id="nickname"
