@@ -1,0 +1,37 @@
+//
+// Root
+//
+
+// Light mode
+@include theme-light() {
+    // Page bg
+    --kt-page-bg: #{$page-bg};
+
+    // Header
+    --kt-header-desktop-fixed-bg-color: #{get($header-config, desktop, fixed, bg-color)};
+    --kt-header-desktop-fixed-box-shadow: #{get($header-config, desktop, fixed, box-shadow)};
+
+    --kt-header-tablet-and-mobile-fixed-bg-color: #{get($header-config, tablet-and-mobile, fixed, bg-color)};
+    --kt-header-tablet-and-mobile-fixed-box-shadow: #{get($header-config, tablet-and-mobile, fixed, box-shadow)};
+
+    // Aside
+    --kt-aside-bg-color: #{get($aside-config, bg-color)};
+    --kt-aside-box-shadow: #{get($aside-config, box-shadow)};
+}
+
+// Dark mode
+@include theme-dark() {
+    // Page bg
+    --kt-page-bg: #{$page-bg-dark};
+
+    // Header
+    --kt-header-desktop-fixed-bg-color: #{get($header-config, desktop, fixed, bg-color-dark)};
+    --kt-header-desktop-fixed-box-shadow: #{get($header-config, desktop, fixed, box-shadow-dark)};
+
+    --kt-header-tablet-and-mobile-fixed-bg-color: #{get($header-config, tablet-and-mobile, fixed, bg-color-dark)};
+    --kt-header-tablet-and-mobile-fixed-box-shadow: #{get($header-config, tablet-and-mobile, fixed, box-shadow-dark)};
+
+    // Aside
+    --kt-aside-bg-color: #{get($aside-config, bg-color-dark)};
+    --kt-aside-box-shadow: #{get($aside-config, box-shadow-dark)};
+}

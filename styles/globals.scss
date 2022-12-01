@@ -1,0 +1,149 @@
+// html,
+// body {
+//   background-color: white;
+//   padding: 0;
+//   margin: 0;
+// }
+
+// a {
+//   color: inherit;
+//   text-decoration: none;
+// }
+
+// * {
+//   box-sizing: border-box;
+// }
+
+.container-home {
+  padding: 0 2rem;
+  background-color: #fff !important;
+}
+
+// .container {
+//   padding: 0 2rem;
+// }
+
+.main {
+  min-height: 100vh;
+  padding: 4rem 0;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.footer {
+  display: flex;
+  flex: 1;
+  padding: 2rem 0;
+  border-top: 1px solid #eaeaea;
+  justify-content: center;
+  align-items: center;
+}
+
+.footer a {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+}
+
+.heading{
+  font-weight: 800;
+  font-size: 24px;
+}
+
+.subheading{
+  font-size: 16px;
+}
+
+.home-display{
+  text-align: center;
+}
+
+.home-display .form-home{
+  text-align: left;
+  margin-top: 20px;
+}
+
+.home-display .form-home label{
+  font-weight: 800;
+}
+
+.btn-default-main{
+  background-color: #f37421 !important;
+  color: #fff !important;
+  width: 100%;
+}
+
+.btn-default-google{
+  background-color: #f5f8fa !important;
+  color: #1a224c !important;
+  width: 100%;
+}
+
+.form-control{
+  font-weight: normal !important;
+}
+
+.form-control:active{
+  background-color: #fff !important;
+}
+
+.form-control:focus{
+  background-color: #fff !important;
+}
+
+.form-error{
+  border-color: #e92f39 !important;
+}
+
+p.form-error-label{
+  color: #e92f39 !important;
+  margin-top: 5px;
+}
+
+.form-footer{
+  margin-top: 20px;
+}
+
+p.text-main{
+  color: #f37421;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+p.text-shadow{
+  color: #8d91a6;
+  font-size: 13px;
+}
+
+@media (max-width: 600px) {
+  .grid {
+    width: 100%;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .card,
+  .footer {
+    border-color: #222;
+  }
+  .code {
+    background: #111;
+  }
+  .logo img {
+    filter: invert(1);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html {
+    color-scheme: dark;
+  }
+  body {
+    color: white;
+    background: black;
+  }
+}
