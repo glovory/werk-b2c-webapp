@@ -1,7 +1,24 @@
+// Bootstrap & Metronic override
+.form-control,
+.form-select {
+  font-weight: normal;
+}
+
+.form-error {
+  border-color: #e92f39 !important;
+}
+
+.form-control-solid.is-invalid,
+.form-select-solid.is-invalid {
+  border-color: #f1416c !important;
+}
+
 // Custom Utilities
 
 // Sizing
-
+.min-h-auto {
+  min-height: auto !important;
+}
 // End Sizing
 
 // 
@@ -13,8 +30,17 @@
 .place-items-center {
   place-items: center;
 }
+// End grid
 
 // flex
 .flex-none {
   flex: none;
 }
+// End flex
+
+// Typography
+.fs-16px {
+  font-size: 16px;
+}
+// End Typography
+

@@ -1,23 +1,5 @@
-import { forwardRef } from "react"; // React, ReactNode, 
+import { forwardRef } from "react";
 import { Cx } from '../../utils/dom';
-
-// interface FormProps {
-//   children?: React.ReactNode, // any, // ReactNode
-//   noValidate?: boolean,
-//   disabled?: boolean,
-//   loading?: boolean,
-//   fieldsetClass?: string,
-// }
-
-// export interface FormProps
-//   extends React.FormHTMLAttributes<HTMLFormElement>,
-//   {
-//     children?: any; // ReactNode
-//     noValidate?: boolean;
-//     disabled?: boolean;
-//     loading?: boolean;
-//     fieldsetClass?: string;
-//   }
 
 const Form = forwardRef<HTMLFormElement, any>(
   (
@@ -27,11 +9,9 @@ const Form = forwardRef<HTMLFormElement, any>(
       validated,
       fieldsetClass,
       noValidate = true,
-      // prepend,
-      // append,
       children,
       ...etc
-    }: any, // FormProps
+    }: any,
     ref
   ) => {
     return (
@@ -39,18 +19,14 @@ const Form = forwardRef<HTMLFormElement, any>(
         {...etc}
         ref={ref}
         noValidate={noValidate}
-        className={Cx(className, { 'was-validated': validated, disabled })}
+        className={Cx(className, validated && 'was-validated')}
       >
-        {/* {prepend} */}
-
         <fieldset
           className={fieldsetClass}
           disabled={disabled}
         >
           {children}
         </fieldset>
-
-        {/* {append} */}
       </form>
     );
   }

@@ -20,7 +20,6 @@ export default function LinkedInConnect(){
         <div className="col-md-3 col-sm-6">
           <div className="card shadow-sm mt-20">
             <div className="card-body">
-              {/* mt-n20  */}
               <div className="d-flex gap-7 justify-content-center mb-8" style={{ marginTop: -85 }}>
                 <Image priority src="/image/user_1.png" alt="User" width={104} height={104} className="flex-none rounded-circle" />
                 <div className="rounded bg-warning p-5">
@@ -50,7 +49,6 @@ export default function LinkedInConnect(){
 
           <div className="d-grid gap-3 my-4">
             <Button onClick={() => router.push("/signup")} variant="outline-dark">Cancel</Button>
-            {/* /set-up-profile/import-linkedin-profile */}
             <Button  onClick={() => router.push("/import-linkedin-profile")}>Allow</Button>
           </div>
 

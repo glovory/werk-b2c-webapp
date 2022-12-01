@@ -40,7 +40,7 @@ export default function NavMain(){
             <Nav.Link as={Link} href="/signup">Sign up</Nav.Link>
 
             <Navbar.Text className="py-0 ms-lg-4">
-              Continue with{' '}
+              Continue with
               <Button onClick={signWithGoogle} variant="light" size="sm" className="px-3 ms-4">
                 <Image
                   priority

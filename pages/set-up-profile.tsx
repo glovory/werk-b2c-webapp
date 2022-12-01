@@ -6,7 +6,7 @@ import FormControl from 'react-bootstrap/FormControl';
 import FormSelect from 'react-bootstrap/FormSelect';
 import InputGroup from 'react-bootstrap/InputGroup';
 import Spinner from 'react-bootstrap/Spinner';
-import { useForm } from 'react-hook-form'; // Controller, 
+import { useForm } from 'react-hook-form';
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 
@@ -27,7 +27,6 @@ const COUNTRIES = [
 ];
 
 export default function SetUpProfile(){
-  // getValues, 
   const { register, handleSubmit, setValue, formState: { errors, isSubmitting } } = useForm<IFormInputs>({
     resolver: yupResolver(yup.object({
       fullname: yup.string().trim().required('Full name is required.'),
@@ -63,9 +62,6 @@ export default function SetUpProfile(){
     });
   }
 
-  // const avatar = getValues('avatar')
-  // console.log('avatar: ', avatar);
-
   return (
     <Layout>
       <main className="bg-white py-9 px-4 d-flex align-items-center flex-grow-1">
@@ -76,7 +72,7 @@ export default function SetUpProfile(){
                 <Image src="/image/werk-logo-symbol-space.svg" alt="Werk Logo" width={100} height={85} />
               </Link>
               <h1>Setup your profile!</h1>
-              <p className="subheading text-black-50 pb-5">
+              <p className="fs-16px text-black-50 pb-5">
                 This information will be displayed publicly so be careful what you share.
               </p>
             </div>
@@ -113,15 +109,15 @@ export default function SetUpProfile(){
                 }
                 
                 <div className="ms-5">
-                  <label
-                    // as="label"
-                    // variant="outline-dark"
-                    className="btn btn-outline btn-outline-primary btn-active-light-primary" // 
+                  <Button
+                    as="label"
+                    variant="outline-primary"
+                    className="btn-outline btn-active-light-primary"
                     onKeyDown={onEnterFile}
                   >
                     Click to Upload
                     <input {...register("avatar")} onChange={onChangeFile} type="file" hidden accept=".jpg,.jpeg,.png" />
-                  </label>
+                  </Button>
                   <div className="form-text">Use a square image for best results.</div>
                 </div>
 
@@ -129,7 +125,7 @@ export default function SetUpProfile(){
 
               <hr className="my-9 border-secondary" />
               
-              <label htmlFor="fullname" className="fw-bold">Full Name <sup className="text-danger">*</sup></label>
+              <label htmlFor="fullname" className="required form-label fw-semibold">Full Name</label>
               <p className="text-black-50">Write your full name.</p>
               <FormControl
                 {...register("fullname")}
@@ -139,15 +135,16 @@ export default function SetUpProfile(){
                 isInvalid={!!errors.fullname}
                 id="fullname"
                 placeholder="Enter your full name"
+                className="form-control-solid"
               />
               {errors.fullname && <div className="invalid-feedback">{errors.fullname.message}</div>}
               
               <hr className="my-9 border-secondary" />
 
-              <label htmlFor="nickname" className="fw-bold">Nickname <sup className="text-danger">*</sup></label>
+              <label htmlFor="nickname" className="required form-label fw-semibold">Nickname</label>
               <p className="text-black-50">This will also act as your profile URL slug.</p>
               <InputGroup>
-                <InputGroup.Text as="label" htmlFor="nickname">https://werk.id/@</InputGroup.Text>
+                <InputGroup.Text as="label" htmlFor="nickname" className="bg-secondary">https://werk.id/@</InputGroup.Text>
                 <FormControl
                   {...register("nickname")}
                   type="text"
@@ -156,6 +153,7 @@ export default function SetUpProfile(){
                   isInvalid={!!errors.nickname}
                   id="nickname"
                   placeholder="Set your nickname"
+                  className="form-control-solid"
                 />
               </InputGroup>
               <div className="form-text">Minimum character is 3 and can combine with number, underscore or period. Space or symbol are not allowed.</div>
@@ -163,7 +161,7 @@ export default function SetUpProfile(){
 
               <hr className="my-9 border-secondary" />
 
-              <label htmlFor="headline" className="fw-bold">Headline <sup className="text-danger">*</sup></label>
+              <label htmlFor="headline" className="required form-label fw-semibold">Headline</label>
               <p className="text-black-50">Write a brief introduction. This will show in talent searches.</p>
               <FormControl
                 {...register("headline")}
@@ -173,13 +171,14 @@ export default function SetUpProfile(){
                 isInvalid={!!errors.headline}
                 id="headline"
                 placeholder="e.g. I'm an Account Executive based in Jakarta"
+                className="form-control-solid"
               />
               <div className="form-text">100 characters.</div>
               {errors.headline && <div className="invalid-feedback d-block">{errors.headline.message}</div>}
 
               <hr className="my-9 border-secondary" />
 
-              <label htmlFor="bio" className="fw-bold">Your Bio</label>
+              <label htmlFor="bio" className="fw-semibold">Your Bio</label>
               <p className="text-black-50">
                 Tell us about yourself so companies know who you are. Sharing more details about yourself and your achievements will help you stand out.
               </p>
@@ -190,12 +189,13 @@ export default function SetUpProfile(){
                 id="bio"
                 as="textarea"
                 placeholder="Write a few sentences about you and your experience..."
+                className="form-control-solid"
                 rows={4}
               />
               
               <hr className="my-9 border-secondary" />
 
-              <label htmlFor="country" className="fw-bold">Where are you based? <sup className="text-danger">*</sup></label>
+              <label htmlFor="country" className="required form-label fw-semibold">Where are you based?</label>
               <p className="text-black-50">Find roles based in your country.</p>
               <FormSelect
                 {...register("country")}
@@ -203,6 +203,7 @@ export default function SetUpProfile(){
                 disabled={isSubmitting}
                 isInvalid={!!errors.country}
                 id="country"
+                className="form-select-solid"
               >
                 <option value="">Select Country</option>
                 {COUNTRIES.map((item: any) => 
@@ -222,7 +223,6 @@ export default function SetUpProfile(){
             </Form>
           </div>
         </div>
-        
       </main>
     </Layout>
   );

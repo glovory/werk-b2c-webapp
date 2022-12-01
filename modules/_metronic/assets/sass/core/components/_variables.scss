@@ -724,11 +724,11 @@ $form-check-input-active-filter-dark:       brightness(90%) !default;
 
 $form-check-input-bg:                       transparent !default;
 $form-check-input-bg-dark:                  transparent !default;
-$form-check-input-bg-solid:                 $gray-200 !default;
+$form-check-input-bg-solid:                 #ccc; // Metronic = $gray-200 !default;
 $form-check-input-bg-solid-dark:            $gray-200-dark !default;
 $form-check-input-bg-solid:                 $gray-200 !default;
 $form-check-input-bg-solid-dark:            $gray-200-dark !default;
-$form-check-input-border:                   1px solid $input-border-color !default;
+$form-check-input-border:                   1px solid #ccc !default; // Metronic = 1px solid $input-border-color !default;
 $form-check-input-border-dark:              1px solid $input-border-color-dark !default;
 $form-check-input-border-radius:            .45em !default;
 $form-check-radio-border-radius:            50% !default;
