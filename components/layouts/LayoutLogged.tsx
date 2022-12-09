@@ -1,24 +1,25 @@
 import type { ReactNode } from "react";
 import Head from 'next/head';
-import NavMain from "./NavMain";
+import NavLogged from "./NavLogged";
+import Footer from "../layouts/Home/Footer";
 
 interface Props {
-  children?: ReactNode
+  children?: ReactNode,
   title?: string,
 }
 
-const LayoutMain = ({ children, title }: Props) => {
+export default function LayoutLogged({ children, title }: Props){
   return (
     <>
       <Head>
         <title>{title}</title>
       </Head>
 
-      <NavMain />
+      <NavLogged />
 
       {children}
+
+      <Footer />
     </>
   );
-};
-  
-export default LayoutMain;
+}

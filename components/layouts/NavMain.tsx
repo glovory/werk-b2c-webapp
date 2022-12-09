@@ -14,7 +14,7 @@ export default function NavMain(){
   }
 
   return (
-    <Navbar bg="light" expand="lg" sticky="top">
+    <Navbar bg="white" expand="lg" sticky="top" className="shadow-sm">
       <Container>
         <Navbar.Brand
           as={Link}
@@ -29,9 +29,9 @@ export default function NavMain(){
           />
         </Navbar.Brand>
 
-        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Toggle aria-controls="navMain" />
 
-        <Navbar.Collapse id="basic-navbar-nav">
+        <Navbar.Collapse id="navMain">
           <Nav className="ms-auto">
             {MENUS.map((v, i) => 
               <Nav.Link key={i} as={Link} href="/">Menu {i + 1}</Nav.Link>

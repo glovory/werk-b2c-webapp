@@ -1,16 +1,25 @@
+import type { ReactElement } from 'react';
 import LayoutMain from '../components/layouts/LayoutMain';
 
-export default function Home(){
+const Home = () => {
   return (
-    <LayoutMain>
-      <main>
-        <img
-          className="w-100 object-cover"
-          height={450}
-          alt="Hero"
-          src="/image/bg/bg-hero.jpg"
-        />
-      </main>
-    </LayoutMain>
+    <main>
+      <img
+        className="w-100 object-cover"
+        height={450}
+        alt="Hero"
+        src="/image/bg/bg-hero.jpg"
+      />
+    </main>
   );
 }
+
+Home.getLayout = function getLayout(page: ReactElement) {
+  return (
+    <LayoutMain title="Werk">
+      {page}
+    </LayoutMain>
+  )
+}
+
+export default Home;

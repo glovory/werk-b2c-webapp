@@ -13,6 +13,12 @@
   border-color: #f1416c !important;
 }
 
+.form-check-input:focus-visible,
+.form-switch.form-check-solid .form-check-input:focus-visible {
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, .5); // var(--bs-btn-focus-box-shadow);
+}
+// End Bootstrap & Metronic override
+
 // Custom Utilities
 
 // Sizing
@@ -21,10 +27,36 @@
 }
 // End Sizing
 
-// 
+// for img
 .object-cover {
   object-fit: cover;
 }
+
+.img-loader {
+  position: relative;
+}
+.img-loader::before,
+.img-loader::after {
+  content: "";
+  position: absolute;
+  z-index: 1;
+}
+.img-loader::before {
+  inset: 0;
+  background-color: var(--kt-secondary);
+}
+.img-loader::after {
+  top: 0;
+  inset-inline-end: -150%;
+  bottom: 0;
+  inset-inline-start: -150%;
+  background: linear-gradient(90deg,rgba(0,0,0,0.06) 25%,rgba(0,0,0,0.15) 37%,rgba(0,0,0,0.06) 63%);
+  animation-name: w-loader;
+  animation-duration: 1.4s;
+  animation-timing-function: ease;
+  animation-iteration-count: infinite;
+}
+// End for img
 
 // grid
 .place-items-center {
@@ -39,8 +71,111 @@
 // End flex
 
 // Typography
+.fs-0 {
+  font-size: 0;
+}
+
 .fs-16px {
   font-size: 16px;
 }
+
+.whitespace-pre-wrap {
+  white-space: pre-wrap;
+}
+
+.line-clamp {
+  // --w-clamp: 3; // OPTION
+  overflow: hidden;
+  display: block;
+  -webkit-line-clamp: var(--w-clamp);
+  // display: box;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
 // End Typography
+
+// Position
+.top-0 {
+  top: 0;
+}
+
+.right-0 {
+  right: 0;
+}
+
+.bottom-0 {
+  bottom: 0;
+}
+
+.right-auto {
+  right: auto;
+}
+
+.left-auto {
+  left: auto;
+}
+
+.inset-0 {
+  inset: 0;
+}
+// End Position
+
+// z-index
+.z-2 {
+  z-index: 2;
+}
+.z-10 {
+  z-index: 10;
+}
+.z-20 {
+  z-index: 20;
+}
+.z-30 {
+  z-index: 30;
+}
+// End z-index
+
+// background
+.bg-rgba-dark-4 {
+  background-color: rgba(0, 0, 0, .4);
+}
+// End background
+
+// Interactivity
+.cursor-pointer {
+  cursor: pointer;
+}
+// END Interactivity
+
+// animation
+@keyframes w-loader {
+  0% {
+    transform: translateX(-37.5%);
+  }
+  100% {
+    transform: translateX(37.5%);
+  }
+}
+// End animation
+
+// FOR Smartphone Landscape & Portrait
+@media (max-width: 767px) {
+  .px-phone-ls-0,
+  .pe-phone-ls-0 {
+    padding-right: 0;
+  }
+
+  .px-phone-ls-0,
+  .ps-phone-ls-0 {
+    padding-left: 0;
+  }
+
+  .rounded-phone-0 {
+    border-radius: 0;
+  }
+
+
+}
 

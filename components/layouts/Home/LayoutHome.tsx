@@ -1,22 +1,22 @@
-import { ReactNode } from "react";
+import type { ReactNode } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 
 interface Props {
-  children?: ReactNode
-  // any props that come into the component
+  children?: ReactNode,
+  title?: string,
 }
 
-const Layout = ({ children }: Props) => {
+const LayoutHome = ({ children, title }: Props) => {
   return (
     <div className="min-vh-100 d-flex flex-column">
-      <Header />
+      <Header title={title} />
 
       {children}
       
-      <Footer />
+      <Footer className="bg-white" />
     </div>
   );
 };
   
-export default Layout;
+export default LayoutHome;

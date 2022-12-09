@@ -21,7 +21,7 @@ export default function LinkedInConnect(){
           <div className="card shadow-sm mt-20">
             <div className="card-body">
               <div className="d-flex gap-7 justify-content-center mb-8" style={{ marginTop: -85 }}>
-                <Image priority src="/image/user_1.png" alt="User" width={104} height={104} className="flex-none rounded-circle" />
+                <Image priority src="/image/misc/user_1.png" alt="User" width={104} height={104} className="flex-none rounded-circle" />
                 <div className="rounded bg-warning p-5">
                   <Image src="/image/werk-logo-white.svg" alt="Werk" width={71.5} height={71.5}  />
                 </div>

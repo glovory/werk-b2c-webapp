@@ -1,13 +1,17 @@
-import React from 'react';
 import YouTubeIcon from '@mui/icons-material/YouTube';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
+import { Cx } from '../../../utils/dom';
 
-const Footer = () => {
+interface Props {
+  className?: string,
+}
+
+const Footer = ({ className }: Props) => {
   return (
-    <footer className="p-4 text-center bg-white text-black-50">
+    <footer className={Cx("p-4 text-center text-black-50", className)}>
       <p>
         Copyright © 2022 Werk. All Rights Reserved.<br />
         Read <a href="/" className="fw-bold text-black-50 text-decoration-underline">About Us</a>, our <a href="/" className="fw-bold text-black-50 text-decoration-underline">Privacy Policy</a> and <a href="/" className="fw-bold text-black-50 text-decoration-underline">Terms of Service</a>.
