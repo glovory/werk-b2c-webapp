@@ -6,7 +6,9 @@ export const loader: LoaderFunction = async ({ request }) => {
   return json({});
 };
 
-export default RemixRouteComponent;
+// export default RemixRouteComponent;
+
+export default RemixRouteComponent.bind({ initialRoute: "/" });
 
 /**
  * To define a custom initial route for refine to redirect and start with:

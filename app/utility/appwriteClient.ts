@@ -1,8 +1,8 @@
 import { Account, Appwrite, Storage } from "@pankod/refine-appwrite";
 
-const APPWRITE_URL = "your-appwrite-url";
-const APPWRITE_PROJECT = "your-appwrite-project";
-const TOKEN_KEY = "token";
+const APPWRITE_URL = "https://app.microstack.id/v1"; // your-appwrite-url
+const APPWRITE_PROJECT = "werk-b2c"; // your-appwrite-project
+const TOKEN_KEY = "token-werk-b2c"; // token
 
 const appwriteClient = new Appwrite();
 

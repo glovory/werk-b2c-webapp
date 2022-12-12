@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  h1, .h1,
+  h2, .h2,
+  h3, .h3,
+  h4, .h4,
+  h5, .h5,
+  h6, .h6 {
+    @apply mt-0 mb-2 font-medium;
+  }
+  h1, .h1 {
+    font-size: 2.5rem;
+  }
+  h2, .h2 {
+    font-size: 2rem;
+  }
+  h3, .h3 {
+    font-size: 1.75rem;
+  }
+  h4, .h4 {
+    font-size: 1.5rem;
+  }
+  h5, .h5 {
+    font-size: 1.25rem;
+  }
+  h6, .h6 {
+    font-size: 1rem;
+  }
+  p {
+    @apply mt-0;
+  }
+  a {
+    color: #0d6efd;
+    cursor: pointer;
+  }
+  a:hover {
+    color: #0a58ca;
+  }
+  hr {
+    border: 0;
+    border-top: 1px solid;
+    @apply border-slate-200;
+  }
+  img {
+    @apply inline-block;
+  }
+}
+
+.w-input-group .MuiInputBase-root {
+  background-color: #e0e0e6;
+}
+
+.w-input-group .MuiInputAdornment-root > .MuiTypography-root {
+  color: #1a224c;
+}
+
+.w-input-group .MuiInputBase-input {
+  padding-left: 14px;
+  background-color: #fff;
+}
+
+.w-input-gray .MuiInputBase-input,
+.w-input-gray.w-multiline {
+  background-color: #f4f4f6;
+}
+
+.no-icon.MuiLoadingButton-loading {
+  padding-left: 2.25rem !important;
+}
+
+/*  */
+
+.w-required::after {
+  content: "*";
+  color: #e92f39;
+  vertical-align: top;
+  margin-left: 5px;
+}
+
+.line-clamp {
+  /* --w-clamp: 3; // OPTION */
+  overflow: hidden;
+  display: block;
+  -webkit-line-clamp: var(--w-clamp);
+  /* display: box; */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+/* FOR Smartphone Landscape & Portrait */
+@media (max-width: 767px) {
+  .px-xs-0,
+  .pe-xs-0 {
+    padding-right: 0;
+  }
+
+  .px-xs-0,
+  .ps-xs-0 {
+    padding-left: 0;
+  }
+
+  .rounded-xs-0 {
+    border-radius: 0;
+  }
+
+
+}

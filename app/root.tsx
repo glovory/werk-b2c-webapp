@@ -17,8 +17,8 @@ import {
   CssBaseline,
   GlobalStyles,
   ThemeProvider,
-  LightTheme,
-  ReadyPage,
+  // LightTheme,
+  // ReadyPage,
   ErrorComponent,
 } from "@pankod/refine-mui";
 
@@ -30,11 +30,15 @@ import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
-import { Title, Sider, Layout, Header } from "~/components/layout";
+// import { Title, Sider, Layout, Header } from "~/components/layout";
+
+import { light } from './theme';
+import WelcomePage from '~/components/WelcomePage';
+import tailwindcss from "./styles/app.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Werk B2B",
+  title: "Werk B2C",
   viewport: "width=device-width,initial-scale=1",
 });
 
@@ -68,13 +72,11 @@ const Document = withEmotionCache(
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
           />
-          <meta
-            name="emotion-insertion-point"
-            content="emotion-insertion-point"
-          />
+          <meta name="emotion-insertion-point" content="emotion-insertion-point" />
         </head>
         <body>
           {children}
+          <link rel="stylesheet" href={tailwindcss} />
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
@@ -87,9 +89,13 @@ const Document = withEmotionCache(
 export default function App() {
   return (
     <Document>
-      <ThemeProvider theme={LightTheme}>
-        <CssBaseline />
-        <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} />
+      <ThemeProvider theme={light}>
+        <CssBaseline enableColorScheme />
+        <GlobalStyles
+          styles={{
+            html: { WebkitFontSmoothing: "auto" }
+          }}
+        />
         <RefineSnackbarProvider>
           <Refine
             routerProvider={routerProvider}
@@ -103,12 +109,19 @@ export default function App() {
             authProvider={authProvider}
             LoginPage={AuthPage}
             notificationProvider={notificationProvider}
-            ReadyPage={ReadyPage}
+            // ReadyPage={ReadyPage}
+            DashboardPage={WelcomePage}
             catchAll={<ErrorComponent />}
-            Title={Title}
-            Sider={Sider}
-            Layout={Layout}
-            Header={Header}
+            // Title={Title}
+            // Sider={Sider}
+            // Layout={Layout}
+            // Header={Header}
+            resources={[
+              {
+                name: "home",
+                // list: WelcomePage,
+              }
+            ]}
           >
             <Outlet />
           </Refine>
