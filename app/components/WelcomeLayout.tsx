@@ -31,7 +31,6 @@ export default function WelcomeLayout({
             <img
               width="32"
               height="32"
-              className="align-middle"
               src="/image/werk-logo-symbol-space.svg"
               alt="Werk"
             />

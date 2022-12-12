@@ -1,10 +1,12 @@
+/* BASE */
+
 h1, .h1,
   h2, .h2,
   h3, .h3,
   h4, .h4,
   h5, .h5,
   h6, .h6 {
-  margin-top: 0px;
+  margin-top: 0;
   margin-bottom: 0.5rem;
   font-weight: 500;
 }
@@ -34,7 +36,7 @@ h6, .h6 {
 }
 
 p {
-  margin-top: 0px;
+  margin-top: 0;
 }
 
 a {
@@ -47,14 +49,14 @@ a:hover {
 }
 
 hr {
+  margin: 1rem 0;
   border: 0;
-  border-top: 1px solid;
-  --tw-border-opacity: 1;
-  border-color: rgb(226 232 240 / var(--tw-border-opacity));
+  border-top: 1px solid #e8e9ed;
 }
 
 img {
   display: inline-block;
+  vertical-align: middle;
 }
 
 *, ::before, ::after {
@@ -151,6 +153,10 @@ img {
   --tw-backdrop-sepia:  ;
 }
 
+/* END BASE */
+
+/* COMPONENTS */
+
 .container {
   width: 100%;
 }
@@ -185,12 +191,80 @@ img {
   }
 }
 
+/* This won't be included in your compiled CSS unless you actually use it */
+
+.border-bottom {
+  border-bottom: 1px solid #dee2e6;
+}
+
+.w-required::after {
+  content: "*";
+  color: #e92f39;
+  vertical-align: top;
+  margin-left: 5px;
+}
+
+.line-clamp {
+  /* --w-clamp: 3; // OPTION */
+  overflow: hidden;
+  display: block;
+  -webkit-line-clamp: var(--w-clamp);
+  display: box;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+/* END COMPONENTS */
+
+/* CUSTOM */
+
+/* This will always be included in your compiled CSS */
+
+.w-input-group .MuiInputBase-root {
+  background-color: #e0e0e6;
+}
+
+.w-input-group .MuiInputAdornment-root > .MuiTypography-root {
+  color: #1a224c;
+}
+
+.w-input-group .MuiInputBase-input {
+  padding-left: 14px;
+  background-color: #fff;
+}
+
+.w-input-gray .MuiInputBase-input,
+.w-input-gray.w-multiline {
+  background-color: #f4f4f6;
+}
+
+.no-icon.MuiLoadingButton-loading {
+  padding-left: 2.25rem !important;
+}
+
+.modal-bs .MuiDialog-paper,
+.modal-bs .MuiDialogContent-root {
+  overflow-y: unset;
+}
+
+/* END CUSTOM */
+
 .fixed {
   position: fixed;
 }
 
 .sticky {
   position: sticky;
+}
+
+.top-0 {
+  top: 0px;
+}
+
+.z-10 {
+  z-index: 10;
 }
 
 .m-0 {
@@ -286,6 +360,10 @@ img {
   margin-top: 1.25rem;
 }
 
+.mt-3 {
+  margin-top: 0.75rem;
+}
+
 .mt-0 {
   margin-top: 0px;
 }
@@ -348,10 +426,6 @@ img {
 
 .min-w-0 {
   min-width: 0px;
-}
-
-.min-w-50 {
-  min-width: 50%;
 }
 
 .max-w-md {
@@ -418,6 +492,11 @@ img {
   border-radius: 9999px;
 }
 
+.rounded-t-md {
+  border-top-left-radius: 0.375rem;
+  border-top-right-radius: 0.375rem;
+}
+
 .border-0 {
   border-width: 0px;
 }
@@ -469,6 +548,11 @@ img {
   padding-right: 1rem;
 }
 
+.px-16 {
+  padding-left: 4rem;
+  padding-right: 4rem;
+}
+
 .py-7 {
   padding-top: 1.75rem;
   padding-bottom: 1.75rem;
@@ -477,6 +561,16 @@ img {
 .py-8 {
   padding-top: 2rem;
   padding-bottom: 2rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .pt-8 {
@@ -499,12 +593,20 @@ img {
   padding-left: 1rem;
 }
 
+.pr-2 {
+  padding-right: 0.5rem;
+}
+
 .text-center {
   text-align: center;
 }
 
 .text-right {
   text-align: right;
+}
+
+.align-baseline {
+  vertical-align: baseline;
 }
 
 .align-middle {
@@ -569,48 +671,7 @@ img {
   transition-duration: 150ms;
 }
 
-.w-input-group .MuiInputBase-root {
-  background-color: #e0e0e6;
-}
-
-.w-input-group .MuiInputAdornment-root > .MuiTypography-root {
-  color: #1a224c;
-}
-
-.w-input-group .MuiInputBase-input {
-  padding-left: 14px;
-  background-color: #fff;
-}
-
-.w-input-gray .MuiInputBase-input,
-.w-input-gray.w-multiline {
-  background-color: #f4f4f6;
-}
-
-.no-icon.MuiLoadingButton-loading {
-  padding-left: 2.25rem !important;
-}
-
-/*  */
-
-.w-required::after {
-  content: "*";
-  color: #e92f39;
-  vertical-align: top;
-  margin-left: 5px;
-}
-
-.line-clamp {
-  /* --w-clamp: 3; // OPTION */
-  overflow: hidden;
-  display: block;
-  -webkit-line-clamp: var(--w-clamp);
-  /* display: box; */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-  white-space: normal;
-}
+/* RESPONSIVE */
 
 /* FOR Smartphone Landscape & Portrait */
 

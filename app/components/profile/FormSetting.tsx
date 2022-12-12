@@ -8,24 +8,24 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { enterToClick } from '~/utils/dom';
 
 interface Props {
-  onSubmit?: React.FormEventHandler<HTMLFormElement>,
-  onChangeFile?: React.ChangeEventHandler<HTMLInputElement>,
   photo?: object | undefined | any,
   disabled?: boolean,
+  onSubmit?: React.FormEventHandler<HTMLFormElement>,
+  onChangeFile?: React.ChangeEventHandler<HTMLInputElement>,
   children?: ReactNode,
 }
 
 const COUNTRIES = [
-  'Indonesia'
+  'Indonesia', 'Malaysia', 'Thailand', 'Singapore', 'Saudi Arabia', 'Philippines',
 ];
 
-const FormSetting: React.FC = ({
-  onSubmit,
-  onChangeFile,
+export default function FormSetting({
   photo,
   disabled,
+  onSubmit,
+  onChangeFile,
   children,
-}: Props) => {
+}: Props){
   return (
     <form
       noValidate
@@ -169,7 +169,7 @@ const FormSetting: React.FC = ({
             variant="contained"
             loading={disabled}
             type="submit"
-            className="min-w-50"
+            className="px-16"
           >
             Save
           </LoadingButton>
@@ -178,5 +178,3 @@ const FormSetting: React.FC = ({
     </form>
   );
 }
-
-export default FormSetting;

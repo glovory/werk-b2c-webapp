@@ -20,7 +20,7 @@ const FooterMain = ({ className }: Props) => {
 
       <div className="flex flex-wrap justify-center items-center">
         <a href="/" rel="noopener noreferrer" target="_blank" className="block px-2">
-          <img src="/image/brand/tiktok.svg" alt="tiktok" />
+          <img src="/image/brand/tiktok.svg" alt="tiktok" className="align-baseline" />
         </a>
         <a href="/" rel="noopener noreferrer" target="_blank" className="block px-2 text-gray-500">
           <YouTubeIcon />

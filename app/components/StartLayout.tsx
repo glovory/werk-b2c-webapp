@@ -48,7 +48,6 @@ export default function StartLayout({
               <img
                 width="32"
                 height="32"
-                className="align-middle"
                 src="/image/werk-logo-symbol-space.svg"
                 alt="Werk"
               />

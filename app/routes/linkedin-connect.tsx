@@ -16,7 +16,7 @@ export default function LinkedInConnect(){
             <div className="flex gap-7 justify-center mb-8" style={{ marginTop: -85 }}>
               <img src="/image/misc/user_1.png" alt="User" width={104} height={104} className="flex-none rounded-full" />
               <div className="rounded bg-orange-500 p-5">
-                <img src="/image/werk-logo-white.svg" alt="Werk" width={71.5} height={71.5} className="align-middle" />
+                <img src="/image/werk-logo-white.svg" alt="Werk" width={71.5} height={71.5} />
               </div>
             </div>
 

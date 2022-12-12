@@ -54,7 +54,7 @@ export default function Page(){
                   variant="contained"
                   loading={isSubmitting}
                   type="submit"
-                  className="min-w-50"
+                  className="px-16"
                 >
                   Save
                 </LoadingButton>

@@ -11,6 +11,7 @@ import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import { Link } from "@remix-run/react";
 
 import FooterMain from './FooterMain';
@@ -22,7 +23,7 @@ interface Props {
 const USER_MENU = ['Account Setting', 'Sign Out'];
 const LANGUAGE = [
   { label: "English", value: "en" },
-  { label: "Indonesia", value: "id" },
+  { label: "Bahasa Indonesia", value: "id" },
 ];
 
 export default function LayoutLogged({
@@ -42,6 +43,18 @@ export default function LayoutLogged({
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   }
+
+  const menuPosition = {
+    sx: { mt: '30px' },
+    anchorOrigin: {
+      vertical: 'top',
+      horizontal: 'right',
+    },
+    transformOrigin: {
+      vertical: 'top',
+      horizontal: 'right',
+    }
+  };
 
   return (
     <>
@@ -79,7 +92,6 @@ export default function LayoutLogged({
                 <Select
                   renderValue={(val) => (
                     <div className="flex items-center uppercase">
-                      {/* height={20}  */}
                       <Avatar
                         sx={{ width: 20, height: 20 }}
                         variant="square"
@@ -93,6 +105,9 @@ export default function LayoutLogged({
                   value={language}
                   onChange={languageChange}
                   displayEmpty
+                  IconComponent={ExpandMoreTwoToneIcon}
+                  // @ts-ignore:next-line
+                  MenuProps={menuPosition}
                   // inputProps={{ 'aria-label': 'Without label' }}
                 >
                   {LANGUAGE.map((lang) => 
@@ -110,19 +125,12 @@ export default function LayoutLogged({
                   src="/image/misc/user_1.png"
                 />
               </IconButton>
+              {/* @ts-ignore:next-line */}
               <Menu
-                sx={{ mt: '30px' }}
+                {...menuPosition}
                 id="account-menu"
                 anchorEl={anchorElUser}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
                 // keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
                 open={!!anchorElUser}
                 onClose={handleCloseUserMenu}
               >

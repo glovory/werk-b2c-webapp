@@ -1,6 +1,5 @@
+/* BASE */ 
 @tailwind base;
-@tailwind components;
-@tailwind utilities;
 
 @layer base {
   h1, .h1,
@@ -9,7 +8,8 @@
   h4, .h4,
   h5, .h5,
   h6, .h6 {
-    @apply mt-0 mb-2 font-medium;
+    margin-top: 0;
+    @apply mb-2 font-medium;
   }
   h1, .h1 {
     font-size: 2.5rem;
@@ -30,7 +30,7 @@
     font-size: 1rem;
   }
   p {
-    @apply mt-0;
+    margin-top: 0;
   }
   a {
     color: #0d6efd;
@@ -40,14 +40,52 @@
     color: #0a58ca;
   }
   hr {
+    margin: 1rem 0;
     border: 0;
-    border-top: 1px solid;
-    @apply border-slate-200;
+    border-top: 1px solid #e8e9ed;
   }
   img {
-    @apply inline-block;
+    display: inline-block;
+    vertical-align: middle;
   }
 }
+/* END BASE */
+
+/* COMPONENTS */
+@tailwind components;
+
+@layer components {
+  /* This won't be included in your compiled CSS unless you actually use it */
+  .border-top {
+    border-top: 1px solid #dee2e6;
+  }
+  .border-bottom {
+    border-bottom: 1px solid #dee2e6;
+  }
+
+  .w-required::after {
+    content: "*";
+    color: #e92f39;
+    vertical-align: top;
+    margin-left: 5px;
+  }
+  
+  .line-clamp {
+    /* --w-clamp: 3; // OPTION */
+    overflow: hidden;
+    display: block;
+    -webkit-line-clamp: var(--w-clamp);
+    display: box;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    text-overflow: ellipsis;
+    white-space: normal;
+  }
+}
+/* END COMPONENTS */
+
+/* CUSTOM */
+/* This will always be included in your compiled CSS */
 
 .w-input-group .MuiInputBase-root {
   background-color: #e0e0e6;
@@ -71,26 +109,15 @@
   padding-left: 2.25rem !important;
 }
 
-/*  */
-
-.w-required::after {
-  content: "*";
-  color: #e92f39;
-  vertical-align: top;
-  margin-left: 5px;
+.modal-bs .MuiDialog-paper,
+.modal-bs .MuiDialogContent-root {
+  overflow-y: unset;
 }
+/* END CUSTOM */
 
-.line-clamp {
-  /* --w-clamp: 3; // OPTION */
-  overflow: hidden;
-  display: block;
-  -webkit-line-clamp: var(--w-clamp);
-  /* display: box; */
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-  white-space: normal;
-}
+@tailwind utilities;
+
+/* RESPONSIVE */
 
 /* FOR Smartphone Landscape & Portrait */
 @media (max-width: 767px) {
@@ -107,6 +134,5 @@
   .rounded-xs-0 {
     border-radius: 0;
   }
-
 
 }
