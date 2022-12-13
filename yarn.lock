@@ -1514,10 +1514,10 @@
     tslib "^2.3.1"
     warn-once "^0.1.0"
 
-"@pankod/refine-react-hook-form@3.35.0":
-  version "3.35.0"
-  resolved "https://registry.yarnpkg.com/@pankod/refine-react-hook-form/-/refine-react-hook-form-3.35.0.tgz#409c271e86770a1efac919849667d35c124b6163"
-  integrity sha512-GrbNEpjcAEboRZcERLcB0/qPkZhPv4S0lmHjSsVP7oodd2X/djXg37zaGXe+IW1ZFLJcGk5tezdUgX1y3qM4iw==
+"@pankod/refine-react-hook-form@3.37.0":
+  version "3.37.0"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-react-hook-form/-/refine-react-hook-form-3.37.0.tgz#4eac5fde02f50079d17d884355abc0cb3e2f11e5"
+  integrity sha512-EnLzNbgOGtkBSb1I2WHmco5/083i7np/ylRgfUWPZLEedCe0nXyfVT3dwLClGO3VvMXIwQQO6QQsQZ7ll2kk6Q==
   dependencies:
     react-hook-form "^7.30.0"
 
