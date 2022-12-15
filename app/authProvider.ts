@@ -16,10 +16,15 @@ export const authProvider: AuthProvider = {
       return Promise.reject();
     }
   },
-  logout: async () => {
-    Cookies.remove(TOKEN_KEY);
-    await account.deleteSession("current");
-    return Promise.resolve();
+  logout: async (redirectPath = "/") => {
+    try {
+      Cookies.remove(TOKEN_KEY);
+      const req = await account.deleteSession("current");
+      const res: any = { redirectPath, ...req };
+      return Promise.resolve(res);
+    } catch(e) {
+      return Promise.reject(e);
+    }
   },
   checkError: () => Promise.resolve(),
   checkAuth: async (context) => {

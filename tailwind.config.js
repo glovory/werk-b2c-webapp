@@ -18,6 +18,11 @@ module.exports = {
       listStyleType: {
         'lower-alpha': 'lower-alpha',
       },
+      zIndex: {
+        '1': '1',
+        '2': '2',
+        '3': '3',
+      },
     },
   },
   plugins: [],

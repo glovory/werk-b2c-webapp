@@ -30,9 +30,9 @@ export default function WelcomeLayout({
         >
           <Link to="/">
             <img
-              width="32"
-              height="32"
-              src="/image/werk-logo-symbol-space.svg"
+              // width="32"
+              // height="32"
+              src="/image/logo/werk-logo-symbol.svg" // /image/werk-logo-symbol-space.svg
               alt="Werk"
             />
           </Link>
