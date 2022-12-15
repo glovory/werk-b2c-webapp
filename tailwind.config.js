@@ -12,11 +12,13 @@ module.exports = {
       minHeight: {
         'calc-nav': 'calc(100vh - 50px)', // 48px
       },
-      // minWidth: {
-      //   '50': '50%', //  !important
-      // },
       listStyleType: {
         'lower-alpha': 'lower-alpha',
+      },
+      zIndex: {
+        '1': '1',
+        '2': '2',
+        '3': '3',
       },
     },
   },

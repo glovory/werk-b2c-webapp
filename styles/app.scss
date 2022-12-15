@@ -2,6 +2,9 @@
 @tailwind base;
 
 @layer base {
+  html {
+    -webkit-font-smoothing: auto;
+  }
   h1, .h1,
   h2, .h2,
   h3, .h3,
@@ -54,15 +57,8 @@
 /* COMPONENTS */
 @tailwind components;
 
+/* This won't be included in your compiled CSS unless you actually use it */
 @layer components {
-  /* This won't be included in your compiled CSS unless you actually use it */
-  .border-top {
-    border-top: 1px solid #dee2e6;
-  }
-  .border-bottom {
-    border-bottom: 1px solid #dee2e6;
-  }
-
   .w-required::after {
     content: "*";
     color: #e92f39;
@@ -101,7 +97,7 @@
 }
 
 .w-input-gray .MuiInputBase-input,
-.w-input-gray.w-multiline {
+.w-input-gray.w-multiline .MuiInputBase-root {
   background-color: #f4f4f6;
 }
 
@@ -115,7 +111,19 @@
 }
 /* END CUSTOM */
 
+/* UTILITIES */
 @tailwind utilities;
+
+/* This won't be included in your compiled CSS unless you actually use it */
+@layer utilities {
+  .border-top {
+    border-top: 1px solid #dee2e6;
+  }
+  .border-bottom {
+    border-bottom: 1px solid #dee2e6;
+  }
+}
+/* END UTILITIES */
 
 /* RESPONSIVE */
 
