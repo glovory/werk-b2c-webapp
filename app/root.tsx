@@ -15,7 +15,7 @@ import {
   notificationProvider,
   RefineSnackbarProvider,
   CssBaseline,
-  GlobalStyles,
+  // GlobalStyles,
   ThemeProvider,
   // LightTheme,
   // ReadyPage,
@@ -31,6 +31,7 @@ import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
 // import { Title, Sider, Layout, Header } from "~/components/layout";
+import GoogleIcon from '@mui/icons-material/Google';
 
 import { light } from './theme';
 import WelcomePage from '~/components/WelcomePage';
@@ -38,7 +39,7 @@ import tailwindcss from "./styles/app.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Werk B2C",
+  title: "Werk",
   viewport: "width=device-width,initial-scale=1",
 });
 
@@ -68,6 +69,7 @@ const Document = withEmotionCache(
           {title ? <title>{title}</title> : null}
           <Meta />
           <Links />
+          <link rel="icon" href="/image/werk-logo-symbol-space.svg" />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -76,9 +78,9 @@ const Document = withEmotionCache(
         </head>
         <body>
           {children}
-          <link rel="stylesheet" href={tailwindcss} />
           <ScrollRestoration />
           <Scripts />
+          <link rel="stylesheet" href={tailwindcss} />
           <LiveReload />
         </body>
       </html>
@@ -91,11 +93,7 @@ export default function App() {
     <Document>
       <ThemeProvider theme={light}>
         <CssBaseline enableColorScheme />
-        <GlobalStyles
-          styles={{
-            html: { WebkitFontSmoothing: "auto" }
-          }}
-        />
+        {/* <GlobalStyles styles={{ html: { WebkitFontSmoothing: "auto" } }} /> */}
         <RefineSnackbarProvider>
           <Refine
             routerProvider={routerProvider}
@@ -105,10 +103,22 @@ export default function App() {
             liveProvider={liveProvider(appwriteClient, {
               databaseId: "default",
             })}
-            liveMode="auto"
+            // liveMode="auto" // @deprecated — liveMode property is deprecated. Use it from within options instead.
+            options={{ liveMode: "auto" }}
             authProvider={authProvider}
-            LoginPage={AuthPage}
             notificationProvider={notificationProvider}
+            // LoginPage={AuthPage}
+            LoginPage={() => (
+              <AuthPage
+                providers={[
+                  {
+                    name: "google",
+                    icon: <GoogleIcon />,
+                    label: "Sign in with Google",
+                  },
+                ]}
+              />
+            )}
             // ReadyPage={ReadyPage}
             DashboardPage={WelcomePage}
             catchAll={<ErrorComponent />}
@@ -119,7 +129,7 @@ export default function App() {
             resources={[
               {
                 name: "home",
-                // list: WelcomePage,
+                // list: ListHomePage,
               }
             ]}
           >

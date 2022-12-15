@@ -15,7 +15,7 @@ const FooterMain = ({ className }: Props) => {
     <footer className={Cx("p-4 text-center mt-auto", className)}>
       <p className="mb-4 text-xs">
         Copyright © 2022 Werk. All Rights Reserved.<br />
-        Read <Link to="/about-us" className="font-bold underline text-gray-600">About Us</Link>, our <Link to="/privacy-policy" className="font-bold underline text-gray-600">Privacy Policy</Link> and <Link to="/terms-of-service" className="font-bold underline text-gray-600">Terms of Service</Link>.
+        Read <Link to="/about-us" className="font-bold underline text-gray-600">About Us</Link>, our <Link to="/privacy" className="font-bold underline text-gray-600">Privacy Policy</Link> and <Link to="/terms" className="font-bold underline text-gray-600">Terms of Service</Link>.
       </p>
 
       <div className="flex flex-wrap justify-center items-center">
