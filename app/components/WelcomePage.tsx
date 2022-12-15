@@ -1,8 +1,9 @@
-import StartLayout from "~/components/StartLayout";
+// import StartLayout from "~/components/StartLayout";
+import LayoutLogged from "~/components/LayoutLogged";
 
 const WelcomePage: React.FC = () => {
   return (
-    <StartLayout>
+    <LayoutLogged footer={false}>
       <img
         loading="lazy"
         decoding="async"
@@ -12,7 +13,7 @@ const WelcomePage: React.FC = () => {
         alt="Hero"
         src="/image/bg/bg-hero.jpg"
       />
-    </StartLayout>
+    </LayoutLogged>
   );
 }
 
