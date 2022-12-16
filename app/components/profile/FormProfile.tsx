@@ -86,7 +86,6 @@ export default function FormProfile({
         </DialogTitle>
         <DialogContent className="mt-6">
           <FormSetting
-            // @ts-ignore:next-line
             disabled={formLoading || isSubmitting}
             register={register}
             errors={errors}
