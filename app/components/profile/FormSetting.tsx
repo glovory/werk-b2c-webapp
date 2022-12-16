@@ -183,13 +183,13 @@ export default function FormSetting({
             />
           )}
         />
-        {/* {errors.country && <div className="invalid-feedback">{errors.country.message}</div>} */}
 
         {children}
 
         <hr className="my-6" />
 
-        <p className="text-right">
+        {/*  sticky bottom-0 bg-white border-top py-3 px-6 mt-5 mb-n4 mx-n6 */}
+        <div className="text-right">
           <LoadingButton
             size="large"
             variant="contained"
@@ -199,7 +199,7 @@ export default function FormSetting({
           >
             Save
           </LoadingButton>
-        </p>
+        </div>
       </fieldset>
     </Form>
   );

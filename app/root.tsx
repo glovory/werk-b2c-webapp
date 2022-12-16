@@ -30,11 +30,12 @@ import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
-// import { Title, Sider, Layout, Header } from "~/components/layout";
-import GoogleIcon from '@mui/icons-material/Google';
+// import { Layout } from "~/components/layout"; // Title, Sider, Layout, Header
+// import AppleIcon from '@mui/icons-material/Apple';
 
 import { light } from './theme';
 import WelcomePage from '~/components/WelcomePage';
+import SetUpProfile from '~/pages/SetupProfile';
 import tailwindcss from "./styles/app.css";
 
 export const meta: MetaFunction = () => ({
@@ -107,18 +108,26 @@ export default function App() {
             options={{ liveMode: "auto" }}
             authProvider={authProvider}
             notificationProvider={notificationProvider}
-            // LoginPage={AuthPage}
-            LoginPage={() => (
-              <AuthPage
-                providers={[
-                  {
-                    name: "google",
-                    icon: <GoogleIcon />,
-                    label: "Sign in with Google",
-                  },
-                ]}
-              />
-            )}
+            LoginPage={AuthPage}
+            // LoginPage={() => (
+            //   <AuthPage
+            //     contentProps={{
+            //       title: "Login",
+            //     }}
+            //     providers={[
+            //       {
+            //         name: "google",
+            //         icon: <img width={18} height={18} alt="Google" src="/image/brand/google.svg" />,
+            //         label: "Sign in with Google",
+            //       },
+            //       {
+            //         name: "apple",
+            //         icon: <AppleIcon sx={{ mb: '4px' }} />,
+            //         label: "Sign in with Apple",
+            //       },
+            //     ]}
+            //   />
+            // )}
             // ReadyPage={ReadyPage}
             DashboardPage={WelcomePage}
             catchAll={<ErrorComponent />}
@@ -128,8 +137,8 @@ export default function App() {
             // Header={Header}
             resources={[
               {
-                name: "home",
-                // list: ListHomePage,
+                name: "setup-profile",
+                list: SetUpProfile,
               }
             ]}
           >

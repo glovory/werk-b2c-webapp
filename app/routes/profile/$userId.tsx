@@ -68,11 +68,11 @@ const Profile: React.FC = () => {
                 }}
               >
                 {(close: any) => [
-                  <MenuItem key={1} component="label" onClick={close} disableRipple>
+                  <MenuItem key="1" component="label" onClick={close}>
                     <ImageTwoToneIcon className="mr-2" />Choose From Gallery
                     <input type="file" accept=".jpg,.jpeg,.png" hidden />
                   </MenuItem>,
-                  <MenuItem key={2} onClick={close} disableRipple>
+                  <MenuItem key="2" onClick={close}>
                     <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-2" /> Choose From Unsplash
                   </MenuItem>
                 ]}

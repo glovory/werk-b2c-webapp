@@ -200,7 +200,7 @@ export default function LayoutLogged({
                             variant="rounded"
                             sx={{ width: 48, height: 48 }}
                             alt={identity.name}
-                            src={identity.avatar} // "/image/misc/user_1.png"
+                            src={identity.avatar}
                             className="mr-3"
                           />
                           <div>
@@ -233,7 +233,7 @@ export default function LayoutLogged({
                       <div>Continue with</div>
                       <LoadingButton
                         variant="outlined"
-                        className="min-w-0"
+                        className="min-w-0 px-2"
                         disabled={!!loadingLoginWith}
                         loading={loadingLoginWith === 'google'}
                         onClick={() => signinWith("google")}
@@ -241,14 +241,14 @@ export default function LayoutLogged({
                         <img
                           width={18}
                           height={18}
-                          alt="Google Logo"
+                          alt="Google"
                           src="/image/brand/google.svg"
                         />
                       </LoadingButton>
                       <LoadingButton
                         variant="contained"
                         color="secondary"
-                        className="min-w-0"
+                        className="min-w-0 px-2"
                         disabled={!!loadingLoginWith}
                         // loading={loadingLoginWith}
                         // onClick={() => signinWith("apple")}
@@ -256,7 +256,7 @@ export default function LayoutLogged({
                         <img
                           width={18}
                           height={18}
-                          alt="Apple Logo"
+                          alt="Apple"
                           src="/image/brand/apple.svg"
                         />
                       </LoadingButton>
