@@ -831,6 +831,10 @@ img {
   line-height: 1rem;
 }
 
+.text-0 {
+  font-size: 0;
+}
+
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
@@ -854,6 +858,11 @@ img {
 
 .not-italic {
   font-style: normal;
+}
+
+.text-blue-700 {
+  --tw-text-opacity: 1;
+  color: rgb(29 78 216 / var(--tw-text-opacity));
 }
 
 .text-white {
@@ -889,11 +898,6 @@ img {
 .text-gray-400 {
   --tw-text-opacity: 1;
   color: rgb(156 163 175 / var(--tw-text-opacity));
-}
-
-.text-blue-700 {
-  --tw-text-opacity: 1;
-  color: rgb(29 78 216 / var(--tw-text-opacity));
 }
 
 .underline {

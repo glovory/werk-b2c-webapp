@@ -40,6 +40,9 @@ module.exports = {
       backgroundColor: {
         'w-blue-1': '#cfd9ff',
       },
+      fontSize: {
+        '0': '0',
+      },
     },
   },
   plugins: [],
