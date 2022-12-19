@@ -12,6 +12,8 @@ const LoginWith: React.FC = () => {
     // const provider = new URLSearchParams(window.location.search).get('provider');
     const provider = params.providerId;
     if(provider && ['google'].includes(provider)){
+      // window.open('', 'Sign in - Google Account', `left=${(screen.width - 496) / 2},top=${(screen.height - 574) / 4},width=496,height=574`);
+      // "https://staging.business.werk.id/v1/auth/oauth2/success", "https://staging.business.werk.id/v1/auth/oauth2/failure"
       account.createOAuth2Session(provider, REDIRECT_SUCCESS, REDIRECT_FAILURE);
     }
   }, []);

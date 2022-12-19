@@ -10,10 +10,12 @@ import FormSetting from '~/components/profile/FormSetting';
 interface FormProfileInputs {
   avatar: any
   fullname: string
-  account_name: string
-  headline: string
+  accountName: string
+  headLine: string
   bio: string
   country: string
+  province: string
+  city: string
 }
 
 const SetUpProfile: React.FC = () => {
@@ -26,9 +28,11 @@ const SetUpProfile: React.FC = () => {
   } = useForm<FormProfileInputs>({
     resolver: yupResolver(yup.object({
       fullname: yup.string().trim().required('Full name is required.'),
-      account_name: yup.string().trim().required("Account Name is required and can't be empty."),
-      headline: yup.string().trim().required('A headline is required.'),
+      accountName: yup.string().trim().required("Account Name is required and can't be empty."),
+      headLine: yup.string().trim().required('A headline is required.').max(100, 'Maximum 100 characters.'),
       country: yup.string().trim().required('Required choice for Country.'),
+      province: yup.string().required('Required choice for Province/States.'),
+      city: yup.string().required('Required choice for City.'),
     }).required())
   });
   const [photo, setPhoto] = useState<any>();
@@ -64,11 +68,11 @@ const SetUpProfile: React.FC = () => {
           
           <FormSetting
             inputPhoto
-            // @ts-ignore:next-line
             photo={photo}
             disabled={formLoading || isSubmitting}
             register={register}
             errors={errors}
+            setValue={setValue}
             onChangeFile={onChangeFile}
             onSubmit={handleSubmit(onSave)}
           />

@@ -30,8 +30,8 @@ import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
-// import { Layout } from "~/components/layout"; // Title, Sider, Layout, Header
-// import AppleIcon from '@mui/icons-material/Apple';
+// import { Title, Sider, Layout, Header } from "~/components/layout";
+// import remixImageStyles from "remix-image/remix-image.css";
 
 import { light } from './theme';
 import WelcomePage from '~/components/WelcomePage';
@@ -40,8 +40,8 @@ import tailwindcss from "./styles/app.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Werk",
   viewport: "width=device-width,initial-scale=1",
+  title: "Werk",
 });
 
 interface DocumentProps {
@@ -65,12 +65,10 @@ const Document = withEmotionCache(
     return (
       <html lang="en">
         <head>
-          <meta charSet="utf-8" />
-          <meta name="viewport" content="width=device-width,initial-scale=1" />
-          {title ? <title>{title}</title> : null}
           <Meta />
+          {title ? <title>{title}</title> : null}
           <Links />
-          <link rel="icon" href="/image/werk-logo-symbol-space.svg" />
+          <link rel="icon" href="/image/werk.svg" />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -109,25 +107,6 @@ export default function App() {
             authProvider={authProvider}
             notificationProvider={notificationProvider}
             LoginPage={AuthPage}
-            // LoginPage={() => (
-            //   <AuthPage
-            //     contentProps={{
-            //       title: "Login",
-            //     }}
-            //     providers={[
-            //       {
-            //         name: "google",
-            //         icon: <img width={18} height={18} alt="Google" src="/image/brand/google.svg" />,
-            //         label: "Sign in with Google",
-            //       },
-            //       {
-            //         name: "apple",
-            //         icon: <AppleIcon sx={{ mb: '4px' }} />,
-            //         label: "Sign in with Apple",
-            //       },
-            //     ]}
-            //   />
-            // )}
             // ReadyPage={ReadyPage}
             DashboardPage={WelcomePage}
             catchAll={<ErrorComponent />}
@@ -156,5 +135,6 @@ export function links() {
       rel: "stylesheet",
       href: "https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css",
     },
+    // { rel: "stylesheet", href: remixImageStyles },
   ];
 }

@@ -51,6 +51,9 @@
     display: inline-block;
     vertical-align: middle;
   }
+  [hidden] {
+    display: none !important;
+  }
 }
 /* END BASE */
 
@@ -121,6 +124,10 @@
   }
   .border-bottom {
     border-bottom: 1px solid #dee2e6;
+  }
+
+  .mt-next-1 > * {
+    border-top: 1px solid #dee2e6;
   }
 }
 /* END UTILITIES */

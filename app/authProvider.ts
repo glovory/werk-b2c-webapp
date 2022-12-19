@@ -3,6 +3,7 @@ import Cookies from "js-cookie";
 import * as cookie from "cookie";
 
 import { account, appwriteClient, TOKEN_KEY } from "~/utility";
+import store from "store2";
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
@@ -17,11 +18,17 @@ export const authProvider: AuthProvider = {
     }
   },
   logout: async (redirectPath = "/") => {
+    // Cookies.remove(TOKEN_KEY);
+    // await account.deleteSession("current");
+    // return Promise.resolve(redirectPath);
+
     try {
       Cookies.remove(TOKEN_KEY);
-      const req = await account.deleteSession("current");
-      const res: any = { redirectPath, ...req };
-      return Promise.resolve(res);
+      // const req = await account.deleteSession("current");
+      // const res: any = { redirectPath, ...req };
+      await account.deleteSession("current");
+      store.remove("cookieFallback");
+      return Promise.resolve(redirectPath);
     } catch(e) {
       return Promise.reject(e);
     }
@@ -53,9 +60,18 @@ export const authProvider: AuthProvider = {
   getPermissions: () => Promise.resolve(),
   getUserIdentity: async () => {
     const user = await account.get();
-
     if (user) {
       return user;
     }
+    
+    // try {
+    //   const user = await account.get();
+    //   if (user) {
+    //     return Promise.resolve(user);
+    //   }
+    //   return Promise.reject();
+    // } catch(e) {
+    //   return Promise.reject(e);
+    // }
   },
 };
