@@ -101,7 +101,7 @@ export default function LayoutLogged({
           <Toolbar variant="dense" className="px-0">
             <Link to="/">
               <img
-                src="/image/logo/werk-logo-symbol.svg" // "/image/werk-logo-symbol-space.svg"
+                src="/image/logo/werk-logo-symbol.svg"
                 alt="Werk"
               />
             </Link>
@@ -147,7 +147,7 @@ export default function LayoutLogged({
                         <MenuItem key={lang.value} value={lang.value}>
                           <img
                             height="22"
-                            className="mr-2"
+                            className="text-0 mr-2"
                             alt={lang.label}
                             src={`/image/flags/${lang.value === 'en' ? 'us' : lang.value}.svg`}
                           />
