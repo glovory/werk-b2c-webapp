@@ -2,6 +2,17 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu'; // , { MenuProps }
 
+export const menuRight = {
+  anchorOrigin: {
+    vertical: 'bottom',
+    horizontal: 'right',
+  },
+  transformOrigin: {
+    vertical: 'top',
+    horizontal: 'right',
+  }
+};
+
 export default function Dropdown({
   buttonProps,
   label,
@@ -33,6 +44,7 @@ export default function Dropdown({
       </LabelAs>
 
       <Menu
+        {...menuRight}
         {...etc}
         anchorEl={anchorEl}
         open={!!anchorEl}
