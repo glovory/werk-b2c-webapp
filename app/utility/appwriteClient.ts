@@ -9,10 +9,10 @@ const TOKEN_KEY = "token_werk_b2c"; // token
 // STAGING  = https://staging.werk.id
 
 // For redirect after success
-const REDIRECT_SUCCESS = "http://localhost:3000/setup-profile";
+const REDIRECT_SUCCESS = "https://staging.werk.id/setup-profile";
 
 // For redirect after failed
-const REDIRECT_FAILURE = "http://localhost:3000/auth/failure";
+const REDIRECT_FAILURE = "https://staging.werk.id/auth/failure";
 
 const appwriteClient = new Appwrite();
 
