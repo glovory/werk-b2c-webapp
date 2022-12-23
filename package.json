@@ -14,8 +14,9 @@
   "dependencies": {
     "@hookform/resolvers": "^2.9.10",
     "@mui/icons-material": "^5.8.3",
+    "@next-boost/hybrid-disk-cache": "^0.3.0",
     "@pankod/refine-appwrite": "^5.1.0",
-    "@pankod/refine-cli": "^1.2.0",
+    "@pankod/refine-cli": "1.13.2",
     "@pankod/refine-core": "3.90.6",
     "@pankod/refine-inferencer": "^1.2.0",
     "@pankod/refine-mui": "3.61.2",
@@ -24,12 +25,15 @@
     "@remix-run/node": "^1.6.8",
     "@remix-run/react": "^1.6.8",
     "@remix-run/serve": "^1.6.8",
+    "axios": "^1.2.1",
     "classnames": "^2.3.2",
     "cookie": "^0.5.0",
     "dotenv": "^16.0.3",
     "js-cookie": "^3.0.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "remix-image": "^1.4.0",
+    "store2": "^2.14.2",
     "yup": "^0.32.11"
   },
   "devDependencies": {

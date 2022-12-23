@@ -31,16 +31,17 @@ import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
 // import { Title, Sider, Layout, Header } from "~/components/layout";
-import GoogleIcon from '@mui/icons-material/Google';
+// import remixImageStyles from "remix-image/remix-image.css";
 
 import { light } from './theme';
 import WelcomePage from '~/components/WelcomePage';
+import SetUpProfile from '~/pages/SetupProfile';
 import tailwindcss from "./styles/app.css";
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Werk",
   viewport: "width=device-width,initial-scale=1",
+  title: "Werk",
 });
 
 interface DocumentProps {
@@ -64,12 +65,10 @@ const Document = withEmotionCache(
     return (
       <html lang="en">
         <head>
-          <meta charSet="utf-8" />
-          <meta name="viewport" content="width=device-width,initial-scale=1" />
-          {title ? <title>{title}</title> : null}
           <Meta />
+          {title ? <title>{title}</title> : null}
           <Links />
-          <link rel="icon" href="/image/werk-logo-symbol-space.svg" />
+          <link rel="icon" href="/image/werk.svg" />
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -98,27 +97,15 @@ export default function App() {
           <Refine
             routerProvider={routerProvider}
             dataProvider={dataProvider(appwriteClient, {
-              databaseId: "default",
+              databaseId: "639a8d312f727df9c1f5", // default
             })}
             liveProvider={liveProvider(appwriteClient, {
-              databaseId: "default",
+              databaseId: "639a8d312f727df9c1f5", // default
             })}
-            // liveMode="auto" // @deprecated — liveMode property is deprecated. Use it from within options instead.
-            options={{ liveMode: "auto" }}
+            options={{ liveMode: "auto" }} // liveMode="auto" // @deprecated — liveMode property is deprecated. Use it from within options instead.
             authProvider={authProvider}
             notificationProvider={notificationProvider}
-            // LoginPage={AuthPage}
-            LoginPage={() => (
-              <AuthPage
-                providers={[
-                  {
-                    name: "google",
-                    icon: <GoogleIcon />,
-                    label: "Sign in with Google",
-                  },
-                ]}
-              />
-            )}
+            LoginPage={AuthPage}
             // ReadyPage={ReadyPage}
             DashboardPage={WelcomePage}
             catchAll={<ErrorComponent />}
@@ -128,8 +115,11 @@ export default function App() {
             // Header={Header}
             resources={[
               {
-                name: "home",
-                // list: ListHomePage,
+                name: "setup-profile",
+                list: SetUpProfile,
+                // options: {
+                //   label: "setup-profile",
+                // },
               }
             ]}
           >
@@ -147,5 +137,6 @@ export function links() {
       rel: "stylesheet",
       href: "https://unpkg.com/modern-css-reset@1.4.0/dist/reset.min.css",
     },
+    // { rel: "stylesheet", href: remixImageStyles },
   ];
 }

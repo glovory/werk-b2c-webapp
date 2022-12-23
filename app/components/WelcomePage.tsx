@@ -1,3 +1,4 @@
+// import Image from "remix-image";
 // import StartLayout from "~/components/StartLayout";
 import LayoutLogged from "~/components/LayoutLogged";
 

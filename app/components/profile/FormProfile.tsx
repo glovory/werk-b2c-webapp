@@ -1,10 +1,7 @@
-// import { useState } from 'react';
 import Dialog from '@mui/material/Dialog'; // , { DialogProps }
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
-import Autocomplete from '@mui/material/Autocomplete';
-import TextField from '@mui/material/TextField';
 import CloseIcon from '@mui/icons-material/Close';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
@@ -19,17 +16,14 @@ interface Props {
 }
 
 interface FormProfileInputs {
-  fullname: string
-  account_name: string
-  headline: string
+  fullName: string
+  accountName: string
+  headLine: string
   bio: string
   country: string
-  states: string
+  province: string
   city: string
 }
-
-const STATES = ['Bali', 'DKI Jakarta', 'East Java', 'Jawa Tengah', 'Jawa Barat', 'Kalimantan Tengah', 'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Utara', 'Madura', 'Yogyakarta'];
-const CITIES = ['Jakarta', 'Malang', 'Surabaya'];
 
 export default function FormProfile({
   open,
@@ -40,14 +34,15 @@ export default function FormProfile({
     refineCore: { onFinish, formLoading },
     register,
     handleSubmit,
+    setValue,
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
     resolver: yupResolver(yup.object({
-      fullname: yup.string().trim().required('Full name is required.'),
-      account_name: yup.string().trim().required("Account Name is required and can't be empty."),
-      headline: yup.string().trim().required('A headline is required.'),
+      fullName: yup.string().trim().required('Full name is required.'),
+      accountName: yup.string().trim().required("Account Name is required and can't be empty."),
+      headLine: yup.string().trim().required('A headline is required.').max(100, 'Maximum 100 characters.'),
       country: yup.string().trim().required('Required choice for Country.'),
-      states: yup.string().trim().required('Required choice for Province/States.'),
+      province: yup.string().trim().required('Required choice for Province/States.'),
       city: yup.string().trim().required('Required choice for City.'),
     }).required())
   });
@@ -64,78 +59,34 @@ export default function FormProfile({
   }
 
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={formLoading || isSubmitting ? undefined : onCloseModal}
-        scroll="body"
-        className="modal-bs"
+    <Dialog
+      open={open}
+      onClose={formLoading || isSubmitting ? undefined : onCloseModal}
+      scroll="body"
+      className="modal-bs"
+    >
+      <DialogTitle
+        className="py-2 pr-2 flex items-center sticky top-0 z-10 bg-white rounded-t-md border-bottom"
       >
-        <DialogTitle
-          className="py-2 pr-2 flex items-center sticky top-0 z-10 bg-white rounded-t-md border-bottom"
+        Edit Profile
+        <IconButton
+          onClick={onCloseModal}
+          disabled={formLoading || isSubmitting}
+          className="ml-auto"
+          aria-label="Close"
         >
-          Edit Profile
-          <IconButton
-            onClick={onCloseModal}
-            disabled={formLoading || isSubmitting}
-            className="ml-auto"
-            aria-label="Close"
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent className="mt-6">
-          <FormSetting
-            // @ts-ignore:next-line
-            disabled={formLoading || isSubmitting}
-            register={register}
-            errors={errors}
-            onSubmit={handleSubmit(onSave)}
-          >
-            <div className="mt-3">
-              <Autocomplete
-                className="w-input-gray w-multiline"
-                fullWidth
-                options={STATES}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    {...register("states")}
-                    disabled={formLoading || isSubmitting}
-                    error={!!errors.states}
-                    // @ts-ignore:next-line
-                    helperText={errors?.states?.message}
-                    id="states"
-                    placeholder="Select Province/States"
-                  />
-                )}
-              />
-            </div>
-
-            <div className="mt-3">
-              <Autocomplete
-                className="w-input-gray w-multiline"
-                fullWidth
-                options={CITIES}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    {...register("city")}
-                    disabled={formLoading || isSubmitting}
-                    error={!!errors.city}
-                    // @ts-ignore:next-line
-                    helperText={errors?.city?.message}
-                    id="city"
-                    placeholder="Select City"
-                  />
-                )}
-              />
-            </div>
-          </FormSetting>
-        </DialogContent>
-      </Dialog>
-
-
-    </>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent className="mt-6">
+        <FormSetting
+          disabled={formLoading || isSubmitting}
+          register={register}
+          errors={errors}
+          setValue={setValue}
+          onSubmit={handleSubmit(onSave)}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

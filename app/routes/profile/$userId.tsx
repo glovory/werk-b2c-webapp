@@ -1,24 +1,43 @@
-import { useState } from 'react';
+import { useState } from 'react'; // , useEffect
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
-import CardMedia from '@mui/material/CardMedia';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
+import CardActions from '@mui/material/CardActions';
 import Switch from '@mui/material/Switch';
 import Button from '@mui/material/Button';
-import MenuItem from '@mui/material/MenuItem';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemText from '@mui/material/ListItemText';
+import Checkbox from '@mui/material/Checkbox';
 import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
-import CameraAltTwoToneIcon from '@mui/icons-material/CameraAltTwoTone';
-import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
+import RoomTwoToneIcon from '@mui/icons-material/RoomTwoTone';
+import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import { useGetIdentity } from "@pankod/refine-core";
 
+// import { storage } from "~/utility"; // functions
+import useGetFileView from '~/utils/hooks/useGetFileView';
 import LayoutLogged from '~/components/LayoutLogged';
 import FormProfile from '~/components/profile/FormProfile';
-import Dropdown from '~/components/Dropdown';
+import Cover from '~/components/Cover';
+import AvatarSetup from '~/components/AvatarSetup';
+import WerkLogo from '~/svg/Werk';
 
 const Profile: React.FC = () => {
+  const { data: userData, isLoading } = useGetIdentity<any>(); // , isSuccess
+  const { $id: userId, name: fullName } = userData || {}; //email: userEmail 
   const [modalEdit, setModalEdit] = useState<boolean>(false);
-  // const [photo, setPhoto] = useState<any>();
+  const [cover, setCover] = useState<any>("/image/bg/cover.svg");
+  const [avatar, setAvatar] = useState<any>();
+  
+  useGetFileView(
+    userId ? userId + '_cropped' : null,
+    (fileUrl: any) => {
+      setAvatar(fileUrl.href);
+    }
+  );
 
   const onSaveProfile = (data: any) => {
     console.log('onSaveProfile data: ', data);
@@ -35,8 +54,12 @@ const Profile: React.FC = () => {
     setModalEdit(false);
   }
 
-  const testEnv = () => {
-    // console.log(process.env.APPWRITE_URL);
+  const onSaveCover = (file: any) => {
+    setCover(file);
+  }
+
+  const onSaveAvatar = (file: any) => {
+    setAvatar(file);
   }
 
   return (
@@ -47,67 +70,52 @@ const Profile: React.FC = () => {
         onSubmit={onSaveProfile}
       />
 
-      <Container className="py-7 px-xs-0">
+      <Container className="pb-7 md:pt-7 max-md:px-0">
         <Grid justifyContent="center" container spacing={2}>
           <Grid item lg={8} xs={12}>
-            <Card variant="outlined" className="rounded-xs-0 relative">
-              {/* Cover */}
-              <Dropdown
-                label={<CameraAltTwoToneIcon />}
-                buttonProps={{
-                  className: "min-w-0 p-1 absolute top-4 right-4 z-1 hover:bg-white"
-                }}
-                // elevation={0}
-                anchorOrigin={{
-                  vertical: 'bottom',
-                  horizontal: 'right',
-                }}
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-              >
-                {(close: any) => [
-                  <MenuItem key={1} component="label" onClick={close} disableRipple>
-                    <ImageTwoToneIcon className="mr-2" />Choose From Gallery
-                    <input type="file" accept=".jpg,.jpeg,.png" hidden />
-                  </MenuItem>,
-                  <MenuItem key={2} onClick={close} disableRipple>
-                    <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-2" /> Choose From Unsplash
-                  </MenuItem>
-                ]}
-              </Dropdown>
-
-              <CardMedia
-                component="img"
-                height="180"
-                alt="Cover"
-                image="/image/bg/cover.jpg"
+            <Card variant="outlined" className="max-md:rounded-none">
+              <Cover
+                disabled={isLoading}
+                src={cover}
+                onSave={onSaveCover}
               />
 
-              <CardContent>
+              <CardContent className="max-md:text-center">
                 <Grid container spacing={2}>
                   <Grid item lg={9} xs={12}>
-                    {/* Avatar */}
-                    <h4 className="mb-0 font-semibold text-gray-800">John Doe</h4>
-                    <h6 className="mb-0 text-orange-400">Headline</h6>
+                    <AvatarSetup
+                      loading={isLoading || !avatar}
+                      disabled={isLoading}
+                      src={avatar}
+                      alt={fullName}
+                      className="border-solid border-white max-md:mx-auto"
+                      style={{
+                        marginTop: -80,
+                        borderWidth: 10,
+                      }}
+                      onSave={onSaveAvatar}
+                    />
+
+                    <h4 className="mb-0 mt-3 font-semibold text-gray-800">{fullName}</h4>
+                    <h6 className="mb-1 text-orange-400">Headline</h6>
                     <address className="not-italic text-sm text-gray-500">
-                      Address
+                      <RoomTwoToneIcon sx={{ fontSize: 16 }} className="align-middle" /> Address
                     </address>
                   </Grid>
 
-                  <Grid item lg={3} xs={12} className="text-right">
+                  <Grid item lg={3} xs={12} className="lg:text-right max-md:flex max-md:flex-col items-center">
                     <Button
-                      onClick={testEnv}
                       color="secondary"
-                      className="mb-4 bg-gray-100 text-gray-500 hover:bg-blue-900 hover:text-white"
+                      className="mb-4 bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white"
                     >
+                      <WerkLogo className="mr-1" />
                       werk.id/@john_doe
                     </Button>
                     <Button
-                      className="text-blue-700"
+                      className="text-blue-600 min-w-0"
                       onClick={onOpenModal}
                     >
+                      <EditTwoToneIcon fontSize="small" className="mr-2" />
                       Edit Profile
                     </Button>
                   </Grid>
@@ -137,10 +145,33 @@ const Profile: React.FC = () => {
                 action={
                   <Switch defaultChecked />
                 }
+                className="py-2 border-bottom"
               />
-              <CardContent>
-                Content
-              </CardContent>
+              <List component="div" dense>
+                <ListItem
+                  // key={value}
+                  component="label"
+                  secondaryAction={
+                    <Checkbox
+                      size="small"
+                      edge="end"
+                      // onChange={handleToggle(value)}
+                      // checked={checked.indexOf(value) !== -1}
+                      // inputProps={{ 'aria-labelledby': labelId }}
+                    />
+                  }
+                  disablePadding
+                >
+                  <ListItemButton className="px-5">
+                    <ListItemText primary="Internship" />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+              <CardActions className="justify-end border-top">
+                <Button size="small" color="inherit">
+                  Learn more
+                </Button>
+              </CardActions>
             </Card>
           </Grid>
         </Grid>

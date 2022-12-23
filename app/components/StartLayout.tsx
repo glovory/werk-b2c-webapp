@@ -35,7 +35,8 @@ export default function StartLayout({
 
     // window.open('', 'Sign in - Google Account', `left=${(screen.width - 496) / 2},top=${(screen.height - 574) / 4},width=496,height=574`);
     // "https://staging.business.werk.id/v1/auth/oauth2/success", "https://staging.business.werk.id/v1/auth/oauth2/failure"
-    account.createOAuth2Session(provider, REDIRECT_SUCCESS, REDIRECT_FAILURE);
+    const baseUrl = window.location.origin;
+    account.createOAuth2Session(provider, baseUrl + REDIRECT_SUCCESS, baseUrl + REDIRECT_FAILURE);
   }
 
   return (
