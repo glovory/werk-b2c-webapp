@@ -19,7 +19,6 @@ export default function Cover({
 
   const onChangeFile = (e: any) => {
     const file = e.target.files[0];
-    // console.log('onChangeFile file: ', file);
     if(file){
       setFileImage(file);
     }
@@ -52,7 +51,7 @@ export default function Cover({
             buttonProps={{
               disabled: !loadBg || disabled,
               hidden: !!fileImage.name,
-              className: "min-w-0 p-1 rounded-full absolute top-4 right-4 z-1 hover:bg-white"
+              className: "min-w-0 p-1 rounded-full absolute md:top-4 max-md:bottom-4 right-4 z-1 hover:bg-white"
             }}
           >
             {(close: any) => 

@@ -1,17 +1,15 @@
 import type { AuthProvider } from "@pankod/refine-core";
 import Cookies from "js-cookie";
 import * as cookie from "cookie";
+import store from "store2";
 
 import { account, appwriteClient, TOKEN_KEY } from "~/utility";
-import store from "store2";
 
 export const authProvider: AuthProvider = {
   login: async ({ email, password }) => {
     try {
       const user = await account.createEmailSession(email, password);
-
       Cookies.set(TOKEN_KEY, user.providerAccessToken);
-
       return Promise.resolve(user);
     } catch (e) {
       return Promise.reject();
@@ -24,8 +22,6 @@ export const authProvider: AuthProvider = {
 
     try {
       Cookies.remove(TOKEN_KEY);
-      // const req = await account.deleteSession("current");
-      // const res: any = { redirectPath, ...req };
       await account.deleteSession("current");
       store.remove("cookieFallback");
       return Promise.resolve(redirectPath);
@@ -33,7 +29,13 @@ export const authProvider: AuthProvider = {
       return Promise.reject(e);
     }
   },
-  checkError: () => Promise.resolve(),
+  // checkError: () => Promise.resolve(),
+  checkError: (err) => {
+    if(err?.response?.status === 401){
+      return Promise.reject("/register");
+    }
+    return Promise.resolve();
+  },
   checkAuth: async (context) => {
     let token = undefined;
     if (context) {
@@ -63,15 +65,5 @@ export const authProvider: AuthProvider = {
     if (user) {
       return user;
     }
-    
-    // try {
-    //   const user = await account.get();
-    //   if (user) {
-    //     return Promise.resolve(user);
-    //   }
-    //   return Promise.reject();
-    // } catch(e) {
-    //   return Promise.reject(e);
-    // }
   },
 };
