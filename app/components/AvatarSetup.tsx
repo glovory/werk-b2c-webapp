@@ -6,12 +6,12 @@ import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
+import Skeleton from '@mui/material/Skeleton';
 import CameraAltTwoToneIcon from '@mui/icons-material/CameraAltTwoTone';
 import CloseIcon from '@mui/icons-material/Close';
 
-import WerkLogo from '~/svg/werk';
-import { Cx } from '~/utils/dom';
-import { enterToClick } from '~/utils/dom';
+import WerkLogo from '~/svg/Werk';
+import { Cx, enterToClick } from '~/utils/dom';
 
 export default function AvatarSetup({
   src,
@@ -19,6 +19,7 @@ export default function AvatarSetup({
   className,
   style,
   disabled,
+  loading,
   onSave,
 }: any){
   const myAlt = alt || "Avatar";
@@ -47,20 +48,28 @@ export default function AvatarSetup({
       className={
         Cx(
           "grid place-items-center rounded-full relative w-140 h-140",
-          !src && 'bg-w-blue-1',
+          (!src || loading) && 'bg-w-blue-1',
           className
         )
       }
       style={style}
     >
-      {src ?
-        <Avatar
-          sx={{ width: 120, height: 120 }}
-          src={src}
-          alt={myAlt}
-        />
+      {loading ?
+        <Skeleton animation="wave" variant="circular" width={120} height={120} />
         :
-        <WerkLogo width={60} height={60} className="text-blue-700" />
+        src ?
+          <Avatar
+            sx={{ width: 120, height: 120 }}
+            src={src}
+            alt={myAlt}
+            imgProps={{
+              loading: "lazy",
+              decoding: "async",
+              draggable: false,
+            }}
+          />
+          :
+          <WerkLogo width={60} height={60} className="text-blue-700" />
       }
       
       <Button
@@ -80,7 +89,6 @@ export default function AvatarSetup({
         open={openModal}
         onClose={disabled ? undefined : onCloseModal}
       >
-        {/* sticky top-0 z-10 bg-white rounded-t-md  */}
         <DialogTitle  className="py-2 pr-2 flex items-center border-bottom">
           Edit Photo Profile
           <IconButton
@@ -99,7 +107,7 @@ export default function AvatarSetup({
               height={320}
               className="object-cover rounded-md" // w-80
               alt={myAlt}
-              src={fileImage.name ? window.URL.createObjectURL(fileImage) : src}
+              src={fileImage?.name ? window.URL.createObjectURL(fileImage) : src}
             />
           }
         </div>

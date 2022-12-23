@@ -16,7 +16,7 @@ interface Props {
 }
 
 interface FormProfileInputs {
-  fullname: string
+  fullName: string
   accountName: string
   headLine: string
   bio: string
@@ -38,7 +38,7 @@ export default function FormProfile({
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
     resolver: yupResolver(yup.object({
-      fullname: yup.string().trim().required('Full name is required.'),
+      fullName: yup.string().trim().required('Full name is required.'),
       accountName: yup.string().trim().required("Account Name is required and can't be empty."),
       headLine: yup.string().trim().required('A headline is required.').max(100, 'Maximum 100 characters.'),
       country: yup.string().trim().required('Required choice for Country.'),
@@ -59,38 +59,34 @@ export default function FormProfile({
   }
 
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={formLoading || isSubmitting ? undefined : onCloseModal}
-        scroll="body"
-        className="modal-bs"
+    <Dialog
+      open={open}
+      onClose={formLoading || isSubmitting ? undefined : onCloseModal}
+      scroll="body"
+      className="modal-bs"
+    >
+      <DialogTitle
+        className="py-2 pr-2 flex items-center sticky top-0 z-10 bg-white rounded-t-md border-bottom"
       >
-        <DialogTitle
-          className="py-2 pr-2 flex items-center sticky top-0 z-10 bg-white rounded-t-md border-bottom"
+        Edit Profile
+        <IconButton
+          onClick={onCloseModal}
+          disabled={formLoading || isSubmitting}
+          className="ml-auto"
+          aria-label="Close"
         >
-          Edit Profile
-          <IconButton
-            onClick={onCloseModal}
-            disabled={formLoading || isSubmitting}
-            className="ml-auto"
-            aria-label="Close"
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
-        <DialogContent className="mt-6">
-          <FormSetting
-            disabled={formLoading || isSubmitting}
-            register={register}
-            errors={errors}
-            setValue={setValue}
-            onSubmit={handleSubmit(onSave)}
-          />
-        </DialogContent>
-      </Dialog>
-
-
-    </>
+          <CloseIcon />
+        </IconButton>
+      </DialogTitle>
+      <DialogContent className="mt-6">
+        <FormSetting
+          disabled={formLoading || isSubmitting}
+          register={register}
+          errors={errors}
+          setValue={setValue}
+          onSubmit={handleSubmit(onSave)}
+        />
+      </DialogContent>
+    </Dialog>
   );
 }

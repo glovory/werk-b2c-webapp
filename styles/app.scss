@@ -104,8 +104,9 @@
   background-color: #f4f4f6;
 }
 
-.no-icon.MuiLoadingButton-loading {
-  padding-left: 2.25rem !important;
+/* Select with small arrow */
+.w-select-sm .MuiSelect-icon {
+  font-size: 1.25rem;
 }
 
 .modal-bs .MuiDialog-paper,
@@ -125,29 +126,15 @@
   .border-bottom {
     border-bottom: 1px solid #dee2e6;
   }
-
-  .mt-next-1 > * {
-    border-top: 1px solid #dee2e6;
-  }
+  
 }
 /* END UTILITIES */
 
 /* RESPONSIVE */
 
 /* FOR Smartphone Landscape & Portrait */
+/*
 @media (max-width: 767px) {
-  .px-xs-0,
-  .pe-xs-0 {
-    padding-right: 0;
-  }
-
-  .px-xs-0,
-  .ps-xs-0 {
-    padding-left: 0;
-  }
-
-  .rounded-xs-0 {
-    border-radius: 0;
-  }
-
+  
 }
+*/

@@ -15,14 +15,14 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import { Link } from "@remix-run/react";
-import { useGetIdentity } from "@pankod/refine-core"; // useGetIdentity, useLogout
+import { useGetIdentity } from "@pankod/refine-core"; // useLogout
 import { useNavigate } from "@remix-run/react";
 
 import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE } from "~/utility";
 import { authProvider } from '~/authProvider';
 import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
-import WerkLogo from '~/svg/werk';
+import WerkLogo from '~/svg/Werk';
 
 interface Props {
   footer?: boolean | any,
@@ -42,21 +42,10 @@ export default function LayoutLogged({
   // const { mutate: logout } = useLogout<string>();
   const navigate = useNavigate();
   const [identity, setIdentity] = useState<any>();
-  // const [isLoading, setIsLoading] = useState(true);
   const [loadingSignin, setLoadingSignin] = useState(false);
   const [language, setLanguage] = useState<string>('en');
 
   useEffect(() => {
-    // account.get()
-    //   .then(user => {
-    //     setIdentity(user);
-    //   })
-    //   .catch(() => {
-    //     // console.log('e: ', e);
-    //   })
-    //   .finally(() => setIsLoading(false));
-
-    // console.log('userData: ', userData);
     setIdentity(!isLoading && userData && isSuccess ? userData : null);
   }, [userData, isSuccess, isLoading]);
 
@@ -66,7 +55,8 @@ export default function LayoutLogged({
 
   const signinWith = (provider: string) => {
     setLoadingSignin(true);
-    account.createOAuth2Session(provider, REDIRECT_SUCCESS, REDIRECT_FAILURE);
+    const baseUrl = window.location.origin;
+    account.createOAuth2Session(provider, baseUrl + REDIRECT_SUCCESS, baseUrl + REDIRECT_FAILURE);
   }
 
   const onLogout = async (close: any) => {
@@ -117,9 +107,10 @@ export default function LayoutLogged({
                     variant="standard"
                     size="small"
                     className="mr-5"
-                    sx={{ minWidth: 72 }}
+                    sx={{ minWidth: 72.5 }}
                   >
                     <Select
+                      className="w-select-sm"
                       renderValue={(val) => (
                         <div className="flex items-center uppercase">
                           <Avatar
@@ -135,12 +126,11 @@ export default function LayoutLogged({
                       value={language}
                       onChange={languageChange}
                       displayEmpty
-                      IconComponent={ExpandMoreTwoToneIcon}
+                      IconComponent={ExpandMoreTwoToneIcon} // ArrowSmall | ExpandMoreTwoToneIcon
                       // @ts-ignore:next-line
                       MenuProps={{
                         ...menuRight,
                         sx: { mt: '5px' },
-                        // MenuListProps: { className: "mt-next-1" },
                       }}
                     >
                       {LANGUAGE.map((lang) => 
@@ -157,88 +147,74 @@ export default function LayoutLogged({
                     </Select>
                   </FormControl>
                 
-                  {identity ?
-                    <>
-                      <Dropdown
-                        labelAs={IconButton}
-                        label={
-                          identity.avatar ?
+                  {isSuccess && identity ?
+                    <Dropdown
+                      labelAs={IconButton}
+                      label={
+                        identity.avatar ?
+                          <Avatar
+                            sx={{ width: 32, height: 32 }}
+                            alt={identity.name}
+                            src={identity.avatar}
+                          />
+                          :
+                          <div className="grid place-items-center rounded-full w-8 h-8 bg-w-blue-1 text-blue-700">
+                            <WerkLogo width={20} height={20} />
+                          </div>
+                      }
+                      buttonProps={{
+                        className: "p-0",
+                      }}
+                      id="account-menu"
+                      sx={{ mt: '5px' }}
+                      MenuListProps={{
+                        className: "min-w-[275px]",
+                      }}
+                    >
+                      {(close: any) => [
+                        <MenuItem
+                          key="1"
+                          disableRipple
+                          disableTouchRipple
+                          className="hover:bg-white cursor-auto select-auto"
+                        >
+                          {identity.avatar ?
                             <Avatar
-                              sx={{ width: 32, height: 32 }}
+                              variant="rounded"
+                              sx={{ width: 48, height: 48 }}
                               alt={identity.name}
                               src={identity.avatar}
                             />
                             :
-                            <div className="grid place-items-center rounded-full w-8 h-8 bg-w-blue-1 text-blue-700">
-                              <WerkLogo width={20} height={20} />
+                            <div className="grid place-items-center rounded-md w-12 h-12 bg-w-blue-1 text-blue-700">
+                              <WerkLogo width={36} height={36} />
                             </div>
-                        }
-                        buttonProps={{
-                          className: "p-0",
-                        }}
-                        id="account-menu"
-                        sx={{ mt: '5px' }}
-                        MenuListProps={{
-                          className: "min-w-[275px]",
-                        }}
-                      >
-                        {(close: any) => [
-                          <div key="1">
-                            <MenuItem
-                              disableRipple
-                              disableTouchRipple
-                              className="hover:bg-white cursor-auto select-auto"
-                            >
-                              {identity.avatar ?
-                                <Avatar
-                                  variant="rounded"
-                                  sx={{ width: 48, height: 48 }}
-                                  alt={identity.name}
-                                  src={identity.avatar}
-                                />
-                                :
-                                <div className="grid place-items-center rounded-md w-12 h-12 bg-w-blue-1 text-blue-700">
-                                  <WerkLogo width={36} height={36} />
-                                </div>
-                              }
-                              <div className="ml-3">
-                                <b className="font-medium">{identity.name}</b>
-                                <div className="text-xs">{identity.email}</div>
-                              </div>
-                            </MenuItem>
-                            <hr className="my-3" />
-                          </div>,
-                          <MenuItem
-                            key="2"
-                            component={Link}
-                            to={`/profile/${identity.accountName || identity.$id}`}
-                            onClick={close}
-                          >
-                            <Typography textAlign="center">My Profile</Typography>
-                          </MenuItem>,
-                          <div key="3">
-                            <MenuItem onClick={close}>
-                              <Typography textAlign="center">Account Setting</Typography>
-                            </MenuItem>
-                            <hr className="my-3" />
-                          </div>,
-                          <MenuItem key="4" onClick={() => onLogout(close)}>
-                            <Typography textAlign="center">Sign Out</Typography>
-                          </MenuItem>
-                        ]}
-                      </Dropdown>
-                    </>
+                          }
+                          <div className="ml-3">
+                            <b className="font-medium">{identity.name}</b>
+                            <div className="text-xs">{identity.email}</div>
+                          </div>
+                        </MenuItem>,
+                        <hr key="2" className="my-3" />,
+                        <MenuItem
+                          key="3"
+                          component={Link}
+                          to={`/profile/${identity.accountName || identity.$id}`}
+                          onClick={close}
+                        >
+                          <Typography textAlign="center">My Profile</Typography>
+                        </MenuItem>,
+                        <MenuItem key="4" onClick={close}>
+                          <Typography textAlign="center">Account Setting</Typography>
+                        </MenuItem>,
+                        <hr key="5" className="my-3" />,
+                        <MenuItem key="6" onClick={() => onLogout(close)}>
+                          <Typography textAlign="center">Sign Out</Typography>
+                        </MenuItem>
+                      ]}
+                    </Dropdown>
                     :
                     <div className="flex flex-row items-center gap-3">
-                      {/* <Button
-                        component={Link}
-                        to="/signup"
-                        color="secondary"
-                        className="mr-3"
-                      >
-                        Sign up
-                      </Button> */}
-
                       <div>Continue with</div>
                       <Button
                         variant="outlined"
