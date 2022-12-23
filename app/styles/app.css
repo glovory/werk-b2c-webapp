@@ -244,8 +244,10 @@ img {
   background-color: #f4f4f6;
 }
 
-.no-icon.MuiLoadingButton-loading {
-  padding-left: 2.25rem !important;
+/* Select with small arrow */
+
+.w-select-sm .MuiSelect-icon {
+  font-size: 1.25rem;
 }
 
 .modal-bs .MuiDialog-paper,
@@ -294,10 +296,6 @@ img {
 
 .top-0 {
   top: 0px;
-}
-
-.top-4 {
-  top: 1rem;
 }
 
 .right-4 {
@@ -776,11 +774,6 @@ img {
   padding-right: 1.5rem;
 }
 
-.py-7 {
-  padding-top: 1.75rem;
-  padding-bottom: 1.75rem;
-}
-
 .px-5 {
   padding-left: 1.25rem;
   padding-right: 1.25rem;
@@ -808,6 +801,10 @@ img {
 
 .pl-4 {
   padding-left: 1rem;
+}
+
+.pb-7 {
+  padding-bottom: 1.75rem;
 }
 
 .text-center {
@@ -934,10 +931,6 @@ img {
   border-bottom: 1px solid #dee2e6;
 }
 
-.mt-next-1 > * {
-  border-top: 1px solid #dee2e6;
-}
-
 /* This won't be included in your compiled CSS unless you actually use it */
 
 /* END UTILITIES */
@@ -946,21 +939,11 @@ img {
 
 /* FOR Smartphone Landscape & Portrait */
 
+/*
 @media (max-width: 767px) {
-  .px-xs-0,
-  .pe-xs-0 {
-    padding-right: 0;
-  }
-
-  .px-xs-0,
-  .ps-xs-0 {
-    padding-left: 0;
-  }
-
-  .rounded-xs-0 {
-    border-radius: 0;
-  }
+  
 }
+*/
 
 .hover\:bg-white:hover {
   --tw-bg-opacity: 1;
@@ -982,7 +965,43 @@ img {
   color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 
+@media not all and (min-width: 768px) {
+  .max-md\:bottom-4 {
+    bottom: 1rem;
+  }
+
+  .max-md\:mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .max-md\:flex {
+    display: flex;
+  }
+
+  .max-md\:flex-col {
+    flex-direction: column;
+  }
+
+  .max-md\:rounded-none {
+    border-radius: 0px;
+  }
+
+  .max-md\:px-0 {
+    padding-left: 0px;
+    padding-right: 0px;
+  }
+
+  .max-md\:text-center {
+    text-align: center;
+  }
+}
+
 @media (min-width: 768px) {
+  .md\:top-4 {
+    top: 1rem;
+  }
+
   .md\:w-3\/4 {
     width: 75%;
   }
@@ -990,10 +1009,18 @@ img {
   .md\:w-2\/4 {
     width: 50%;
   }
+
+  .md\:pt-7 {
+    padding-top: 1.75rem;
+  }
 }
 
 @media (min-width: 1024px) {
   .lg\:w-1\/4 {
     width: 25%;
+  }
+
+  .lg\:text-right {
+    text-align: right;
   }
 }

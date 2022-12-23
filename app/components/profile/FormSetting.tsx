@@ -5,9 +5,9 @@ import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
-import { Form } from "@remix-run/react";
+// import { Form } from "@remix-run/react";
 
-import WerkLogo from '~/svg/werk';
+import WerkLogo from '~/svg/Werk';
 import { enterToClick } from '~/utils/dom';
 import fetchData from '~/utils/fetchData';
 
@@ -29,7 +29,7 @@ const COUNTRIES = [
 // const STATES = ['Bali', 'DKI Jakarta', 'East Java', 'Jawa Tengah', 'Jawa Barat', 'Kalimantan Tengah', 'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Utara', 'Madura', 'Yogyakarta'];
 // const CITIES = ['Jakarta', 'Malang', 'Surabaya'];
 
-const EXTERNAL_API = 'http://localhost:3000/data'; // https://api-location.netlify.app
+// const EXTERNAL_API = 'http://localhost:3000/data'; // https://api-location.netlify.app
 
 export default function FormSetting({
   inputPhoto,
@@ -53,7 +53,7 @@ export default function FormSetting({
   const onOpenGetBased = () => {
     setOpenStates(true);
     if(!states.length){
-      fetchData(EXTERNAL_API + '/cities.json', {
+      fetchData(window.location.origin + '/data/cities.json', {
         mode: 'no-cors',
       })
       .then((res: any) => {
@@ -87,9 +87,9 @@ export default function FormSetting({
   }
 
   return (
-    <Form
-      method="post"
-      encType="multipart/form-data"
+    <form
+      // method="post"
+      // encType="multipart/form-data"
       noValidate
       onSubmit={onSubmit}
     >
@@ -122,7 +122,7 @@ export default function FormSetting({
                 >
                   Click to Upload
                   <input
-                    {...register("avatar")}
+                    // {...register("avatar")}
                     hidden
                     type="file"
                     accept=".jpg,.jpeg,.png"
@@ -138,14 +138,14 @@ export default function FormSetting({
           </>
         }
 
-        <label htmlFor="fullname" className="font-semibold w-required">Full Name</label>
+        <label htmlFor="fullName" className="font-semibold w-required">Full Name</label>
         <p className="mb-3">Write your full name.</p>
         <TextField
-          {...register("fullname")}
+          {...register("fullName")}
           disabled={disabled}
-          error={!!errors.fullname}
-          helperText={errors?.fullname?.message}
-          id="fullname"
+          error={!!errors.fullName}
+          helperText={errors?.fullName?.message}
+          id="fullName"
           className="w-input-gray"
           required
           fullWidth
@@ -325,6 +325,6 @@ export default function FormSetting({
           </LoadingButton>
         </div>
       </fieldset>
-    </Form>
+    </form>
   );
 }

@@ -97,13 +97,12 @@ export default function App() {
           <Refine
             routerProvider={routerProvider}
             dataProvider={dataProvider(appwriteClient, {
-              databaseId: "default",
+              databaseId: "639a8d312f727df9c1f5", // default
             })}
             liveProvider={liveProvider(appwriteClient, {
-              databaseId: "default",
+              databaseId: "639a8d312f727df9c1f5", // default
             })}
-            // liveMode="auto" // @deprecated — liveMode property is deprecated. Use it from within options instead.
-            options={{ liveMode: "auto" }}
+            options={{ liveMode: "auto" }} // liveMode="auto" // @deprecated — liveMode property is deprecated. Use it from within options instead.
             authProvider={authProvider}
             notificationProvider={notificationProvider}
             LoginPage={AuthPage}
@@ -118,6 +117,9 @@ export default function App() {
               {
                 name: "setup-profile",
                 list: SetUpProfile,
+                // options: {
+                //   label: "setup-profile",
+                // },
               }
             ]}
           >

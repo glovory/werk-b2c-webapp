@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'; // , useEffect
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
@@ -17,18 +17,27 @@ import RoomTwoToneIcon from '@mui/icons-material/RoomTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import { useGetIdentity } from "@pankod/refine-core";
 
+// import { storage } from "~/utility"; // functions
+import useGetFileView from '~/utils/hooks/useGetFileView';
 import LayoutLogged from '~/components/LayoutLogged';
 import FormProfile from '~/components/profile/FormProfile';
 import Cover from '~/components/Cover';
 import AvatarSetup from '~/components/AvatarSetup';
-import WerkLogo from '~/svg/werk';
+import WerkLogo from '~/svg/Werk';
 
 const Profile: React.FC = () => {
-  const { data: identity } = useGetIdentity<any>();
-  const { name: fullName } = identity || {}; // $id: userId, email: userEmail 
+  const { data: userData, isLoading } = useGetIdentity<any>(); // , isSuccess
+  const { $id: userId, name: fullName } = userData || {}; //email: userEmail 
   const [modalEdit, setModalEdit] = useState<boolean>(false);
-  const [cover, setCover] = useState<any>("/image/bg/cover.svg"); // cover.jpg
+  const [cover, setCover] = useState<any>("/image/bg/cover.svg");
   const [avatar, setAvatar] = useState<any>();
+  
+  useGetFileView(
+    userId ? userId + '_cropped' : null,
+    (fileUrl: any) => {
+      setAvatar(fileUrl.href);
+    }
+  );
 
   const onSaveProfile = (data: any) => {
     console.log('onSaveProfile data: ', data);
@@ -61,22 +70,25 @@ const Profile: React.FC = () => {
         onSubmit={onSaveProfile}
       />
 
-      <Container className="py-7 px-xs-0">
+      <Container className="pb-7 md:pt-7 max-md:px-0">
         <Grid justifyContent="center" container spacing={2}>
           <Grid item lg={8} xs={12}>
-            <Card variant="outlined" className="rounded-xs-0">
+            <Card variant="outlined" className="max-md:rounded-none">
               <Cover
+                disabled={isLoading}
                 src={cover}
                 onSave={onSaveCover}
               />
 
-              <CardContent>
+              <CardContent className="max-md:text-center">
                 <Grid container spacing={2}>
                   <Grid item lg={9} xs={12}>
                     <AvatarSetup
+                      loading={isLoading || !avatar}
+                      disabled={isLoading}
                       src={avatar}
                       alt={fullName}
-                      className="border-solid border-white"
+                      className="border-solid border-white max-md:mx-auto"
                       style={{
                         marginTop: -80,
                         borderWidth: 10,
@@ -91,7 +103,7 @@ const Profile: React.FC = () => {
                     </address>
                   </Grid>
 
-                  <Grid item lg={3} xs={12} className="text-right">
+                  <Grid item lg={3} xs={12} className="lg:text-right max-md:flex max-md:flex-col items-center">
                     <Button
                       color="secondary"
                       className="mb-4 bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white"
@@ -100,7 +112,7 @@ const Profile: React.FC = () => {
                       werk.id/@john_doe
                     </Button>
                     <Button
-                      className="text-blue-600"
+                      className="text-blue-600 min-w-0"
                       onClick={onOpenModal}
                     >
                       <EditTwoToneIcon fontSize="small" className="mr-2" />
