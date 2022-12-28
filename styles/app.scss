@@ -80,6 +80,15 @@
     text-overflow: ellipsis;
     white-space: normal;
   }
+
+  /* Cropper */
+  .cropper:active:not(:focus-within)::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1301;
+    cursor: move;
+  }
 }
 /* END COMPONENTS */
 
@@ -109,9 +118,13 @@
   font-size: 1.25rem;
 }
 
-.modal-bs .MuiDialog-paper,
 .modal-bs .MuiDialogContent-root {
   overflow-y: unset;
+}
+
+.modal-bs .MuiDialog-paper {
+  overflow-y: unset;
+  height: auto;
 }
 /* END CUSTOM */
 

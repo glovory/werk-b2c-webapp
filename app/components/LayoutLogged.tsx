@@ -20,6 +20,7 @@ import { useNavigate } from "@remix-run/react";
 
 import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE } from "~/utility";
 import { authProvider } from '~/authProvider';
+import useGetFileView from '~/utils/hooks/useGetFileView';
 import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
 import WerkLogo from '~/svg/Werk';
@@ -39,11 +40,23 @@ export default function LayoutLogged({
   children,
 }: Props){
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
+  const { $id: userId } = userData || {};
   // const { mutate: logout } = useLogout<string>();
   const navigate = useNavigate();
   const [identity, setIdentity] = useState<any>();
   const [loadingSignin, setLoadingSignin] = useState(false);
+  // const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
+  const [avatar, setAvatar] = useState<any>();
   const [language, setLanguage] = useState<string>('en');
+
+  useGetFileView(
+    userId ? userId + '_cropped' : null,
+    (fileUrl: any) => {
+      // console.log('useGetFileView fileUrl: ', fileUrl);
+      fileUrl && setAvatar(fileUrl.href);
+      // setLoadingAvatar(false);
+    }
+  );
 
   useEffect(() => {
     setIdentity(!isLoading && userData && isSuccess ? userData : null);
@@ -151,11 +164,11 @@ export default function LayoutLogged({
                     <Dropdown
                       labelAs={IconButton}
                       label={
-                        identity.avatar ?
+                        avatar ?
                           <Avatar
                             sx={{ width: 32, height: 32 }}
                             alt={identity.name}
-                            src={identity.avatar}
+                            src={avatar}
                           />
                           :
                           <div className="grid place-items-center rounded-full w-8 h-8 bg-w-blue-1 text-blue-700">
@@ -165,7 +178,7 @@ export default function LayoutLogged({
                       buttonProps={{
                         className: "p-0",
                       }}
-                      id="account-menu"
+                      id="accountMenu"
                       sx={{ mt: '5px' }}
                       MenuListProps={{
                         className: "min-w-[275px]",
@@ -178,12 +191,12 @@ export default function LayoutLogged({
                           disableTouchRipple
                           className="hover:bg-white cursor-auto select-auto"
                         >
-                          {identity.avatar ?
+                          {avatar ?
                             <Avatar
                               variant="rounded"
                               sx={{ width: 48, height: 48 }}
                               alt={identity.name}
-                              src={identity.avatar}
+                              src={avatar}
                             />
                             :
                             <div className="grid place-items-center rounded-md w-12 h-12 bg-w-blue-1 text-blue-700">
@@ -199,7 +212,7 @@ export default function LayoutLogged({
                         <MenuItem
                           key="3"
                           component={Link}
-                          to={`/profile/${identity.accountName || identity.$id}`}
+                          to={`/profile/${identity.$id}`} // ${identity.accountName || identity.$id}
                           onClick={close}
                         >
                           <Typography textAlign="center">My Profile</Typography>
@@ -215,7 +228,7 @@ export default function LayoutLogged({
                     </Dropdown>
                     :
                     <div className="flex flex-row items-center gap-3">
-                      <div>Continue with</div>
+                      <div className="text-sm">Continue with</div>
                       <Button
                         variant="outlined"
                         className="min-w-0 px-2"

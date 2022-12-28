@@ -12,9 +12,15 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Checkbox from '@mui/material/Checkbox';
+import MenuItem from '@mui/material/MenuItem';
 import WorkTwoToneIcon from '@mui/icons-material/WorkTwoTone';
 import RoomTwoToneIcon from '@mui/icons-material/RoomTwoTone';
 import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
+import HelpTwoToneIcon from '@mui/icons-material/HelpTwoTone';
+import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
+import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
+import OpenWithTwoToneIcon from '@mui/icons-material/OpenWithTwoTone';
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import { useGetIdentity } from "@pankod/refine-core";
 
 // import { storage } from "~/utility"; // functions
@@ -23,19 +29,27 @@ import LayoutLogged from '~/components/LayoutLogged';
 import FormProfile from '~/components/profile/FormProfile';
 import Cover from '~/components/Cover';
 import AvatarSetup from '~/components/AvatarSetup';
+import Dropdown, { menuLeft } from '~/components/Dropdown';
 import WerkLogo from '~/svg/Werk';
+import CameraIcon from '~/svg/Camera';
+import { enterToClick } from '~/utils/dom';
+import { INITIAL_BG } from '~/config';
 
 const Profile: React.FC = () => {
   const { data: userData, isLoading } = useGetIdentity<any>(); // , isSuccess
   const { $id: userId, name: fullName } = userData || {}; //email: userEmail 
   const [modalEdit, setModalEdit] = useState<boolean>(false);
-  const [cover, setCover] = useState<any>("/image/bg/cover.svg");
+  const [cover, setCover] = useState<any>(INITIAL_BG);
   const [avatar, setAvatar] = useState<any>();
+  const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
+  const [openModalView, setOpenModalView] = useState<boolean>(false);
   
   useGetFileView(
     userId ? userId + '_cropped' : null,
     (fileUrl: any) => {
-      setAvatar(fileUrl.href);
+      // console.log('useGetFileView fileUrl: ', fileUrl);
+      fileUrl && setAvatar(fileUrl.href);
+      setLoadingAvatar(false);
     }
   );
 
@@ -55,11 +69,35 @@ const Profile: React.FC = () => {
   }
 
   const onSaveCover = (file: any) => {
-    setCover(file);
+    console.log('Hit API to save background & backgroundCropped here');
+    console.log('onSaveCover file: ', file);
+    setCover(window.URL.createObjectURL(file)); // file
+  }
+
+  const onDeleteCover = (closeConfirm: any) => {
+    setTimeout(() => {
+      setCover(INITIAL_BG);
+      closeConfirm();
+    }, 1500);
   }
 
   const onSaveAvatar = (file: any) => {
-    setAvatar(file);
+    console.log('Hit API to save avatar & avatarCropped here');
+    console.log('onSaveAvatar file: ', file);
+    setAvatar(window.URL.createObjectURL(file)); // file
+  }
+
+  const viewPhotoAvatar = (close: any) => {
+    close();
+    setOpenModalView(true);
+  }
+
+  const onCloseModalView = () => {
+    setOpenModalView(false);
+  }
+
+  const doDeleteAvatar = (close: any) => {
+    close();
   }
 
   return (
@@ -78,23 +116,74 @@ const Profile: React.FC = () => {
                 disabled={isLoading}
                 src={cover}
                 onSave={onSaveCover}
+                onDelete={onDeleteCover}
               />
 
               <CardContent className="max-md:text-center">
                 <Grid container spacing={2}>
                   <Grid item lg={9} xs={12}>
                     <AvatarSetup
-                      loading={isLoading || !avatar}
+                      loading={isLoading || loadingAvatar} // !avatar
                       disabled={isLoading}
+                      avatarProps={{
+                        sx: { width: 120, height: 120 },
+                      }}
+                      iconProps={{
+                        width: 60,
+                        height: 60
+                      }}
                       src={avatar}
                       alt={fullName}
-                      className="border-solid border-white max-md:mx-auto"
+                      className="border-solid border-white max-md:mx-auto w-140 h-140"
                       style={{
                         marginTop: -80,
                         borderWidth: 10,
                       }}
+                      openModalView={openModalView}
+                      onCloseModalView={onCloseModalView}
                       onSave={onSaveAvatar}
-                    />
+                    >
+                      {(onChangeFile: any, disabled: any) => (
+                        avatar ?
+                          <Dropdown
+                            keepMounted
+                            {...menuLeft}
+                            disableAutoFocusItem
+                            label={<CameraIcon />}
+                            buttonProps={{
+                              disabled,
+                              className: "min-w-0 p-1 rounded-full hover:bg-white absolute bottom-0"
+                            }}
+                          >
+                            {(close: any) => [
+                              <MenuItem key="v" onClick={() => viewPhotoAvatar(close)}>
+                                <VisibilityTwoToneIcon className="mr-2" />View Photo
+                              </MenuItem>,
+                              <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
+                                <ImageTwoToneIcon className="mr-2" />Choose From Gallery
+                                <input onChange={onChangeFile} type="file" accept=".jpg,.jpeg,.png" hidden />
+                              </MenuItem>,
+                              <MenuItem key="c" onClick={close}>
+                                <OpenWithTwoToneIcon className="mr-2" />Change Position
+                              </MenuItem>,
+                              <hr key="h" className="my-2" />,
+                              <MenuItem key="d" onClick={() => doDeleteAvatar(close)}>
+                                <DeleteTwoToneIcon className="mr-2" />Delete Photo
+                              </MenuItem>,
+                            ]}
+                          </Dropdown>
+                          :
+                          <Button
+                            disabled={disabled}
+                            component="label"
+                            className="min-w-0 p-1 rounded-full hover:bg-white absolute bottom-0"
+                            onKeyDown={enterToClick}
+                          >
+                            <CameraIcon />
+                            <input onChange={onChangeFile} disabled={disabled} type="file" accept=".jpg,.jpeg,.png" hidden />
+                          </Button>
+                      )}
+                    </AvatarSetup>
 
                     <h4 className="mb-0 mt-3 font-semibold text-gray-800">{fullName}</h4>
                     <h6 className="mb-1 text-orange-400">Headline</h6>
@@ -169,6 +258,7 @@ const Profile: React.FC = () => {
               </List>
               <CardActions className="justify-end border-top">
                 <Button size="small" color="inherit">
+                  <HelpTwoToneIcon sx={{ fontSize: 15 }} className="mr-1" />
                   Learn more
                 </Button>
               </CardActions>

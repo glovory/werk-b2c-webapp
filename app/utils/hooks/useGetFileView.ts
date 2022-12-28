@@ -3,9 +3,11 @@ import { storage } from "~/utility";
 
 import { BUCKET_ID } from '~/config';
 
+
 export default function useGetFileView(
   fileId: string | null | undefined,
-  action: any
+  action: any,
+  // onError: any,
 ){
   useEffect(() => {
     if(fileId){
@@ -15,7 +17,8 @@ export default function useGetFileView(
           action?.(fileUrl);
         })
         .catch((err) => {
-          console.log('err: ', err);
+          // console.log('err: ', err);
+          action?.(null, err);
         });
     }
   }, [fileId]);

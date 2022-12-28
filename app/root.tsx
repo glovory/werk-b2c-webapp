@@ -108,7 +108,7 @@ export default function App() {
             LoginPage={AuthPage}
             // ReadyPage={ReadyPage}
             DashboardPage={WelcomePage}
-            catchAll={<ErrorComponent />}
+            catchAll={<ErrorComponent />} // For 404 = https://refine.dev/docs/api-reference/core/components/refine-config/#catchall
             // Title={Title}
             // Sider={Sider}
             // Layout={Layout}

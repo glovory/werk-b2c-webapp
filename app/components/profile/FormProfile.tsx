@@ -3,6 +3,8 @@ import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -30,6 +32,8 @@ export default function FormProfile({
   onCloseModal,
   onSubmit,
 }: Props){
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {
     refineCore: { onFinish, formLoading },
     register,
@@ -60,10 +64,11 @@ export default function FormProfile({
 
   return (
     <Dialog
-      open={open}
-      onClose={formLoading || isSubmitting ? undefined : onCloseModal}
+      fullScreen={fullScreen}
       scroll="body"
       className="modal-bs"
+      open={open}
+      onClose={formLoading || isSubmitting ? undefined : onCloseModal}
     >
       <DialogTitle
         className="py-2 pr-2 flex items-center sticky top-0 z-10 bg-white rounded-t-md border-bottom"

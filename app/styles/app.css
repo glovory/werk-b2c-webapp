@@ -218,6 +218,16 @@ img {
   white-space: normal;
 }
 
+/* Cropper */
+
+.cropper:active:not(:focus-within)::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 1301;
+  cursor: move;
+}
+
 /* This won't be included in your compiled CSS unless you actually use it */
 
 /* END COMPONENTS */
@@ -250,9 +260,13 @@ img {
   font-size: 1.25rem;
 }
 
-.modal-bs .MuiDialog-paper,
 .modal-bs .MuiDialogContent-root {
   overflow-y: unset;
+}
+
+.modal-bs .MuiDialog-paper {
+  overflow-y: unset;
+  height: auto;
 }
 
 /* END CUSTOM */
@@ -294,24 +308,24 @@ img {
   bottom: 0px;
 }
 
-.top-0 {
-  top: 0px;
-}
-
 .right-4 {
   right: 1rem;
+}
+
+.top-0 {
+  top: 0px;
 }
 
 .right-0 {
   right: 0px;
 }
 
-.z-10 {
-  z-index: 10;
-}
-
 .z-1 {
   z-index: 1;
+}
+
+.z-10 {
+  z-index: 10;
 }
 
 .m-auto {
@@ -320,6 +334,16 @@ img {
 
 .m-0 {
   margin: 0px;
+}
+
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.my-2 {
+  margin-top: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .my-3 {
@@ -332,19 +356,14 @@ img {
   margin-bottom: 1.5rem;
 }
 
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
-.mx-auto {
-  margin-left: auto;
-  margin-right: auto;
-}
-
 .my-7 {
   margin-top: 1.75rem;
   margin-bottom: 1.75rem;
+}
+
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
 }
 
 .mx-n6 {
@@ -401,16 +420,20 @@ img {
   margin-bottom: 3rem;
 }
 
+.ml-4 {
+  margin-left: 1rem;
+}
+
+.mt-2 {
+  margin-top: 0.5rem;
+}
+
 .mb-5 {
   margin-bottom: 1.25rem;
 }
 
 .mb-3 {
   margin-bottom: 0.75rem;
-}
-
-.mt-2 {
-  margin-top: 0.5rem;
 }
 
 .mt-20 {
@@ -439,10 +462,6 @@ img {
 
 .mt-6 {
   margin-top: 1.5rem;
-}
-
-.ml-4 {
-  margin-left: 1rem;
 }
 
 .mt-4 {
@@ -489,8 +508,12 @@ img {
   display: none;
 }
 
-.h-140 {
-  height: 140px;
+.h-80 {
+  height: 20rem;
+}
+
+.h-auto {
+  height: auto;
 }
 
 .h-8 {
@@ -501,12 +524,12 @@ img {
   height: 3rem;
 }
 
-.h-auto {
-  height: auto;
-}
-
 .h-20 {
   height: 5rem;
+}
+
+.h-140 {
+  height: 140px;
 }
 
 .min-h-calc-nav {
@@ -517,12 +540,12 @@ img {
   min-height: 100vh;
 }
 
-.w-140 {
-  width: 140px;
-}
-
 .w-80 {
   width: 20rem;
+}
+
+.w-full {
+  width: 100%;
 }
 
 .w-60 {
@@ -537,16 +560,20 @@ img {
   width: 3rem;
 }
 
-.w-full {
-  width: 100%;
+.w-20 {
+  width: 5rem;
 }
 
 .w-64 {
   width: 16rem;
 }
 
-.w-20 {
-  width: 5rem;
+.w-140 {
+  width: 140px;
+}
+
+.w-2\/4 {
+  width: 50%;
 }
 
 .min-w-0 {
@@ -627,16 +654,24 @@ img {
   gap: 0.75rem;
 }
 
-.gap-7 {
-  gap: 1.75rem;
-}
-
 .gap-4 {
   gap: 1rem;
 }
 
+.gap-7 {
+  gap: 1.75rem;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
 .rounded-full {
   border-radius: 9999px;
+}
+
+.rounded-lg {
+  border-radius: 0.5rem;
 }
 
 .rounded-md {
@@ -660,6 +695,10 @@ img {
   border-style: solid;
 }
 
+.border-transparent {
+  border-color: transparent;
+}
+
 .border-blue-500 {
   --tw-border-opacity: 1;
   border-color: rgb(59 130 246 / var(--tw-border-opacity));
@@ -675,14 +714,13 @@ img {
   background-color: rgb(207 217 255 / var(--tw-bg-opacity));
 }
 
+.bg-gray-700\/60 {
+  background-color: rgb(55 65 81 / 0.6);
+}
+
 .bg-white {
   --tw-bg-opacity: 1;
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
-}
-
-.bg-slate-700 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(51 65 85 / var(--tw-bg-opacity));
 }
 
 .bg-orange-500 {
@@ -693,14 +731,6 @@ img {
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
-}
-
-.bg-cover {
-  background-size: cover;
-}
-
-.bg-no-repeat {
-  background-repeat: no-repeat;
 }
 
 .object-cover {
@@ -716,6 +746,10 @@ img {
   padding: 1rem;
 }
 
+.p-6 {
+  padding: 1.5rem;
+}
+
 .p-0 {
   padding: 0px;
 }
@@ -729,14 +763,19 @@ img {
   padding-bottom: 0.5rem;
 }
 
-.py-3 {
-  padding-top: 0.75rem;
-  padding-bottom: 0.75rem;
+.py-1 {
+  padding-top: 0.25rem;
+  padding-bottom: 0.25rem;
 }
 
 .px-4 {
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.py-3 {
+  padding-top: 0.75rem;
+  padding-bottom: 0.75rem;
 }
 
 .px-7 {
@@ -911,6 +950,12 @@ img {
   box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
 }
 
+.shadow-none {
+  --tw-shadow: 0 0 #0000;
+  --tw-shadow-colored: 0 0 #0000;
+  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
+}
+
 .filter {
   filter: var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow);
 }
@@ -977,6 +1022,10 @@ img {
 
   .max-md\:flex {
     display: flex;
+  }
+
+  .max-md\:w-2\/4 {
+    width: 50%;
   }
 
   .max-md\:flex-col {
