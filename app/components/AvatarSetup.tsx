@@ -1,17 +1,20 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import Dialog from '@mui/material/Dialog'; // , { DialogProps }
 import DialogTitle from '@mui/material/DialogTitle';
-// import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
-import CameraAltTwoToneIcon from '@mui/icons-material/CameraAltTwoTone';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import CloseIcon from '@mui/icons-material/Close';
+import OpenWithTwoToneIcon from '@mui/icons-material/OpenWithTwoTone';
+import Cropper from 'react-easy-crop';
 
 import WerkLogo from '~/svg/Werk';
-import { Cx, enterToClick } from '~/utils/dom';
+import { Cx } from '~/utils/dom';
+import { getCroppedImg } from '~/utils/imageProcessing';
 
 export default function AvatarSetup({
   src,
@@ -20,11 +23,22 @@ export default function AvatarSetup({
   style,
   disabled,
   loading,
+  avatarProps,
+  iconProps,
   onSave,
+  openModalView,
+  onCloseModalView,
+  label,
+  children,
 }: any){
   const myAlt = alt || "Avatar";
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [fileImage, setFileImage] = useState<any>();
+  const [fileInput, setFileInput] = useState<any>();
+  const [fileBlob, setFileBlob] = useState<any>();
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
 
   const onCloseModal = () => {
     setOpenModal(false);
@@ -33,56 +47,65 @@ export default function AvatarSetup({
   const onChangeFile = (e: any) => {
     const file = e.target.files[0];
     if(file){
-      setFileImage(file);
+      setFileInput(file);
+      setFileBlob(window.URL.createObjectURL(file));
       setOpenModal(true);
     }
   }
 
-  const saveFile = () => {
+  const onCropComplete = useCallback((cropArea: any, cropAreaPx: any) => {
+    setCroppedAreaPixels(cropAreaPx);
+  }, [])
+
+  const saveFile = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(fileBlob, croppedAreaPixels);
+      // console.log('saveFile croppedImage: ', croppedImage);
+      onSave?.(croppedImage, fileInput);
+    } catch (e) {
+      console.error(e)
+    }
+
     onCloseModal();
-    onSave?.(window.URL.createObjectURL(fileImage));
-  }
+  }, [croppedAreaPixels]);
 
   return (
-    <div
-      className={
-        Cx(
-          "grid place-items-center rounded-full relative w-140 h-140",
-          (!src || loading) && 'bg-w-blue-1',
-          className
-        )
-      }
-      style={style}
-    >
-      {loading ?
-        <Skeleton animation="wave" variant="circular" width={120} height={120} />
-        :
-        src ?
-          <Avatar
-            sx={{ width: 120, height: 120 }}
-            src={src}
-            alt={myAlt}
-            imgProps={{
-              loading: "lazy",
-              decoding: "async",
-              draggable: false,
-            }}
-          />
-          :
-          <WerkLogo width={60} height={60} className="text-blue-700" />
-      }
-      
-      <Button
-        disabled={disabled}
-        component="label"
-        className="min-w-0 p-1 rounded-full hover:bg-white absolute bottom-0"
-        onKeyDown={enterToClick}
+    <>
+      <div
+        className={
+          Cx(
+            "grid place-items-center rounded-full relative",
+            (!src || loading) && 'bg-w-blue-1',
+            className
+          )
+        }
+        style={style}
       >
-        <CameraAltTwoToneIcon fontSize="small" />
-        <input onChange={onChangeFile} disabled={disabled} type="file" accept=".jpg,.jpeg,.png" hidden />
-      </Button>
+        {loading ?
+          <Skeleton animation="wave" variant="circular" width={120} height={120} />
+          :
+          src ?
+            <Avatar
+              {...avatarProps}
+              src={src}
+              alt={myAlt}
+              imgProps={{
+                loading: "lazy",
+                decoding: "async",
+                draggable: false,
+              }}
+            />
+            :
+            <WerkLogo {...iconProps} className="text-blue-700" />
+        }
+
+        {typeof children === 'function' ? children(onChangeFile, disabled) : children}
+      </div>
+
+      {typeof label === 'function' ? label(onChangeFile, disabled) : null}
 
       <Dialog
+        fullScreen={fullScreen}
         fullWidth
         scroll="body"
         className="modal-bs"
@@ -100,21 +123,64 @@ export default function AvatarSetup({
             <CloseIcon />
           </IconButton>
         </DialogTitle>
-        <div className="p-4 text-center">
-          {(fileImage || src) &&
-            <img
-              width={320}
-              height={320}
-              className="object-cover rounded-md" // w-80
-              alt={myAlt}
-              src={fileImage?.name ? window.URL.createObjectURL(fileImage) : src}
-            />
+        <div className="p-4">
+          {(fileBlob || src) &&
+            <div className="w-80 h-80 mx-auto rounded-lg overflow-hidden relative cropper" tabIndex={-1}>
+              <Cropper
+                objectFit="horizontal-cover"
+                showGrid={false}
+                cropShape="round"
+                aspect={1 / 1}
+                cropSize={{
+                  height: 320,
+                  width: 320,
+                }}
+                mediaProps={{
+                  draggable: false,
+                }}
+                image={fileBlob || src}
+                crop={crop}
+                onCropChange={setCrop}
+                onCropComplete={onCropComplete}
+              />
+
+              <div className="absolute inset-0 flex pointer-events-none">
+                <b className="text-white bg-gray-700/60 m-auto py-1 px-4 rounded-md text-xs shadow-sm">
+                  <OpenWithTwoToneIcon sx={{ fontSize: 20 }} className="align-middle mr-2" />
+                  Drag to change the image position
+                </b>
+              </div>
+            </div>
           }
         </div>
         <DialogActions className="py-3 px-4 border-top">
           <Button onClick={saveFile} size="large" variant="contained" className="px-7">Save</Button>
         </DialogActions>
       </Dialog>
-    </div>
+
+      <Dialog
+        fullScreen={fullScreen}
+        fullWidth
+        maxWidth="lg"
+        scroll="body"
+        className="modal-bs"
+        open={openModalView}
+        onClose={onCloseModalView}
+      >
+        <DialogTitle className="py-2 pr-2 flex items-center border-bottom">
+          Background Photo
+          <IconButton
+            onClick={onCloseModalView}
+            className="ml-auto"
+            aria-label="Close"
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <div className="p-6 text-center">
+          <img src={src} alt="Bg" className="md:w-2/4 h-auto rounded-md" draggable={false} />
+        </div>
+      </Dialog>
+    </>
   );
 }

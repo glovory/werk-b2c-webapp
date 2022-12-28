@@ -2,14 +2,28 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import Menu from '@mui/material/Menu'; // , { MenuProps }
 
+const anchorOrigin = {
+  vertical: 'bottom',
+  horizontal: 'right',
+};
+const transformOrigin = {
+  vertical: 'top',
+  horizontal: 'right',
+}
+
 export const menuRight = {
+  anchorOrigin,
+  transformOrigin
+};
+
+export const menuLeft = {
   anchorOrigin: {
-    vertical: 'bottom',
-    horizontal: 'right',
+    ...anchorOrigin,
+    horizontal: 'left',
   },
   transformOrigin: {
-    vertical: 'top',
-    horizontal: 'right',
+    ...transformOrigin,
+    horizontal: 'left',
   }
 };
 

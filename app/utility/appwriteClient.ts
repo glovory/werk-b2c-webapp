@@ -1,18 +1,11 @@
 import { Account, Appwrite, Storage, Functions } from "@pankod/refine-appwrite";
 
+import { APPWRITE_URL, APPWRITE_PROJECT, TOKEN_KEY, REDIRECT_SUCCESS, REDIRECT_FAILURE } from '~/config';
+
 // process.env.APPWRITE_URL
-const APPWRITE_URL = "https://app.microstack.id/v1"; // your-appwrite-url
-const APPWRITE_PROJECT = "werk-b2c-staging"; // your-appwrite-project
-const TOKEN_KEY = "token_werk_b2c"; // token
-
-// DEV      = http://localhost:3000
-// STAGING  = https://staging.werk.id
-
-// For redirect after success
-const REDIRECT_SUCCESS = "/process/user-exist";
-
-// For redirect after failed
-const REDIRECT_FAILURE = "/auth/failure";
+// const APPWRITE_URL = "https://app.microstack.id/v1"; // your-appwrite-url
+// const APPWRITE_PROJECT = "werk-b2c-staging"; // your-appwrite-project
+// const TOKEN_KEY = "token_werk_b2c"; // token
 
 const appwriteClient = new Appwrite();
 
