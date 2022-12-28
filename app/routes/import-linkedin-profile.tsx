@@ -2,15 +2,16 @@
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
 import LoadingButton from '@mui/lab/LoadingButton';
-import { Form } from "@remix-run/react";
+// import { Form } from "@remix-run/react";
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import WelcomeLayout from "~/components/WelcomeLayout";
+import { DOMAIN } from '~/config';
 
 interface FormProfileInputs {
-  account_name: string
+  accountName: string
 }
 
 const Page: React.FC = () => {
@@ -21,12 +22,12 @@ const Page: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
     resolver: yupResolver(yup.object({
-      account_name: yup.string().trim().required("Account Name is required and can't be empty."),
+      accountName: yup.string().trim().required("Account Name is required and can't be empty."),
     }).required())
   });
 
   const onSave = (data: any) => {
-    console.log('onSave data: ', data);
+    // console.log('onSave data: ', data);
     return new Promise((resolve: any) => {
       setTimeout(() => {
         onFinish(data);
@@ -46,8 +47,7 @@ const Page: React.FC = () => {
             </p>
           </div>
 
-          <Form
-            method="post"
+          <form
             noValidate
             onSubmit={handleSubmit(onSave)}
           >
@@ -55,16 +55,16 @@ const Page: React.FC = () => {
               disabled={formLoading || isSubmitting}
               className="min-w-0 p-0 m-0 border-0 text-sm"
             >
-              <label htmlFor="account_name" className="w-required font-semibold">Account Name</label>
+              <label htmlFor="accountName" className="w-required font-semibold">Account Name</label>
               <p className="mb-3">This will also act as your profile URL slug.</p>
               <TextField
-                {...register("account_name")}
+                {...register("accountName")}
                 disabled={formLoading || isSubmitting}
-                error={!!errors.account_name}
+                error={!!errors.accountName}
                 // @ts-ignore:next-line
-                helperText={errors?.account_name?.message}
+                helperText={errors?.accountName?.message}
                 className="w-input-group w-input-gray"
-                id="account_name"
+                id="accountName"
                 required
                 fullWidth
                 variant="outlined"
@@ -74,9 +74,9 @@ const Page: React.FC = () => {
                     <InputAdornment
                       position="start"
                       component="label"
-                      htmlFor="account_name"
+                      htmlFor="accountName"
                     >
-                      https://werk.id/@
+                      {DOMAIN}/@
                     </InputAdornment>
                   ),
                 }}
@@ -99,7 +99,7 @@ const Page: React.FC = () => {
                 </LoadingButton>
               </div>
             </fieldset>
-          </Form>
+          </form>
         </div>
       </main>
     </WelcomeLayout>

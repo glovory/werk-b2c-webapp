@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import Button from '@mui/material/Button';
+// import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -7,12 +7,11 @@ import Autocomplete from '@mui/material/Autocomplete';
 import CircularProgress from '@mui/material/CircularProgress';
 // import { Form } from "@remix-run/react";
 
-import WerkLogo from '~/svg/Werk';
-import { enterToClick } from '~/utils/dom';
 import fetchData from '~/utils/fetchData';
+import { DOMAIN } from '~/config';
 
 interface Props {
-  inputPhoto?: boolean,
+  inputPhoto?: any, // boolean
   photo?: object | undefined | any,
   disabled?: boolean,
   register?: any,
@@ -28,19 +27,16 @@ const COUNTRIES = [
 ];
 // const STATES = ['Bali', 'DKI Jakarta', 'East Java', 'Jawa Tengah', 'Jawa Barat', 'Kalimantan Tengah', 'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Utara', 'Madura', 'Yogyakarta'];
 // const CITIES = ['Jakarta', 'Malang', 'Surabaya'];
-
 // const EXTERNAL_API = 'http://localhost:3000/data'; // https://api-location.netlify.app
 
 export default function FormSetting({
   inputPhoto,
-  photo,
   disabled,
   register,
   errors,
   cityValue = '',
   setValue,
   onSubmit,
-  onChangeFile,
 }: Props){
   const [openStates, setOpenStates] = useState<boolean>(false);
   const [openCity, setOpenCity] = useState<boolean>(false);
@@ -88,55 +84,11 @@ export default function FormSetting({
 
   return (
     <form
-      // method="post"
-      // encType="multipart/form-data"
       noValidate
       onSubmit={onSubmit}
     >
       <fieldset disabled={disabled} className="min-w-0 p-0 m-0 border-0 text-sm">
-        {inputPhoto &&
-          <>
-            <b>Your Photo</b>
-            <p className="mb-4">This will be displayed on your profile.</p>
-            <div className="flex items-start">
-              {photo ?
-                <img
-                  className="rounded-full object-cover flex-none"
-                  width={80}
-                  height={80}
-                  alt="Avatar"
-                  src={photo.name ? window.URL.createObjectURL(photo) : photo}
-                />
-                :
-                <div className="rounded-full grid place-items-center w-20 h-20 bg-w-blue-1 text-blue-700">
-                  <WerkLogo width={40} height={40} />
-                </div>
-              }
-
-              <div className="ml-4">
-                <Button
-                  component="label"
-                  variant="outlined"
-                  disabled={disabled}
-                  onKeyDown={enterToClick}
-                >
-                  Click to Upload
-                  <input
-                    // {...register("avatar")}
-                    hidden
-                    type="file"
-                    accept=".jpg,.jpeg,.png"
-                    disabled={disabled}
-                    onChange={onChangeFile}
-                  />
-                </Button>
-                <div className="text-xs mt-2">Use a square image for best results.</div>
-              </div>
-            </div>
-
-            <hr className="my-6" /> 
-          </>
-        }
+        {inputPhoto}
 
         <label htmlFor="fullName" className="font-semibold w-required">Full Name</label>
         <p className="mb-3">Write your full name.</p>
@@ -175,7 +127,7 @@ export default function FormSetting({
                 component="label"
                 htmlFor="accountName"
               >
-                https://werk.id/@
+                {DOMAIN}/@
               </InputAdornment>
             ),
           }}
@@ -241,8 +193,6 @@ export default function FormSetting({
             />
           )}
         />
-
-        {/* {children} */}
 
         <div className="mt-4">
           <Autocomplete
