@@ -4,8 +4,9 @@ import { useNavigate } from "@remix-run/react";
 
 import LoadingPage from '~/components/LoadingPage';
 import { functions } from '~/utility';
+import { CHECK_USER_EXIST } from '~/config';
 
-const UserExist: React.FC = () => {
+const ProcessSignIn: React.FC = () => {
   const navigate = useNavigate();
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
 
@@ -14,7 +15,7 @@ const UserExist: React.FC = () => {
     if(!isLoading && isSuccess && userData){
       const { $id } = userData;
       // JSON.stringify({ userId: $id })
-      functions.createExecution('63a02b6bbf99a9acd42c', `{"userId":"${$id}"}`)
+      functions.createExecution(CHECK_USER_EXIST, `{"userId":"${$id}"}`)
       .then((res: any) => {
         const fixRes = JSON.parse(res?.response || '{}');
         navigate(fixRes.isExist ? '/' : '/build-profile', { replace: true });
@@ -28,4 +29,4 @@ const UserExist: React.FC = () => {
   return <LoadingPage />;
 }
 
-export default UserExist;
+export default ProcessSignIn;

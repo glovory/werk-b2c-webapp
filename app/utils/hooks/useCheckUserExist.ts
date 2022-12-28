@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useGetIdentity } from "@pankod/refine-core";
-import { functions } from '~/utility'
+import { functions } from '~/utility';
+import { CHECK_USER_EXIST } from '~/config';
 
 export default function useCheckUserExist(action: any){
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
@@ -9,7 +10,7 @@ export default function useCheckUserExist(action: any){
     if(!isLoading && isSuccess && userData){
       const { $id } = userData;
       // JSON.stringify({ userId: $id })
-      functions.createExecution('63a02b6bbf99a9acd42c', `{"userId":"${$id}"}`)
+      functions.createExecution(CHECK_USER_EXIST, `{"userId":"${$id}"}`)
       .then((res: any) => {
         const fixRes = JSON.parse(res?.response || '{}');
         // navigate(fixRes.isExist ? '/' : '/build-profile', { replace: true });

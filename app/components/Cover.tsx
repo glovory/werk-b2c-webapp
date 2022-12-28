@@ -1,90 +1,232 @@
-import { useState } from 'react';
-// import CardMedia from '@mui/material/CardMedia';
+import { useState, useCallback, useRef } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import CameraAltTwoToneIcon from '@mui/icons-material/CameraAltTwoTone';
+import IconButton from '@mui/material/IconButton';
+import Dialog from '@mui/material/Dialog'; // , { DialogProps }
+import DialogTitle from '@mui/material/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
 import OpenWithTwoToneIcon from '@mui/icons-material/OpenWithTwoTone';
+import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
+import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
+import CloseIcon from '@mui/icons-material/Close';
+import Cropper from 'react-easy-crop';
 
 import Dropdown from '~/components/Dropdown';
-import Background from '~/components/Background';
+import CameraIcon from '~/svg/Camera';
 import { enterToClick } from '~/utils/dom';
+import { getCroppedImg } from '~/utils/imageProcessing';
+import { INITIAL_BG } from '~/config';
 
 export default function Cover({
   src,
   disabled,
   onSave,
+  onDelete,
 }: any){
+  const height = 180;
+  const theme = useTheme();
+  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const refParent = useRef();
+  const [parentWidth, setParentWidth] = useState<any>(760);
   const [fileImage, setFileImage] = useState<any>({});
+  const [fileBlob, setFileBlob] = useState<any>();
+  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
 
   const onChangeFile = (e: any) => {
     const file = e.target.files[0];
     if(file){
+      const { width } = (refParent.current as any)?.getBoundingClientRect() || {};
+      setParentWidth(width);
       setFileImage(file);
+      setFileBlob(window.URL.createObjectURL(file));
     }
   }
 
   const doCancel = () => {
     setFileImage({});
+    setFileBlob(null);
   }
 
-  const doSave = () => {
+  const onCropComplete = useCallback((cropArea: any, cropAreaPx: any) => {
+    setCroppedAreaPixels(cropAreaPx);
+  }, [])
+
+  const doSave = useCallback(async () => {
+    try {
+      const croppedImage = await getCroppedImg(fileBlob, croppedAreaPixels);
+      // console.log('saveFile croppedImage: ', croppedImage);
+      onSave?.(croppedImage, fileImage);
+    } catch (e) {
+      console.error(e)
+    }
+
     doCancel();
-    onSave?.(fileImage);
+  }, [croppedAreaPixels])
+
+  const onCloseModal = () => {
+    setOpenModal(false);
+  }
+
+  const viewPhoto = (close: any) => {
+    close();
+    setOpenModal(true);
+  }
+
+  const openConfirmDelete = (close: any) => {
+    close();
+    setOpenConfirm(true);
+    // onDelete?.();
+  }
+
+  const closeConfirm = () => {
+    setOpenConfirm(false);
+  }
+
+  const renderMenus = (close: any) => {
+    let fix = [
+      <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
+        <ImageTwoToneIcon className="mr-2" />Choose From Gallery
+        <input onChange={onChangeFile} type="file" accept=".jpg,.jpeg,.png" hidden />
+      </MenuItem>,
+      <MenuItem key="2" onClick={close}>
+        <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-2" />
+        Choose From Unsplash
+      </MenuItem>
+    ];
+    
+    if(src !== INITIAL_BG){
+      fix = [
+        <MenuItem key="v" onClick={() => viewPhoto(close)}>
+          <VisibilityTwoToneIcon className="mr-2" />View Photo
+        </MenuItem>,
+        ...fix,
+        <MenuItem key="c" onClick={close}>
+          <OpenWithTwoToneIcon className="mr-2" />Change Position
+        </MenuItem>,
+        <hr key="h" className="my-2" />,
+        <MenuItem key="d" onClick={() => openConfirmDelete(close)}>
+          <DeleteTwoToneIcon className="mr-2" />Delete Photo
+        </MenuItem>,
+      ];
+    }
+    return fix;
   }
 
   return (
-    <Background
-      className="relative bg-no-repeat bg-cover"
-      style={{
-        height: 180,
-        backgroundPosition: 'center',
-      }}
-      src={fileImage.name ? window.URL.createObjectURL(fileImage) : src}
+    <div
+      ref={refParent as any}
+      className="relative"
     >
-      {(loadBg: any) => 
-        <>
-          <Dropdown
-            keepMounted
-            disableAutoFocusItem
-            label={<CameraAltTwoToneIcon />}
-            buttonProps={{
-              disabled: !loadBg || disabled,
-              hidden: !!fileImage.name,
-              className: "min-w-0 p-1 rounded-full absolute md:top-4 max-md:bottom-4 right-4 z-1 hover:bg-white"
+      {fileBlob &&
+        <div className="relative cropper" style={{ height }} tabIndex={-1}>
+          <Cropper
+            classes={{
+              cropAreaClassName: "border-transparent shadow-none",
             }}
-          >
-            {(close: any) => 
-              [
-                <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
-                  <ImageTwoToneIcon className="mr-2" />Choose From Gallery
-                  <input onChange={onChangeFile} type="file" accept=".jpg,.jpeg,.png" hidden />
-                </MenuItem>,
-                <MenuItem key="2" onClick={close}>
-                  <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-2" />
-                  Choose From Unsplash
-                </MenuItem>
-              ]
-            }
-          </Dropdown>
+            objectFit="horizontal-cover" // horizontal-cover | vertical-cover | contain | auto-cover
+            showGrid={false}
+            // aspect={21 / 9}
+            cropSize={{
+              height,
+              width: parentWidth, // Must Calc from parent width
+            }}
+            mediaProps={{
+              draggable: false,
+            }}
+            image={fileBlob} // fileBlob || src
+            crop={crop}
+            onCropChange={setCrop}
+            onCropComplete={onCropComplete}
+          />
+        </div>
+      }
 
-          {fileImage.name &&
-            <>
-              <div className="absolute top-0 right-0 mt-3 mr-3">
-                <Button onClick={doCancel} variant="outlined" color="primary" className="min-w-80 border-blue-500 bg-white hover:bg-blue-200 mr-3">Cancel</Button>
-                <Button onClick={doSave} variant="contained" className="min-w-80">Save</Button>
-              </div>
+      <img
+        hidden={!!fileBlob}
+        height={height}
+        className="w-full object-cover text-0"
+        loading="lazy"
+        decoding="async"
+        draggable={false}
+        alt="Background"
+        src={src} // fileImage.name ? window.URL.createObjectURL(fileImage) : src
+      />
+      <Dropdown
+        keepMounted
+        disableAutoFocusItem
+        label={<CameraIcon />}
+        buttonProps={{
+          disabled: disabled,
+          hidden: !!fileBlob,
+          className: "min-w-0 p-1 rounded-full absolute md:top-4 max-md:bottom-4 right-4 z-1 hover:bg-white"
+        }}
+      >
+        {(close: any) => renderMenus(close)}
+      </Dropdown>
 
-              <div className="absolute inset-0 flex pointer-events-none">
-                <b className="text-white bg-slate-700 m-auto py-2 px-4 rounded-md text-xs">
-                  <OpenWithTwoToneIcon fontSize="small" className="align-middle mr-2" />
-                  Drag to change the image position
-                </b>
-              </div>
-            </>
-          }
+      {fileBlob &&
+        <>
+          <div className="absolute top-0 right-0 mt-3 mr-3">
+            <Button onClick={doCancel} variant="outlined" color="primary" className="min-w-80 border-blue-500 bg-white hover:bg-blue-200 mr-3">Cancel</Button>
+            <Button onClick={doSave} variant="contained" className="min-w-80">Save</Button>
+          </div>
+
+          <div className="absolute inset-0 flex pointer-events-none">
+            <b className="text-white bg-gray-700/60 m-auto py-1 px-4 rounded-md text-xs shadow-sm">
+              <OpenWithTwoToneIcon sx={{ fontSize: 20 }} className="align-middle mr-2" />
+              Drag to change the image position
+            </b>
+          </div>
         </>
       }
-    </Background>
+
+      <Dialog
+        fullScreen={fullScreen}
+        fullWidth
+        maxWidth="lg"
+        scroll="body"
+        className="modal-bs"
+        open={openModal}
+        onClose={onCloseModal}
+      >
+        <DialogTitle className="py-2 pr-2 flex items-center border-bottom">
+          Background Photo
+          <IconButton
+            onClick={onCloseModal}
+            className="ml-auto"
+            aria-label="Close"
+          >
+            <CloseIcon />
+          </IconButton>
+        </DialogTitle>
+        <div className="p-6">
+          <img src={src} alt="Bg" className="w-full h-auto rounded-md" draggable={false} />
+        </div>
+      </Dialog>
+
+      <Dialog
+        open={openConfirm}
+        onClose={closeConfirm}
+        aria-labelledby="dialog-remove-background"
+      >
+        <DialogTitle id="dialog-remove-background">
+          Are you sure to delete this background?
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={closeConfirm}>No</Button>
+          <Button onClick={() => onDelete?.(closeConfirm)} autoFocus>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </div>
   );
 }

@@ -1,15 +1,19 @@
 import { useState, useEffect } from 'react';
 import Grid from '@mui/material/Grid';
+import Button from '@mui/material/Button';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useGetIdentity } from "@pankod/refine-core"; // useOne
-import { useNavigate } from "@remix-run/react";
+// import { useNavigate } from "@remix-run/react";
 
 import AuthSensor from '~/components/AuthSensor';
 import WelcomeLayout from "~/components/WelcomeLayout";
 import FormSetting from '~/components/profile/FormSetting';
+import AvatarSetup from '~/components/AvatarSetup';
+import { enterToClick } from '~/utils/dom';
 import { storage } from "~/utility"; // , functions, normalizeFile
+import { BUCKET_ID, CANDIDATE_PROFILES } from '~/config';
 
 interface FormProfileInputs {
   avatar: any
@@ -23,7 +27,7 @@ interface FormProfileInputs {
 }
 
 const SetUpProfile: React.FC = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
   const {
     refineCore: { onFinish, formLoading },
@@ -34,7 +38,7 @@ const SetUpProfile: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
     refineCoreProps: {
-      resource: "639a94a596500ae9a7d8",
+      resource: CANDIDATE_PROFILES,
       redirect: false,
     },
     resolver: yupResolver(yup.object({
@@ -46,6 +50,8 @@ const SetUpProfile: React.FC = () => {
       city: yup.string().required('Required choice for City.'),
     }).required())
   });
+  const [fileInput, setFileInput] = useState<any>();
+  const [photoFile, setPhotoFile] = useState<any>();
   const [photo, setPhoto] = useState<any>();
 
   // Prevent access this page if isExist
@@ -73,11 +79,11 @@ const SetUpProfile: React.FC = () => {
     }
   }, [userData, isSuccess, isLoading]);
 
-  const onChangeFile = (e: any) => {
-    const file = e.target.files[0];
-    if(file){
-      setPhoto(file);
-    }
+  const onSaveAvatar = (crop: any, original: any) => {
+    // console.log('onSaveAvatar original: ', original);
+    setFileInput(original);
+    setPhoto(crop);
+    setPhotoFile(window.URL.createObjectURL(crop));
   }
 
   const onSave = async (data: any) => {
@@ -88,28 +94,31 @@ const SetUpProfile: React.FC = () => {
     };
     if(photo){
       const userId = userData.$id;
+      const originalFile = new File([fileInput], userId + ".jpg", {
+        type: "image/jpeg" // fileInput.type,
+      });
+      const cropFile = new File([photo], userId + "_cropped.jpg", {
+        type: "image/jpeg" // fileInput.type,
+      });
+      // console.log('onSave cropFile: ', cropFile);
+      // console.log('onSave originalFile: ', originalFile);
+
       // const ext = '.' + photo.name.split('.').pop();
       // const { $id } = 
-      await storage.createFile("63a117a09c198a16ae4e", userId, photo); // userId + ext
+      await storage.createFile(BUCKET_ID, userId, originalFile); // userId + ext
       // Cropped
       // const { $id: cropId } = 
-      await storage.createFile("63a117a09c198a16ae4e", userId + '_cropped', photo); // userId + '_cropped' + ext
-      // const avatarUrl = storage.getFileView("63a117a09c198a16ae4e", $id);
-      // const avatarCropUrl = storage.getFileView("63a117a09c198a16ae4e", cropId);
+      await storage.createFile(BUCKET_ID, userId + '_cropped', cropFile); // userId + '_cropped' + ext
+      // const avatarUrl = storage.getFileView(BUCKET_ID, $id);
+      // const avatarCropUrl = storage.getFileView(BUCKET_ID, cropId);
       // console.log('onSave avatarUrl: ', avatarUrl);
+      // console.log('onSave avatarCropUrl: ', avatarCropUrl);
       fixData.avatar = userId;
       fixData.avatarCropped = userId + '_cropped';
     }
     
-    console.log('onSave fixData: ', fixData);
+    // console.log('onSave fixData: ', fixData);
     onFinish(fixData);
-
-    // return new Promise((resolve: any) => {
-    //   setTimeout(() => {
-    //     onFinish(data);
-    //     resolve();
-    //   }, 2000);
-    // });
   }
 
   return (
@@ -125,13 +134,56 @@ const SetUpProfile: React.FC = () => {
             </div>
             
             <FormSetting
-              inputPhoto
-              photo={photo}
+              inputPhoto={
+                <>
+                  <b>Your Photo</b>
+                  <p className="mb-4">This will be displayed on your profile.</p>
+                  <div className="flex items-start">
+                    <AvatarSetup
+                      loading={isLoading}
+                      disabled={isLoading}
+                      avatarProps={{
+                        sx: { width: 80, height: 80 },
+                      }}
+                      iconProps={{
+                        width: 40,
+                        height: 40
+                      }}
+                      src={photoFile} // photo
+                      // alt={fullName}
+                      className="w-20 h-20"
+                      label={(onChangeFile: any, disabled: any) => (
+                        <div className="ml-4">
+                          <Button
+                            component="label"
+                            variant="outlined"
+                            disabled={isLoading}
+                            onKeyDown={enterToClick}
+                          >
+                            Click to Upload
+                            <input
+                              // {...register("avatar")}
+                              hidden
+                              type="file"
+                              accept=".jpg,.jpeg,.png"
+                              disabled={disabled}
+                              onChange={onChangeFile}
+                            />
+                          </Button>
+                          <div className="text-xs mt-2">Use a square image for best results.</div>
+                        </div>
+                      )}
+                      onSave={onSaveAvatar}
+                    />
+                  </div>
+
+                  <hr className="my-6" />
+                </>
+              }
               disabled={isLoading || formLoading || isSubmitting}
               register={register}
               errors={errors}
               setValue={setValue}
-              onChangeFile={onChangeFile}
               onSubmit={handleSubmit(onSave)}
             />
           </Grid>
