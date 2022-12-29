@@ -1,10 +1,10 @@
 export const createImage = (url: any) =>
   new Promise((resolve, reject) => {
-    const image = new Image();
-    image.addEventListener('load', () => resolve(image));
-    image.addEventListener('error', (err) => reject(err));
-    image.setAttribute('crossOrigin', 'anonymous'); // needed to avoid cross-origin issues on CodeSandbox
-    image.src = url;
+    const img = new Image();
+    img.addEventListener('load', () => resolve(img));
+    img.addEventListener('error', (err) => reject(err));
+    img.setAttribute('crossOrigin', 'anonymous'); // needed to avoid cross-origin issues on CodeSandbox
+    img.src = url;
   })
 
 export function getRadianAngle(degreeValue: any) {
@@ -16,7 +16,6 @@ export function getRadianAngle(degreeValue: any) {
  */
 export function rotateSize(width: any, height: any, rotation: any) {
   const rotRad = getRadianAngle(rotation);
-
   return {
     width: Math.abs(Math.cos(rotRad) * width) + Math.abs(Math.sin(rotRad) * height),
     height: Math.abs(Math.sin(rotRad) * width) + Math.abs(Math.cos(rotRad) * height),

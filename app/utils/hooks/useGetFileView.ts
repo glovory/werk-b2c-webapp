@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
+
 import { storage } from "~/utility";
-
 import { BUCKET_ID } from '~/config';
-
 
 export default function useGetFileView(
   fileId: string | null | undefined,
   action: any,
-  // onError: any,
 ){
   useEffect(() => {
     if(fileId){
@@ -17,7 +15,6 @@ export default function useGetFileView(
           action?.(fileUrl);
         })
         .catch((err) => {
-          // console.log('err: ', err);
           action?.(null, err);
         });
     }

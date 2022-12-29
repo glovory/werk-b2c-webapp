@@ -31,18 +31,23 @@ export default function Dropdown({
   buttonProps,
   label,
   labelAs: LabelAs = Button,
-  // open,
+  keepMounted = false,
+  mountOnOpen,
+  onClose,
   children,
   ...etc
 }: any){
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [firstRender, setFirstRender] = useState<boolean>(false);
 
   const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+    (mountOnOpen && !firstRender) && setFirstRender(true);
     setAnchorEl(e.currentTarget);
   }
 
   const handleClose = () => {
     setAnchorEl(null);
+    onClose?.();
   }
 
   return (
@@ -60,6 +65,7 @@ export default function Dropdown({
       <Menu
         {...menuRight}
         {...etc}
+        keepMounted={keepMounted || firstRender}
         anchorEl={anchorEl}
         open={!!anchorEl}
         onClose={handleClose}

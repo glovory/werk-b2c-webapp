@@ -68,6 +68,25 @@
     vertical-align: top;
     margin-left: 5px;
   }
+
+  .img-loader {
+    position: relative;
+    overflow: hidden;
+    background-color: #f1f1f1;
+  }
+  .img-loader::before,
+  .img-loader::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-color: #f1f1f1;
+  }
+  .img-loader::after {
+    background: #fff linear-gradient(to right, rgba(0,0,0,.08) 0, rgba(0,0,0,.15) 15%, rgba(0,0,0,.08) 30%);
+    background-size: 1200px 100%;
+    animation: w-loader 2s linear infinite;
+  }
   
   .line-clamp {
     /* --w-clamp: 3; // OPTION */
@@ -126,6 +145,15 @@
   overflow-y: unset;
   height: auto;
 }
+
+@keyframes w-loader {
+	0% {
+		background-position: -1200px 0;
+	}
+	100% {
+		background-position: 1200px 0;
+	}
+}
 /* END CUSTOM */
 
 /* UTILITIES */
@@ -134,10 +162,10 @@
 /* This won't be included in your compiled CSS unless you actually use it */
 @layer utilities {
   .border-top {
-    border-top: 1px solid #dee2e6;
+    border-top: 1px solid #e8e9ed; /* #dee2e6 */
   }
   .border-bottom {
-    border-bottom: 1px solid #dee2e6;
+    border-bottom: 1px solid #e8e9ed; /* #dee2e6 */
   }
   
 }
