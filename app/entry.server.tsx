@@ -45,7 +45,6 @@ export default function handleRequest(
         },
         onError: (error) => {
           didError = true;
-
           console.error(error);
         },
       }

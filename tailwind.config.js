@@ -20,6 +20,7 @@ module.exports = {
       },
       minWidth: {
         '80': '80px',
+        '50p': '50%',
       },
       listStyleType: {
         'lower-alpha': 'lower-alpha',
