@@ -13,7 +13,6 @@ export default function useCheckUserExist(action: any){
       functions.createExecution(CHECK_USER_EXIST, `{"userId":"${$id}"}`)
       .then((res: any) => {
         const fixRes = JSON.parse(res?.response || '{}');
-        // navigate(fixRes.isExist ? '/' : '/build-profile', { replace: true });
         action?.(fixRes);
       })
       .catch((err) => {

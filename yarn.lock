@@ -1437,10 +1437,10 @@
   dependencies:
     appwrite "^10.0.1"
 
-"@pankod/refine-cli@1.13.4":
-  version "1.13.4"
-  resolved "https://registry.yarnpkg.com/@pankod/refine-cli/-/refine-cli-1.13.4.tgz#0577f9f3f06963a979ca7a8fa4c71a7d1d84fad7"
-  integrity sha512-wLaGUsRnwsfQU/DXoXpZXh295iLimdoJIJtKvI3lxQQ6Qd486YYOJXDOMBMP9ygzcZxuEGP7EhGvW+H4SpmuTw==
+"@pankod/refine-cli@1.13.6":
+  version "1.13.6"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-cli/-/refine-cli-1.13.6.tgz#45f3e2bd2613ba2cc7c3794eee07bd57b8fe171f"
+  integrity sha512-AhVg4HsPjUKhvIxhHits6P8vVP2yWbWKvMITtEFCJDBgSoQ8gqbzXZeH9T2kaP1s0NLTZwpt7MFg3mGPmWxxsA==
   dependencies:
     boxen "^5.1.2"
     cardinal "^2.1.1"

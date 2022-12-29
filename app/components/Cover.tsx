@@ -1,41 +1,41 @@
 import { useState, useCallback, useRef } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import IconButton from '@mui/material/IconButton';
 import Dialog from '@mui/material/Dialog'; // , { DialogProps }
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
-import OpenWithTwoToneIcon from '@mui/icons-material/OpenWithTwoTone';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import CloseIcon from '@mui/icons-material/Close';
 import Cropper from 'react-easy-crop';
 
 import Dropdown from '~/components/Dropdown';
+import DialogWerk from '~/components/DialogWerk';
 import CameraIcon from '~/svg/Camera';
-import { enterToClick } from '~/utils/dom';
+import MoveIcon from '~/svg/Move';
+import { enterToClick, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
 import { INITIAL_BG } from '~/config';
 
 export default function Cover({
   src,
+  cropSrc,
   disabled,
   onSave,
   onDelete,
 }: any){
   const height = 180;
+  const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const refParent = useRef();
+  const refFile = useRef();
   const [parentWidth, setParentWidth] = useState<any>(760);
   const [fileImage, setFileImage] = useState<any>({});
   const [fileBlob, setFileBlob] = useState<any>();
-  const [crop, setCrop] = useState({ x: 0, y: 0 });
+  const [crop, setCrop] = useState(INIT_CROP);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
@@ -53,6 +53,12 @@ export default function Cover({
   const doCancel = () => {
     setFileImage({});
     setFileBlob(null);
+    setCrop(INIT_CROP);
+    // Reset input file
+    const inputFile = refFile.current as any;
+    if(inputFile?.value){
+      inputFile.value = "";
+    }
   }
 
   const onCropComplete = useCallback((cropArea: any, cropAreaPx: any) => {
@@ -64,11 +70,10 @@ export default function Cover({
       const croppedImage = await getCroppedImg(fileBlob, croppedAreaPixels);
       // console.log('saveFile croppedImage: ', croppedImage);
       onSave?.(croppedImage, fileImage);
+      doCancel();
     } catch (e) {
       console.error(e)
     }
-
-    doCancel();
   }, [croppedAreaPixels])
 
   const onCloseModal = () => {
@@ -94,10 +99,10 @@ export default function Cover({
     let fix = [
       <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
         <ImageTwoToneIcon className="mr-2" />Choose From Gallery
-        <input onChange={onChangeFile} type="file" accept=".jpg,.jpeg,.png" hidden />
+        <input ref={refFile as any} onChange={onChangeFile} type="file" accept=".jpg,.jpeg,.png" hidden />
       </MenuItem>,
       <MenuItem key="2" onClick={close}>
-        <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-2" />
+        <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-3" />
         Choose From Unsplash
       </MenuItem>
     ];
@@ -109,7 +114,7 @@ export default function Cover({
         </MenuItem>,
         ...fix,
         <MenuItem key="c" onClick={close}>
-          <OpenWithTwoToneIcon className="mr-2" />Change Position
+          <MoveIcon width={18} height={18} className="ml-1 mr-3" />Change Position
         </MenuItem>,
         <hr key="h" className="my-2" />,
         <MenuItem key="d" onClick={() => openConfirmDelete(close)}>
@@ -125,7 +130,7 @@ export default function Cover({
       ref={refParent as any}
       className="relative"
     >
-      {fileBlob &&
+      {(fileBlob || cropSrc) &&
         <div className="relative cropper" style={{ height }} tabIndex={-1}>
           <Cropper
             classes={{
@@ -141,7 +146,7 @@ export default function Cover({
             mediaProps={{
               draggable: false,
             }}
-            image={fileBlob} // fileBlob || src
+            image={fileBlob || cropSrc} // fileBlob || src
             crop={crop}
             onCropChange={setCrop}
             onCropComplete={onCropComplete}
@@ -150,9 +155,9 @@ export default function Cover({
       }
 
       <img
+        {...imgLoader("w-full object-cover text-0")}
         hidden={!!fileBlob}
         height={height}
-        className="w-full object-cover text-0"
         loading="lazy"
         decoding="async"
         draggable={false}
@@ -160,16 +165,16 @@ export default function Cover({
         src={src} // fileImage.name ? window.URL.createObjectURL(fileImage) : src
       />
       <Dropdown
-        keepMounted
+        mountOnOpen // keepMounted
         disableAutoFocusItem
         label={<CameraIcon />}
         buttonProps={{
-          disabled: disabled,
+          disabled,
           hidden: !!fileBlob,
           className: "min-w-0 p-1 rounded-full absolute md:top-4 max-md:bottom-4 right-4 z-1 hover:bg-white"
         }}
       >
-        {(close: any) => renderMenus(close)}
+        {renderMenus}
       </Dropdown>
 
       {fileBlob &&
@@ -181,36 +186,31 @@ export default function Cover({
 
           <div className="absolute inset-0 flex pointer-events-none">
             <b className="text-white bg-gray-700/60 m-auto py-1 px-4 rounded-md text-xs shadow-sm">
-              <OpenWithTwoToneIcon sx={{ fontSize: 20 }} className="align-middle mr-2" />
+              <MoveIcon className="align-middle mr-2" />
               Drag to change the image position
             </b>
           </div>
         </>
       }
 
-      <Dialog
+      <DialogWerk
+        title="Background Photo"
         fullScreen={fullScreen}
         fullWidth
         maxWidth="lg"
         scroll="body"
-        className="modal-bs"
         open={openModal}
         onClose={onCloseModal}
       >
-        <DialogTitle className="py-2 pr-2 flex items-center border-bottom">
-          Background Photo
-          <IconButton
-            onClick={onCloseModal}
-            className="ml-auto"
-            aria-label="Close"
-          >
-            <CloseIcon />
-          </IconButton>
-        </DialogTitle>
         <div className="p-6">
-          <img src={src} alt="Bg" className="w-full h-auto rounded-md" draggable={false} />
+          <img
+            {...imgLoader("w-full h-auto rounded-md")}
+            src={src}
+            alt="Bg"
+            draggable={false}
+          />
         </div>
-      </Dialog>
+      </DialogWerk>
 
       <Dialog
         open={openConfirm}

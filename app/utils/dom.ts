@@ -7,7 +7,6 @@ declare namespace classNames {
   interface ArgumentArray extends Array<Argument> {}
   type Argument = Value | Mapping | ArgumentArray;
 }
-
 export function Cx(...args: classNames.ArgumentArray){
 	return cls.apply(null, args) || undefined;
 }
@@ -17,4 +16,23 @@ export const enterToClick = (e: any) => {
 	if(e.key === 'Enter'){
 		e.target.click();
 	}
+}
+
+// For loader <img />
+export function imgLoader(
+  className?: string,
+  onLoad?: (e: any) => void,
+  onError?: (e: any) => void
+){
+  return {
+    className: Cx("img-loader", className),
+    onLoad: (e: any) => {
+      e.target.classList.remove('img-loader');
+      onLoad?.(e);
+    },
+    onError: (e: any) => {
+      e.target.classList.remove('img-loader');
+      onError?.(e);
+    },
+  }
 }

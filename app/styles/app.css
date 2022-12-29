@@ -206,6 +206,27 @@ img {
   margin-left: 5px;
 }
 
+.img-loader {
+  position: relative;
+  overflow: hidden;
+  background-color: #f1f1f1;
+}
+
+.img-loader::before,
+  .img-loader::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background-color: #f1f1f1;
+}
+
+.img-loader::after {
+  background: #fff linear-gradient(to right, rgba(0,0,0,.08) 0, rgba(0,0,0,.15) 15%, rgba(0,0,0,.08) 30%);
+  background-size: 1200px 100%;
+  animation: w-loader 2s linear infinite;
+}
+
 .line-clamp {
   /* --w-clamp: 3; // OPTION */
   overflow: hidden;
@@ -269,6 +290,16 @@ img {
   height: auto;
 }
 
+@keyframes w-loader {
+  0% {
+    background-position: -1200px 0;
+  }
+
+  100% {
+    background-position: 1200px 0;
+  }
+}
+
 /* END CUSTOM */
 
 /* UTILITIES */
@@ -304,10 +335,6 @@ img {
   left: 0px;
 }
 
-.bottom-0 {
-  bottom: 0px;
-}
-
 .right-4 {
   right: 1rem;
 }
@@ -318,6 +345,10 @@ img {
 
 .right-0 {
   right: 0px;
+}
+
+.bottom-0 {
+  bottom: 0px;
 }
 
 .z-1 {
@@ -361,11 +392,6 @@ img {
   margin-bottom: 1.75rem;
 }
 
-.my-4 {
-  margin-top: 1rem;
-  margin-bottom: 1rem;
-}
-
 .mx-n6 {
   margin-left: -1.5rem;
   margin-right: -1.5rem;
@@ -376,10 +402,6 @@ img {
   margin-bottom: 1.25rem;
 }
 
-.ml-auto {
-  margin-left: auto;
-}
-
 .mr-2 {
   margin-right: 0.5rem;
 }
@@ -388,12 +410,16 @@ img {
   margin-left: 0.25rem;
 }
 
+.mr-3 {
+  margin-right: 0.75rem;
+}
+
 .mt-3 {
   margin-top: 0.75rem;
 }
 
-.mr-3 {
-  margin-right: 0.75rem;
+.ml-auto {
+  margin-left: auto;
 }
 
 .mt-auto {
@@ -434,18 +460,6 @@ img {
 
 .mb-3 {
   margin-bottom: 0.75rem;
-}
-
-.mt-20 {
-  margin-top: 5rem;
-}
-
-.mb-8 {
-  margin-bottom: 2rem;
-}
-
-.mt-7 {
-  margin-top: 1.75rem;
 }
 
 .mb-2 {
@@ -572,10 +586,6 @@ img {
   width: 140px;
 }
 
-.w-2\/4 {
-  width: 50%;
-}
-
 .min-w-0 {
   min-width: 0px;
 }
@@ -588,12 +598,12 @@ img {
   min-width: 275px;
 }
 
-.max-w-md {
-  max-width: 28rem;
+.min-w-50p {
+  min-width: 50%;
 }
 
-.flex-none {
-  flex: none;
+.max-w-md {
+  max-width: 28rem;
 }
 
 .grow {
@@ -658,8 +668,8 @@ img {
   gap: 1rem;
 }
 
-.gap-7 {
-  gap: 1.75rem;
+.gap-6 {
+  gap: 1.5rem;
 }
 
 .overflow-hidden {
@@ -723,11 +733,6 @@ img {
   background-color: rgb(255 255 255 / var(--tw-bg-opacity));
 }
 
-.bg-orange-500 {
-  --tw-bg-opacity: 1;
-  background-color: rgb(249 115 22 / var(--tw-bg-opacity));
-}
-
 .bg-gray-100 {
   --tw-bg-opacity: 1;
   background-color: rgb(243 244 246 / var(--tw-bg-opacity));
@@ -738,10 +743,6 @@ img {
      object-fit: cover;
 }
 
-.p-1 {
-  padding: 0.25rem;
-}
-
 .p-4 {
   padding: 1rem;
 }
@@ -750,17 +751,12 @@ img {
   padding: 1.5rem;
 }
 
+.p-1 {
+  padding: 0.25rem;
+}
+
 .p-0 {
   padding: 0px;
-}
-
-.p-5 {
-  padding: 1.25rem;
-}
-
-.py-2 {
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
 }
 
 .py-1 {
@@ -781,6 +777,11 @@ img {
 .px-7 {
   padding-left: 1.75rem;
   padding-right: 1.75rem;
+}
+
+.py-2 {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
 }
 
 .px-2 {
@@ -818,6 +819,11 @@ img {
   padding-right: 1.25rem;
 }
 
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+
 .pr-2 {
   padding-right: 0.5rem;
 }
@@ -834,12 +840,12 @@ img {
   padding-bottom: 4rem;
 }
 
-.pt-4 {
-  padding-top: 1rem;
-}
-
 .pl-4 {
   padding-left: 1rem;
+}
+
+.pt-4 {
+  padding-top: 1rem;
 }
 
 .pb-7 {
@@ -874,6 +880,11 @@ img {
 .text-sm {
   font-size: 0.875rem;
   line-height: 1.25rem;
+}
+
+.text-lg {
+  font-size: 1.125rem;
+  line-height: 1.75rem;
 }
 
 .font-bold {
@@ -914,6 +925,11 @@ img {
 .text-gray-500 {
   --tw-text-opacity: 1;
   color: rgb(107 114 128 / var(--tw-text-opacity));
+}
+
+.text-gray-700 {
+  --tw-text-opacity: 1;
+  color: rgb(55 65 81 / var(--tw-text-opacity));
 }
 
 .text-gray-800 {
@@ -969,11 +985,13 @@ img {
 }
 
 .border-top {
-  border-top: 1px solid #dee2e6;
+  border-top: 1px solid #e8e9ed;
+  /* #dee2e6 */
 }
 
 .border-bottom {
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 1px solid #e8e9ed;
+  /* #dee2e6 */
 }
 
 /* This won't be included in your compiled CSS unless you actually use it */
@@ -1024,10 +1042,6 @@ img {
     display: flex;
   }
 
-  .max-md\:w-2\/4 {
-    width: 50%;
-  }
-
   .max-md\:flex-col {
     flex-direction: column;
   }
@@ -1051,12 +1065,12 @@ img {
     top: 1rem;
   }
 
-  .md\:w-3\/4 {
-    width: 75%;
-  }
-
   .md\:w-2\/4 {
     width: 50%;
+  }
+
+  .md\:w-3\/4 {
+    width: 75%;
   }
 
   .md\:pt-7 {
@@ -1065,10 +1079,6 @@ img {
 }
 
 @media (min-width: 1024px) {
-  .lg\:w-1\/4 {
-    width: 25%;
-  }
-
   .lg\:text-right {
     text-align: right;
   }

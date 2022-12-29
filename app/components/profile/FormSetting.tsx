@@ -126,6 +126,7 @@ export default function FormSetting({
                 position="start"
                 component="label"
                 htmlFor="accountName"
+                className="text-gray-700"
               >
                 {DOMAIN}/@
               </InputAdornment>
