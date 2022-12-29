@@ -11,7 +11,6 @@ const ProcessSignIn: React.FC = () => {
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
 
   useEffect(() => {
-    // 
     if(!isLoading && isSuccess && userData){
       const { $id } = userData;
       // JSON.stringify({ userId: $id })

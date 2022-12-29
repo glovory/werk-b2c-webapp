@@ -21,13 +21,14 @@ import { useNavigate } from "@remix-run/react";
 import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE } from "~/utility";
 import { authProvider } from '~/authProvider';
 import useGetFileView from '~/utils/hooks/useGetFileView';
+import { imgLoader } from '~/utils/dom';
 import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
 import WerkLogo from '~/svg/Werk';
 
 interface Props {
   footer?: boolean | any,
-  children?: ReactNode,
+  children?: ReactNode | any,
 }
 
 const LANGUAGE = [
@@ -44,17 +45,17 @@ export default function LayoutLogged({
   // const { mutate: logout } = useLogout<string>();
   const navigate = useNavigate();
   const [identity, setIdentity] = useState<any>();
-  const [loadingSignin, setLoadingSignin] = useState(false);
-  // const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
+  const [loadingSignin, setLoadingSignin] = useState<boolean>(false);
+  const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
+  const [firstRenderMenuLang, setFirstRenderMenuLang] = useState<boolean>(false);
   const [avatar, setAvatar] = useState<any>();
   const [language, setLanguage] = useState<string>('en');
 
   useGetFileView(
     userId ? userId + '_cropped' : null,
     (fileUrl: any) => {
-      // console.log('useGetFileView fileUrl: ', fileUrl);
       fileUrl && setAvatar(fileUrl.href);
-      // setLoadingAvatar(false);
+      setLoadingAvatar(false);
     }
   );
 
@@ -86,6 +87,10 @@ export default function LayoutLogged({
         navigate(req, { replace: true });
       }
     }
+  }
+
+  const openMenuLang = () => {
+    !firstRenderMenuLang && setFirstRenderMenuLang(true);
   }
 
   return (
@@ -138,12 +143,15 @@ export default function LayoutLogged({
                       )}
                       value={language}
                       onChange={languageChange}
+                      onOpen={openMenuLang}
                       displayEmpty
                       IconComponent={ExpandMoreTwoToneIcon} // ArrowSmall | ExpandMoreTwoToneIcon
                       // @ts-ignore:next-line
                       MenuProps={{
                         ...menuRight,
                         sx: { mt: '5px' },
+                        id: "menuAppLang",
+                        keepMounted: firstRenderMenuLang,
                       }}
                     >
                       {LANGUAGE.map((lang) => 
@@ -162,18 +170,25 @@ export default function LayoutLogged({
                 
                   {isSuccess && identity ?
                     <Dropdown
+                      mountOnOpen // keepMounted
                       labelAs={IconButton}
                       label={
-                        avatar ?
-                          <Avatar
-                            sx={{ width: 32, height: 32 }}
-                            alt={identity.name}
-                            src={avatar}
-                          />
+                        loadingAvatar ?
+                          <Skeleton animation="wave" variant="circular" width={32} height={32} />
                           :
-                          <div className="grid place-items-center rounded-full w-8 h-8 bg-w-blue-1 text-blue-700">
-                            <WerkLogo width={20} height={20} />
-                          </div>
+                          avatar ?
+                            <Avatar
+                              sx={{ width: 32, height: 32 }}
+                              alt={identity.name}
+                              src={avatar}
+                              imgProps={{
+                                ...imgLoader()
+                              }}
+                            />
+                            :
+                            <div className="grid place-items-center rounded-full w-8 h-8 bg-w-blue-1 text-blue-700">
+                              <WerkLogo width={20} height={20} />
+                            </div>
                       }
                       buttonProps={{
                         className: "p-0",
@@ -197,6 +212,9 @@ export default function LayoutLogged({
                               sx={{ width: 48, height: 48 }}
                               alt={identity.name}
                               src={avatar}
+                              imgProps={{
+                                ...imgLoader()
+                              }}
                             />
                             :
                             <div className="grid place-items-center rounded-md w-12 h-12 bg-w-blue-1 text-blue-700">
@@ -264,7 +282,7 @@ export default function LayoutLogged({
       </AppBar>
 
       <div className="flex flex-col min-h-calc-nav">
-        {children}
+        {typeof children === 'function' ? children(avatar) : children}
 
         {footer && <FooterMain />}
       </div>

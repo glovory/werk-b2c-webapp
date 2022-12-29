@@ -1,4 +1,4 @@
-import { useState } from 'react'; // , useEffect
+import { useState, useRef } from 'react'; // , useEffect
 import Container from '@mui/material/Container';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
@@ -19,8 +19,10 @@ import EditTwoToneIcon from '@mui/icons-material/EditTwoTone';
 import HelpTwoToneIcon from '@mui/icons-material/HelpTwoTone';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
-import OpenWithTwoToneIcon from '@mui/icons-material/OpenWithTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
+import ExploreTwoToneIcon from '@mui/icons-material/ExploreTwoTone';
+import BadgeTwoToneIcon from '@mui/icons-material/BadgeTwoTone';
+import AddTwoToneIcon from '@mui/icons-material/AddTwoTone';
 import { useGetIdentity } from "@pankod/refine-core";
 
 // import { storage } from "~/utility"; // functions
@@ -32,24 +34,37 @@ import AvatarSetup from '~/components/AvatarSetup';
 import Dropdown, { menuLeft } from '~/components/Dropdown';
 import WerkLogo from '~/svg/Werk';
 import CameraIcon from '~/svg/Camera';
+import MoveIcon from '~/svg/Move';
+import WorkExperience from '~/components/profile/sections/WorkExperience';
+import Education from '~/components/profile/sections/Education';
+import HardSkill from '~/components/profile/sections/HardSkill';
+import SoftSkill from '~/components/profile/sections/SoftSkill';
 import { enterToClick } from '~/utils/dom';
 import { INITIAL_BG } from '~/config';
 
 const Profile: React.FC = () => {
   const { data: userData, isLoading } = useGetIdentity<any>(); // , isSuccess
   const { $id: userId, name: fullName } = userData || {}; //email: userEmail 
+  const refFile = useRef();
   const [modalEdit, setModalEdit] = useState<boolean>(false);
   const [cover, setCover] = useState<any>(INITIAL_BG);
   const [avatar, setAvatar] = useState<any>();
+  const [avatarDefault, setAvatarDefault] = useState<any>();
   const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
   const [openModalView, setOpenModalView] = useState<boolean>(false);
   
   useGetFileView(
     userId ? userId + '_cropped' : null,
     (fileUrl: any) => {
-      // console.log('useGetFileView fileUrl: ', fileUrl);
       fileUrl && setAvatar(fileUrl.href);
       setLoadingAvatar(false);
+    }
+  );
+
+  useGetFileView(
+    userId ? userId : null,
+    (fileUrl: any) => {
+      fileUrl && setAvatarDefault(fileUrl.href);
     }
   );
 
@@ -100,6 +115,11 @@ const Profile: React.FC = () => {
     close();
   }
 
+  const doChangePositionAvatar = (close: any, openModalCrop: any) => {
+    close();
+    openModalCrop();
+  }
+
   return (
     <LayoutLogged>
       <FormProfile
@@ -110,7 +130,7 @@ const Profile: React.FC = () => {
 
       <Container className="pb-7 md:pt-7 max-md:px-0">
         <Grid justifyContent="center" container spacing={2}>
-          <Grid item lg={8} xs={12}>
+          <Grid item lg={8} xs={12} className="flex flex-col gap-6">
             <Card variant="outlined" className="max-md:rounded-none">
               <Cover
                 disabled={isLoading}
@@ -124,7 +144,7 @@ const Profile: React.FC = () => {
                   <Grid item lg={9} xs={12}>
                     <AvatarSetup
                       loading={isLoading || loadingAvatar} // !avatar
-                      disabled={isLoading}
+                      disabled={isLoading || loadingAvatar}
                       avatarProps={{
                         sx: { width: 120, height: 120 },
                       }}
@@ -133,20 +153,22 @@ const Profile: React.FC = () => {
                         height: 60
                       }}
                       src={avatar}
+                      cropSrc={avatarDefault}
                       alt={fullName}
                       className="border-solid border-white max-md:mx-auto w-140 h-140"
                       style={{
                         marginTop: -80,
                         borderWidth: 10,
                       }}
+                      inputRef={refFile}
                       openModalView={openModalView}
                       onCloseModalView={onCloseModalView}
                       onSave={onSaveAvatar}
                     >
-                      {(onChangeFile: any, disabled: any) => (
+                      {(onChangeFile: any, openModalCrop: any, disabled: any) => (
                         avatar ?
                           <Dropdown
-                            keepMounted
+                            mountOnOpen // keepMounted
                             {...menuLeft}
                             disableAutoFocusItem
                             label={<CameraIcon />}
@@ -161,10 +183,10 @@ const Profile: React.FC = () => {
                               </MenuItem>,
                               <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
                                 <ImageTwoToneIcon className="mr-2" />Choose From Gallery
-                                <input onChange={onChangeFile} type="file" accept=".jpg,.jpeg,.png" hidden />
+                                <input ref={refFile as any} onChange={onChangeFile} disabled={disabled} type="file" accept=".jpg,.jpeg,.png" hidden />
                               </MenuItem>,
-                              <MenuItem key="c" onClick={close}>
-                                <OpenWithTwoToneIcon className="mr-2" />Change Position
+                              <MenuItem key="c" onClick={() => doChangePositionAvatar(close, openModalCrop)}>
+                                <MoveIcon width={18} height={18} className="ml-1 mr-3" />Change Position
                               </MenuItem>,
                               <hr key="h" className="my-2" />,
                               <MenuItem key="d" onClick={() => doDeleteAvatar(close)}>
@@ -180,7 +202,7 @@ const Profile: React.FC = () => {
                             onKeyDown={enterToClick}
                           >
                             <CameraIcon />
-                            <input onChange={onChangeFile} disabled={disabled} type="file" accept=".jpg,.jpeg,.png" hidden />
+                            <input ref={refFile as any} onChange={onChangeFile} disabled={disabled} type="file" accept=".jpg,.jpeg,.png" hidden />
                           </Button>
                       )}
                     </AvatarSetup>
@@ -220,14 +242,21 @@ const Profile: React.FC = () => {
                 </div>
               </CardContent>
             </Card>
+
+            <WorkExperience />
+
+            <Education />
+
+            <HardSkill />
+
+            <SoftSkill />
           </Grid>
 
-          <Grid item lg={4} xs={12}>
-            <Card variant="outlined" className="rounded-xs-0">
+          <Grid item lg={4} xs={12} className="flex flex-col gap-6">
+            <Card variant="outlined" className="max-md:rounded-none">
               <CardHeader
                 avatar={<WorkTwoToneIcon />}
                 titleTypographyProps={{
-                  variant: "body1",
                   className: "font-medium",
                 }}
                 title="Work Availability"
@@ -256,12 +285,73 @@ const Profile: React.FC = () => {
                   </ListItemButton>
                 </ListItem>
               </List>
-              <CardActions className="justify-end border-top">
+              <CardActions className="justify-end border-top py-1">
                 <Button size="small" color="inherit">
                   <HelpTwoToneIcon sx={{ fontSize: 15 }} className="mr-1" />
                   Learn more
                 </Button>
               </CardActions>
+            </Card>
+
+            <Card variant="outlined" className="max-md:rounded-none">
+              <CardHeader
+                avatar={<ExploreTwoToneIcon />}
+                titleTypographyProps={{
+                  className: "font-medium",
+                }}
+                title="Preferred Work Type"
+                className="py-2 border-bottom"
+              />
+              <List component="div" dense>
+                {['Onsite Work', 'Remote Work', 'Hybrid'].map((item: any) =>
+                  <ListItem
+                    key={item}
+                    component="label"
+                    secondaryAction={
+                      <Checkbox
+                        size="small"
+                        edge="end"
+                      />
+                    }
+                    disablePadding
+                  >
+                    <ListItemButton className="px-5">
+                      <ListItemText primary={item} />
+                    </ListItemButton>
+                  </ListItem>
+                )}
+              </List>
+              <CardActions className="justify-end border-top py-1">
+                <Button size="small" color="inherit">
+                  <HelpTwoToneIcon sx={{ fontSize: 15 }} className="mr-1" />
+                  Learn more
+                </Button>
+              </CardActions>
+            </Card>
+
+            <Card variant="outlined" className="max-md:rounded-none">
+              <CardHeader
+                avatar={<BadgeTwoToneIcon />}
+                titleTypographyProps={{
+                  className: "font-medium",
+                }}
+                title="Other Information"
+                className="py-2 border-bottom"
+              />
+              <List component="div" dense>
+                {['Phone Number', 'Website', 'Social Media'].map((item: any) =>
+                  <ListItem
+                    key={item}
+                    component="label"
+                    disablePadding
+                  >
+                    <ListItemButton className="px-4 text-blue-700">
+                      <AddTwoToneIcon fontSize="small" className="mr-1" />
+                      <ListItemText primary={item} />
+                    </ListItemButton>
+                  </ListItem>
+                )}
+              </List>
             </Card>
           </Grid>
         </Grid>

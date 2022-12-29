@@ -117,9 +117,6 @@ export default function App() {
               {
                 name: "setup-profile",
                 list: SetUpProfile,
-                // options: {
-                //   label: "setup-profile",
-                // },
               }
             ]}
           >
