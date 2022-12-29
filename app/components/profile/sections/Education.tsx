@@ -14,9 +14,6 @@ export default function Education(){
         titleTypographyProps={{
           className: "text-lg font-medium",
         }}
-        // action={
-        //   <Switch defaultChecked />
-        // }
         className="border-bottom"
       />
 
