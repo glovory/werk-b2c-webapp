@@ -98,21 +98,17 @@ const SetUpProfile: React.FC = () => {
         type: "image/jpeg" // fileInput.type,
       });
       const cropFile = new File([photo], userId + "_cropped.jpg", {
-        type: "image/jpeg" // fileInput.type,
+        type: "image/jpeg"
       });
-      // console.log('onSave cropFile: ', cropFile);
-      // console.log('onSave originalFile: ', originalFile);
 
-      // const ext = '.' + photo.name.split('.').pop();
       // const { $id } = 
-      await storage.createFile(BUCKET_ID, userId, originalFile); // userId + ext
+      await storage.createFile(BUCKET_ID, userId, originalFile);
       // Cropped
       // const { $id: cropId } = 
-      await storage.createFile(BUCKET_ID, userId + '_cropped', cropFile); // userId + '_cropped' + ext
+      await storage.createFile(BUCKET_ID, userId + '_cropped', cropFile);
       // const avatarUrl = storage.getFileView(BUCKET_ID, $id);
       // const avatarCropUrl = storage.getFileView(BUCKET_ID, cropId);
       // console.log('onSave avatarUrl: ', avatarUrl);
-      // console.log('onSave avatarCropUrl: ', avatarCropUrl);
       fixData.avatar = userId;
       fixData.avatarCropped = userId + '_cropped';
     }
@@ -149,8 +145,7 @@ const SetUpProfile: React.FC = () => {
                         width: 40,
                         height: 40
                       }}
-                      src={photoFile} // photo
-                      // alt={fullName}
+                      src={photoFile}
                       className="w-20 h-20"
                       label={(onChangeFile: any, disabled: any) => (
                         <div className="ml-4">

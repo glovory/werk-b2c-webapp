@@ -101,19 +101,20 @@
   }
 
   /* Cropper */
-  .cropper:active:not(:focus-within)::after {
-    content: "";
-    position: fixed;
-    inset: 0;
-    z-index: 1301;
-    cursor: move;
+  @media (hover: hover) {
+    .cropper:active:not(:focus-within)::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 1301;
+      cursor: move;
+    }
   }
 }
 /* END COMPONENTS */
 
 /* CUSTOM */
 /* This will always be included in your compiled CSS */
-
 .w-input-group .MuiInputBase-root {
   background-color: #e0e0e6;
 }
@@ -165,7 +166,7 @@
     border-top: 1px solid #e8e9ed; /* #dee2e6 */
   }
   .border-bottom {
-    border-bottom: 1px solid #e8e9ed; /* #dee2e6 */
+    border-bottom: 1px solid #e8e9ed;
   }
   
 }
