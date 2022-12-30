@@ -1,14 +1,12 @@
 export default function WerkLogo({
   fill = "currentColor",
-  width = 16,
-  height = 16,
   ...etc
 }: any){
   return (
     <svg
+      width={16}
+      height={16}
       {...etc}
-      width={width}
-      height={height}
       viewBox="0 0 258 258"
       overflow="visible"
       preserveAspectRatio="none"

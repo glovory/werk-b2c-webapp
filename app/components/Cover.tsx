@@ -13,8 +13,8 @@ import Cropper from 'react-easy-crop';
 
 import Dropdown from '~/components/Dropdown';
 import DialogWerk from '~/components/DialogWerk';
-import CameraIcon from '~/svg/camera';
-import MoveIcon from '~/svg/move';
+import CameraIcon from '~/svg/Camera';
+import MoveIcon from '~/svg/Move';
 import { enterToClick, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
 import { INITIAL_BG } from '~/config';

@@ -8,7 +8,7 @@ import { useTheme } from '@mui/material/styles';
 import Cropper from 'react-easy-crop';
 
 import WerkLogo from '~/svg/werk';
-import MoveIcon from '~/svg/move';
+import MoveIcon from '~/svg/Move';
 import DialogWerk from '~/components/DialogWerk';
 import { Cx, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
