@@ -137,6 +137,7 @@ export default function AvatarSetup({
                   width: 320,
                 }}
                 mediaProps={{
+                  ...imgLoader(),
                   draggable: false,
                 }}
                 image={fileBlob || cropSrc} // src

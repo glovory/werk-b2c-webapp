@@ -1,5 +1,5 @@
 import { type ReactNode, useContext } from "react";
-import { type MetaFunction, type LoaderFunction, json } from "@remix-run/node";
+import { type MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -7,7 +7,6 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
-  useLoaderData,
 } from "@remix-run/react";
 
 import { Refine } from "@pankod/refine-core";
@@ -30,12 +29,11 @@ import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
-import { AppContext } from "~/contexts/AppContext";
 // import { Title, Sider, Layout, Header } from "~/components/layout";
 // import remixImageStyles from "remix-image/remix-image.css";
 
 import { light } from './theme';
-import WelcomePage from '~/components/WelcomePage';
+import WelcomePage from '~/pages/WelcomePage';
 import SetUpProfile from '~/pages/SetupProfile';
 import tailwindcss from "./styles/app.css";
 
@@ -50,22 +48,9 @@ interface DocumentProps {
   title?: string;
 }
 
-export const loader: LoaderFunction = async () => {
-  return json({
-    ENV: {
-      NODE_ENV: process.env.NODE_ENV,
-      SERVE_URL: process.env.SERVE_URL,
-      APPWRITE_URL: process.env.APPWRITE_URL,
-      APPWRITE_PROJECT: process.env.APPWRITE_PROJECT,
-      TOKEN_KEY: process.env.TOKEN_KEY,
-    },
-  })
-}
-
 const Document = withEmotionCache(
   ({ children, title }: DocumentProps, emotionCache) => {
     const clientStyleData = useContext(ClientStyleContext);
-    const { ENV } = useLoaderData();
     useEnhancedEffect(() => {
       emotionCache.sheet.container = document.head;
       const tags = emotionCache.sheet.tags;
@@ -93,11 +78,7 @@ const Document = withEmotionCache(
           <meta name="emotion-insertion-point" content="emotion-insertion-point" />
         </head>
         <body>
-          <AppContext.Provider value={ENV}>
-            {children}
-          </AppContext.Provider>
-          
-          {/* {children} */}
+          {children}
           <ScrollRestoration />
           <Scripts />
           <link rel="stylesheet" href={tailwindcss} />
