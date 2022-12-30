@@ -79,36 +79,3 @@ export default function FormProfile({
     </DialogWerk>
   );
 }
-
-/*
-<Dialog
-  fullScreen={fullScreen}
-  scroll="body"
-  className="modal-bs"
-  open={open}
-  onClose={formLoading || isSubmitting ? undefined : onCloseModal}
->
-  <DialogTitle
-    className="py-2 pr-2 flex items-center sticky top-0 z-10 bg-white rounded-t-md border-bottom"
-  >
-    Edit Profile
-    <IconButton
-      onClick={onCloseModal}
-      disabled={formLoading || isSubmitting}
-      className="ml-auto"
-      aria-label="Close"
-    >
-      <CloseIcon />
-    </IconButton>
-  </DialogTitle>
-  <DialogContent className="mt-6">
-    <FormSetting
-      disabled={formLoading || isSubmitting}
-      register={register}
-      errors={errors}
-      setValue={setValue}
-      onSubmit={handleSubmit(onSave)}
-    />
-  </DialogContent>
-</Dialog>
-*/
