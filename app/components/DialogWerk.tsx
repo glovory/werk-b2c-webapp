@@ -22,10 +22,11 @@ export default function DialogWerk({
       className={Cx("modal-bs", className)}
       onClose={onClose}
     >
-      <DialogTitle className="py-2 pr-2 flex items-center border-bottom">
+      <DialogTitle className="py-2 pr-2 flex items-center border-bottom sticky top-0 z-10 bg-white rounded-t-md">
         {title}
         
         <IconButton
+          disabled={!onClose}
           onClick={onClose}
           className="ml-auto"
           aria-label="Close"

@@ -7,8 +7,8 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Cropper from 'react-easy-crop';
 
-import WerkLogo from '~/svg/Werk';
-import MoveIcon from '~/svg/Move';
+import WerkLogo from '~/svg/werk';
+import MoveIcon from '~/svg/move';
 import DialogWerk from '~/components/DialogWerk';
 import { Cx, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
@@ -145,7 +145,7 @@ export default function AvatarSetup({
                 onCropComplete={onCropComplete}
               />
 
-              <div className="absolute inset-0 flex pointer-events-none">
+              <div className="absolute inset-0 flex pointer-events-none select-none">
                 <b className="text-white bg-gray-700/60 m-auto py-1 px-4 rounded-md text-xs shadow-sm">
                   <MoveIcon className="align-middle mr-2" />
                   Drag to change the image position
