@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog'; // , { DialogProps }
+import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -13,8 +13,8 @@ import Cropper from 'react-easy-crop';
 
 import Dropdown from '~/components/Dropdown';
 import DialogWerk from '~/components/DialogWerk';
-import CameraIcon from '~/svg/Camera';
-import MoveIcon from '~/svg/Move';
+import CameraIcon from '~/svg/camera';
+import MoveIcon from '~/svg/move';
 import { enterToClick, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
 import { INITIAL_BG } from '~/config';
@@ -128,7 +128,7 @@ export default function Cover({
   return (
     <div
       ref={refParent as any}
-      className="relative"
+      className="relative select-none"
     >
       {(fileBlob || cropSrc) &&
         <div className="relative cropper" style={{ height }} tabIndex={-1}>
@@ -155,7 +155,8 @@ export default function Cover({
       }
 
       <img
-        {...imgLoader("w-full object-cover text-0")}
+        // {...imgLoader("w-full object-cover text-0")}
+        className="w-full object-cover text-0"
         hidden={!!fileBlob}
         height={height}
         loading="lazy"

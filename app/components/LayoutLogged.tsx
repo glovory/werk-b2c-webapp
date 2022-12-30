@@ -24,7 +24,7 @@ import useGetFileView from '~/utils/hooks/useGetFileView';
 import { imgLoader } from '~/utils/dom';
 import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
-import WerkLogo from '~/svg/Werk';
+import WerkLogo from '~/svg/werk';
 
 interface Props {
   footer?: boolean | any,

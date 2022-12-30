@@ -32,9 +32,9 @@ import FormProfile from '~/components/profile/FormProfile';
 import Cover from '~/components/Cover';
 import AvatarSetup from '~/components/AvatarSetup';
 import Dropdown, { menuLeft } from '~/components/Dropdown';
-import WerkLogo from '~/svg/Werk';
-import CameraIcon from '~/svg/Camera';
-import MoveIcon from '~/svg/Move';
+import WerkLogo from '~/svg/werk';
+import CameraIcon from '~/svg/camera';
+import MoveIcon from '~/svg/move';
 import WorkExperience from '~/components/profile/sections/WorkExperience';
 import Education from '~/components/profile/sections/Education';
 import HardSkill from '~/components/profile/sections/HardSkill';
@@ -44,7 +44,7 @@ import { INITIAL_BG } from '~/config';
 
 const Profile: React.FC = () => {
   const { data: userData, isLoading } = useGetIdentity<any>(); // , isSuccess
-  const { $id: userId, name: fullName } = userData || {}; //email: userEmail 
+  const { $id: userId, $createdAt: createdAt, name: fullName } = userData || {}; // email: userEmail 
   const refFile = useRef();
   const [modalEdit, setModalEdit] = useState<boolean>(false);
   const [cover, setCover] = useState<any>(INITIAL_BG);
@@ -129,8 +129,9 @@ const Profile: React.FC = () => {
       />
 
       <Container className="pb-7 md:pt-7 max-md:px-0">
-        <Grid justifyContent="center" container spacing={2}>
-          <Grid item lg={8} xs={12} className="flex flex-col gap-6">
+        <Grid container spacing={3} justifyContent="center">
+          {/* lg={9} */}
+          <Grid item lg={9} xs={12} className="flex flex-col gap-6">
             <Card variant="outlined" className="max-md:rounded-none">
               <Cover
                 disabled={isLoading}
@@ -238,7 +239,7 @@ const Profile: React.FC = () => {
                   I am very quality-conscious because I spent my early career years in QA roles
                 </p>
                 <div className="text-xs text-gray-400">
-                  Joined Werk: <time className="font-medium">23 November 2022</time>
+                  Joined Werk: <time dateTime={createdAt} className="font-medium">23 November 2022</time>
                 </div>
               </CardContent>
             </Card>
@@ -251,8 +252,8 @@ const Profile: React.FC = () => {
 
             <SoftSkill />
           </Grid>
-
-          <Grid item lg={4} xs={12} className="flex flex-col gap-6">
+          {/* lg={4} */}
+          <Grid item lg={3} xs={12} className="flex flex-col gap-6">
             <Card variant="outlined" className="max-md:rounded-none">
               <CardHeader
                 avatar={<WorkTwoToneIcon />}

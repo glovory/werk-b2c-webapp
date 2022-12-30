@@ -19,5 +19,5 @@ export const INITIAL_BG = '/image/bg/cover.svg';
 export const BUCKET_ID = '63a117a09c198a16ae4e';
 
 // Functions
-export const CANDIDATE_PROFILES = '639a94a596500ae9a7d8';
 export const CHECK_USER_EXIST = '63a02b6bbf99a9acd42c';
+export const CANDIDATE_PROFILES = '639a94a596500ae9a7d8';

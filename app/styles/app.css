@@ -241,12 +241,14 @@ img {
 
 /* Cropper */
 
-.cropper:active:not(:focus-within)::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 1301;
-  cursor: move;
+@media (hover: hover) {
+  .cropper:active:not(:focus-within)::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 1301;
+    cursor: move;
+  }
 }
 
 /* This won't be included in your compiled CSS unless you actually use it */
@@ -498,6 +500,10 @@ img {
   margin-right: 0.25rem;
 }
 
+.mt-1 {
+  margin-top: 0.25rem;
+}
+
 .block {
   display: block;
 }
@@ -616,6 +622,12 @@ img {
 
 .cursor-auto {
   cursor: auto;
+}
+
+.select-none {
+  -webkit-user-select: none;
+     -moz-user-select: none;
+          user-select: none;
 }
 
 .select-auto {
@@ -757,6 +769,10 @@ img {
 
 .p-0 {
   padding: 0px;
+}
+
+.p-2 {
+  padding: 0.5rem;
 }
 
 .py-1 {
@@ -952,6 +968,11 @@ img {
   color: rgb(156 163 175 / var(--tw-text-opacity));
 }
 
+.text-red-500 {
+  --tw-text-opacity: 1;
+  color: rgb(239 68 68 / var(--tw-text-opacity));
+}
+
 .underline {
   text-decoration-line: underline;
 }
@@ -991,7 +1012,6 @@ img {
 
 .border-bottom {
   border-bottom: 1px solid #e8e9ed;
-  /* #dee2e6 */
 }
 
 /* This won't be included in your compiled CSS unless you actually use it */

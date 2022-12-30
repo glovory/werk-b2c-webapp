@@ -1,5 +1,5 @@
-import React from "react";
-import type { MetaFunction } from "@remix-run/node";
+import { type ReactNode, useContext } from "react";
+import { type MetaFunction, type LoaderFunction, json } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -7,6 +7,7 @@ import {
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
 } from "@remix-run/react";
 
 import { Refine } from "@pankod/refine-core";
@@ -23,13 +24,13 @@ import {
 } from "@pankod/refine-mui";
 
 import routerProvider from "@pankod/refine-remix-router";
-
 import { dataProvider, liveProvider } from "@pankod/refine-appwrite";
 import { withEmotionCache } from "@emotion/react";
 import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
+import { AppContext } from "~/contexts/AppContext";
 // import { Title, Sider, Layout, Header } from "~/components/layout";
 // import remixImageStyles from "remix-image/remix-image.css";
 
@@ -45,13 +46,26 @@ export const meta: MetaFunction = () => ({
 });
 
 interface DocumentProps {
-  children: React.ReactNode;
+  children: ReactNode;
   title?: string;
+}
+
+export const loader: LoaderFunction = async () => {
+  return json({
+    ENV: {
+      NODE_ENV: process.env.NODE_ENV,
+      SERVE_URL: process.env.SERVE_URL,
+      APPWRITE_URL: process.env.APPWRITE_URL,
+      APPWRITE_PROJECT: process.env.APPWRITE_PROJECT,
+      TOKEN_KEY: process.env.TOKEN_KEY,
+    },
+  })
 }
 
 const Document = withEmotionCache(
   ({ children, title }: DocumentProps, emotionCache) => {
-    const clientStyleData = React.useContext(ClientStyleContext);
+    const clientStyleData = useContext(ClientStyleContext);
+    const { ENV } = useLoaderData();
     useEnhancedEffect(() => {
       emotionCache.sheet.container = document.head;
       const tags = emotionCache.sheet.tags;
@@ -68,7 +82,10 @@ const Document = withEmotionCache(
           <Meta />
           {title ? <title>{title}</title> : null}
           <Links />
-          <link rel="icon" href="/image/werk.svg" />
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+          <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+          {/* <link rel="manifest" href="/site.webmanifest" /> */}
           <link
             rel="stylesheet"
             href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
@@ -76,7 +93,11 @@ const Document = withEmotionCache(
           <meta name="emotion-insertion-point" content="emotion-insertion-point" />
         </head>
         <body>
-          {children}
+          <AppContext.Provider value={ENV}>
+            {children}
+          </AppContext.Provider>
+          
+          {/* {children} */}
           <ScrollRestoration />
           <Scripts />
           <link rel="stylesheet" href={tailwindcss} />

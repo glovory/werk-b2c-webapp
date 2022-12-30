@@ -1,14 +1,11 @@
-import Dialog from '@mui/material/Dialog'; // , { DialogProps }
-import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 
+import DialogWerk from '~/components/DialogWerk';
 import FormSetting from '~/components/profile/FormSetting';
 
 interface Props {
@@ -58,31 +55,18 @@ export default function FormProfile({
         onFinish(data);
         onSubmit?.(data);
         resolve();
-      }, 9000);
+      }, 3000);
     });
   }
 
   return (
-    <Dialog
+    <DialogWerk
+      title="Edit Profile"
       fullScreen={fullScreen}
       scroll="body"
-      className="modal-bs"
       open={open}
       onClose={formLoading || isSubmitting ? undefined : onCloseModal}
     >
-      <DialogTitle
-        className="py-2 pr-2 flex items-center sticky top-0 z-10 bg-white rounded-t-md border-bottom"
-      >
-        Edit Profile
-        <IconButton
-          onClick={onCloseModal}
-          disabled={formLoading || isSubmitting}
-          className="ml-auto"
-          aria-label="Close"
-        >
-          <CloseIcon />
-        </IconButton>
-      </DialogTitle>
       <DialogContent className="mt-6">
         <FormSetting
           disabled={formLoading || isSubmitting}
@@ -92,6 +76,6 @@ export default function FormProfile({
           onSubmit={handleSubmit(onSave)}
         />
       </DialogContent>
-    </Dialog>
+    </DialogWerk>
   );
 }
