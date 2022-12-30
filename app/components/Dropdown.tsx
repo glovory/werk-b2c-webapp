@@ -27,6 +27,17 @@ export const menuLeft = {
   }
 };
 
+export const menuCenter = {
+  anchorOrigin: {
+    ...anchorOrigin,
+    horizontal: 'center',
+  },
+  transformOrigin: {
+    ...transformOrigin,
+    horizontal: 'center',
+  }
+};
+
 export default function Dropdown({
   buttonProps,
   label,

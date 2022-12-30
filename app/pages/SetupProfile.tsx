@@ -4,15 +4,17 @@ import Button from '@mui/material/Button';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useGetIdentity } from "@pankod/refine-core";
-// import { useNavigate } from "@remix-run/react";
+// import { useGetIdentity } from "@pankod/refine-core";
+import { useNavigate } from "@remix-run/react";
 
+import LoadingPage from '~/components/LoadingPage';
 import AuthSensor from '~/components/AuthSensor';
 import WelcomeLayout from "~/components/WelcomeLayout";
 import FormSetting from '~/components/profile/FormSetting';
 import AvatarSetup from '~/components/AvatarSetup';
 import { enterToClick } from '~/utils/dom';
-import { storage } from "~/utility"; // , functions
+import useCheckUserExist from '~/utils/hooks/useCheckUserExist';
+import { storage } from "~/utility";
 import { BUCKET_ID, CANDIDATE_PROFILES } from '~/config';
 
 interface FormProfileInputs {
@@ -27,8 +29,15 @@ interface FormProfileInputs {
 }
 
 const SetUpProfile: React.FC = () => {
-  // const navigate = useNavigate();
-  const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
+  const navigate = useNavigate();
+  // Prevent access this page if isExist
+  const { loading: isLoadingCheck, userData, isSuccess, isLoading } = useCheckUserExist((res: any) => {
+    if(res?.isExist){
+      navigate('/', { replace: true });
+      return;
+    }
+  });
+  // const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
   const {
     refineCore: { onFinish, formLoading },
     reset,
@@ -53,23 +62,6 @@ const SetUpProfile: React.FC = () => {
   const [fileInput, setFileInput] = useState<any>();
   const [photoFile, setPhotoFile] = useState<any>();
   const [photo, setPhoto] = useState<any>();
-
-  // Prevent access this page if isExist
-  // useEffect(() => {
-  //   if(!isLoading && isSuccess && userData){
-  //     const { $id } = userData;
-  //     functions.createExecution('63a02b6bbf99a9acd42c', `{"userId":"${$id}"}`)
-  //     .then((res: any) => {
-  //       const fixRes = JSON.parse(res?.response || '{}');
-  //       if(fixRes.isExist){
-  //         navigate('/', { replace: true });
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log('err: ', err);
-  //     });
-  //   }
-  // }, [userData, isSuccess, isLoading]);
 
   useEffect(() => {
     // reset form with fetch data
@@ -106,13 +98,16 @@ const SetUpProfile: React.FC = () => {
       // const { $id: cropId } = 
       await storage.createFile(BUCKET_ID, userId + '_cropped', cropFile);
       // const avatarUrl = storage.getFileView(BUCKET_ID, $id);
-      // const avatarCropUrl = storage.getFileView(BUCKET_ID, cropId);
       // console.log('onSave avatarUrl: ', avatarUrl);
       fixData.avatar = userId;
       fixData.avatarCropped = userId + '_cropped';
     }
     
     onFinish(fixData);
+  }
+
+  if(isLoadingCheck || isLoading){
+    return <LoadingPage />;
   }
 
   return (

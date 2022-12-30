@@ -18,9 +18,9 @@ import { Link } from "@remix-run/react";
 import { useGetIdentity } from "@pankod/refine-core"; // useLogout
 import { useNavigate } from "@remix-run/react";
 
-import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE } from "~/utility";
+import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE, storage } from "~/utility";
 import { authProvider } from '~/authProvider';
-import useGetFileView from '~/utils/hooks/useGetFileView';
+import { BUCKET_ID } from '~/config';
 import { imgLoader } from '~/utils/dom';
 import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
@@ -28,7 +28,7 @@ import WerkLogo from '~/svg/werk';
 
 interface Props {
   footer?: boolean | any,
-  children?: ReactNode | any,
+  children?: ReactNode,
 }
 
 const LANGUAGE = [
@@ -41,7 +41,6 @@ export default function LayoutLogged({
   children,
 }: Props){
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
-  const { $id: userId } = userData || {};
   // const { mutate: logout } = useLogout<string>();
   const navigate = useNavigate();
   const [identity, setIdentity] = useState<any>();
@@ -51,16 +50,20 @@ export default function LayoutLogged({
   const [avatar, setAvatar] = useState<any>();
   const [language, setLanguage] = useState<string>('en');
 
-  useGetFileView(
-    userId ? userId + '_cropped' : null,
-    (fileUrl: any) => {
-      fileUrl && setAvatar(fileUrl.href);
-      setLoadingAvatar(false);
-    }
-  );
-
   useEffect(() => {
-    setIdentity(!isLoading && userData && isSuccess ? userData : null);
+    const isOk = !isLoading && userData && isSuccess;
+    
+    if(isOk){
+      const ava = storage.getFileView(BUCKET_ID, userData.$id);
+      // console.log('avatarSrc: ', avatarSrc);
+      if(ava?.href){
+        setAvatar(ava.href);
+        setLoadingAvatar(false);
+      }
+    }
+
+    setIdentity(isOk ? userData : null);
+    
   }, [userData, isSuccess, isLoading]);
 
   const languageChange = (e: SelectChangeEvent) => {
@@ -282,7 +285,7 @@ export default function LayoutLogged({
       </AppBar>
 
       <div className="flex flex-col min-h-calc-nav">
-        {typeof children === 'function' ? children(avatar) : children}
+        {children}
 
         {footer && <FooterMain />}
       </div>
