@@ -144,6 +144,7 @@ export default function Cover({
               width: parentWidth, // Must Calc from parent width
             }}
             mediaProps={{
+              ...imgLoader(),
               draggable: false,
             }}
             image={fileBlob || cropSrc} // fileBlob || src
@@ -163,7 +164,7 @@ export default function Cover({
         decoding="async"
         draggable={false}
         alt="Background"
-        src={src} // fileImage.name ? window.URL.createObjectURL(fileImage) : src
+        src={src}
       />
       <Dropdown
         mountOnOpen // keepMounted

@@ -91,7 +91,7 @@ export default function WorkExperience(){
   }
 
   return (
-    <Card variant="outlined" className="max-md:rounded-none">
+    <Card variant="outlined" className="max-md:rounded-none w-card">
       <CardHeader
         avatar={<WorkTwoToneIcon />}
         title="Work Experience"

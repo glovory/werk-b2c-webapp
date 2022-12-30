@@ -7,7 +7,7 @@ import AddIcon from '@mui/icons-material/Add';
 
 export default function HardSkill(){
   return (
-    <Card variant="outlined" className="max-md:rounded-none">
+    <Card variant="outlined" className="max-md:rounded-none w-card">
       <CardHeader
         avatar={<ConstructionTwoToneIcon />}
         title="Hard Skill"

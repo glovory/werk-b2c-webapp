@@ -65,7 +65,7 @@ export default function Education(){
   }
 
   return (
-    <Card variant="outlined" className="max-md:rounded-none">
+    <Card variant="outlined" className="max-md:rounded-none w-card">
       <CardHeader
         avatar={<SchoolTwoToneIcon />}
         title="Education"
