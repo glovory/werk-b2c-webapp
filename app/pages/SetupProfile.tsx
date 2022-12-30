@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useGetIdentity } from "@pankod/refine-core"; // useOne
+import { useGetIdentity } from "@pankod/refine-core";
 // import { useNavigate } from "@remix-run/react";
 
 import AuthSensor from '~/components/AuthSensor';
@@ -12,7 +12,7 @@ import WelcomeLayout from "~/components/WelcomeLayout";
 import FormSetting from '~/components/profile/FormSetting';
 import AvatarSetup from '~/components/AvatarSetup';
 import { enterToClick } from '~/utils/dom';
-import { storage } from "~/utility"; // , functions, normalizeFile
+import { storage } from "~/utility"; // , functions
 import { BUCKET_ID, CANDIDATE_PROFILES } from '~/config';
 
 interface FormProfileInputs {
@@ -75,12 +75,11 @@ const SetUpProfile: React.FC = () => {
     // reset form with fetch data
     if(!isLoading && isSuccess && userData){
       const { $id, name } = userData;
-      reset({ id: $id, fullName: name });
+      reset({ candidateId: $id, fullName: name }); // id
     }
   }, [userData, isSuccess, isLoading]);
 
   const onSaveAvatar = (crop: any, original: any) => {
-    // console.log('onSaveAvatar original: ', original);
     setFileInput(original);
     setPhoto(crop);
     setPhotoFile(window.URL.createObjectURL(crop));
@@ -113,7 +112,6 @@ const SetUpProfile: React.FC = () => {
       fixData.avatarCropped = userId + '_cropped';
     }
     
-    // console.log('onSave fixData: ', fixData);
     onFinish(fixData);
   }
 
