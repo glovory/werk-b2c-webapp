@@ -6,7 +6,7 @@ import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 // import { useGetIdentity } from "@pankod/refine-core";
 import { useNavigate } from "@remix-run/react";
-
+//
 import LoadingPage from '~/components/LoadingPage';
 import AuthSensor from '~/components/AuthSensor';
 import WelcomeLayout from "~/components/WelcomeLayout";
@@ -34,7 +34,6 @@ const SetUpProfile: React.FC = () => {
   const { loading: isLoadingCheck, userData, isSuccess, isLoading } = useCheckUserExist((res: any) => {
     if(res?.isExist){
       navigate('/', { replace: true });
-      return;
     }
   });
   // const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
@@ -103,7 +102,14 @@ const SetUpProfile: React.FC = () => {
       fixData.avatarCropped = userId + '_cropped';
     }
     
-    onFinish(fixData);
+    onFinish(fixData)
+      .then(() => {
+        // console.log('onSave res: ', res);
+        navigate('/', { replace: true });
+      })
+      .catch(() => {
+        console.log('error');
+      });
   }
 
   if(isLoadingCheck || isLoading){

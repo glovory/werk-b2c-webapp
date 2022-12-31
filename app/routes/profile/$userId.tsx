@@ -42,6 +42,7 @@ import Education from '~/components/profile/sections/Education';
 import HardSkill from '~/components/profile/sections/HardSkill';
 import SoftSkill from '~/components/profile/sections/SoftSkill';
 import { enterToClick } from '~/utils/dom';
+import { parseDate } from '~/utils/date';
 import { INITIAL_BG, BUCKET_ID, CANDIDATE_PROFILES } from '~/config';
 
 export const meta: MetaFunction = () => ({
@@ -51,7 +52,8 @@ export const meta: MetaFunction = () => ({
 const Profile: React.FC = () => {
   const { data: userData, isLoading } = useGetIdentity<any>(); // , isSuccess
   const { $id: userId, $createdAt: createdAt, name: fullName } = userData || {}; // email: userEmail
-  const { data: currentUser, isLoading: isLoadingCurrentUser } = useList({
+  // , isLoading: isLoadingCurrentUser
+  const { data: currentUser } = useList({
     liveMode: "off",
     resource: CANDIDATE_PROFILES,
     config: {
@@ -266,7 +268,7 @@ const Profile: React.FC = () => {
                   </p>
                 }
                 <div className="text-xs text-gray-400">
-                  Joined Werk: <time dateTime={createdAt} className="font-medium">23 November 2022</time>
+                  Joined Werk: {createdAt && <time dateTime={createdAt} className="font-medium">{parseDate(createdAt)}</time>}
                 </div>
               </CardContent>
             </Card>

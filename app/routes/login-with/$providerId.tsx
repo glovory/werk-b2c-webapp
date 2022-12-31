@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useParams } from "@remix-run/react";
-
+//
 import LoadingPage from '~/components/LoadingPage';
 import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE } from "~/utility";
 
