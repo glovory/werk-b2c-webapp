@@ -15,12 +15,12 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import { Link } from "@remix-run/react";
-import { useGetIdentity } from "@pankod/refine-core"; // useLogout
+import { useGetIdentity, useList } from "@pankod/refine-core"; // useLogout
 import { useNavigate } from "@remix-run/react";
-
+//
 import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE, storage } from "~/utility";
 import { authProvider } from '~/authProvider';
-import { BUCKET_ID } from '~/config';
+import { BUCKET_ID, CANDIDATE_PROFILES } from '~/config';
 import { imgLoader } from '~/utils/dom';
 import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
@@ -28,7 +28,7 @@ import WerkLogo from '~/svg/werk';
 
 interface Props {
   footer?: boolean | any,
-  children?: ReactNode,
+  children?: ReactNode | any,
 }
 
 const LANGUAGE = [
@@ -41,6 +41,20 @@ export default function LayoutLogged({
   children,
 }: Props){
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
+  const { data: currentUser, isLoading: isLoadingCurrentUser } = useList({
+    liveMode: "off",
+    resource: CANDIDATE_PROFILES,
+    config: {
+      hasPagination: false,
+      filters: [
+        {
+          field: "candidateId",
+          operator: "eq",
+          value: userData?.$id,
+        },
+      ],
+    },
+  });
   // const { mutate: logout } = useLogout<string>();
   const navigate = useNavigate();
   const [identity, setIdentity] = useState<any>();
@@ -51,20 +65,18 @@ export default function LayoutLogged({
   const [language, setLanguage] = useState<string>('en');
 
   useEffect(() => {
-    const isOk = !isLoading && userData && isSuccess;
+    const isOk = !isLoading && !isLoadingCurrentUser && currentUser && userData && isSuccess;
+    
+    setIdentity(isOk ? { ...userData, ...(currentUser?.data?.[0] || {}) } : null);
     
     if(isOk){
       const ava = storage.getFileView(BUCKET_ID, userData.$id);
-      // console.log('avatarSrc: ', avatarSrc);
       if(ava?.href){
         setAvatar(ava.href);
         setLoadingAvatar(false);
       }
     }
-
-    setIdentity(isOk ? userData : null);
-    
-  }, [userData, isSuccess, isLoading]);
+  }, [userData, isSuccess, isLoading, isLoadingCurrentUser, currentUser]);
 
   const languageChange = (e: SelectChangeEvent) => {
     setLanguage(e.target.value);
@@ -233,12 +245,18 @@ export default function LayoutLogged({
                         <MenuItem
                           key="3"
                           component={Link}
-                          to={`/profile/${identity.$id}`} // ${identity.accountName || identity.$id}
+                          // to={`/profile/${identity.$id}`} // ${identity.accountName || identity.$id}
+                          to={`/profile/${identity.accountName || identity.candidateId}`}
                           onClick={close}
                         >
                           <Typography textAlign="center">My Profile</Typography>
                         </MenuItem>,
-                        <MenuItem key="4" onClick={close}>
+                        <MenuItem
+                          key="4"
+                          component={Link}
+                          to="/account-setting"
+                          onClick={close}
+                        >
                           <Typography textAlign="center">Account Setting</Typography>
                         </MenuItem>,
                         <hr key="5" className="my-3" />,
@@ -285,7 +303,8 @@ export default function LayoutLogged({
       </AppBar>
 
       <div className="flex flex-col min-h-calc-nav">
-        {children}
+        {/* {children} */}
+        {typeof children === 'function' ? children({ userData, isLoading, isSuccess }) : children}
 
         {footer && <FooterMain />}
       </div>
