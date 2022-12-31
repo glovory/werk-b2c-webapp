@@ -19,7 +19,7 @@ import {
   ThemeProvider,
   // LightTheme,
   // ReadyPage,
-  ErrorComponent,
+  // ErrorComponent,
 } from "@pankod/refine-mui";
 
 import routerProvider from "@pankod/refine-remix-router";
@@ -33,9 +33,11 @@ import ClientStyleContext from "~/contexts/ClientStyleContext";
 // import remixImageStyles from "remix-image/remix-image.css";
 
 import { light } from './theme';
+import tailwindcss from "./styles/app.css";
+import ErrorComponent from '~/pages/error/ErrorComponent';
 import WelcomePage from '~/pages/WelcomePage';
 import SetUpProfile from '~/pages/SetupProfile';
-import tailwindcss from "./styles/app.css";
+// import AccountSetting from '~/pages/AccountSetting';
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
@@ -78,6 +80,7 @@ const Document = withEmotionCache(
           <meta name="emotion-insertion-point" content="emotion-insertion-point" />
         </head>
         <body>
+          <div id="werkPortalPrepend"></div>
           {children}
           <ScrollRestoration />
           <Scripts />
@@ -119,7 +122,11 @@ export default function App() {
               {
                 name: "setup-profile",
                 list: SetUpProfile,
-              }
+              },
+              // {
+              //   name: "account-setting",
+              //   list: AccountSetting,
+              // }
             ]}
           >
             <Outlet />

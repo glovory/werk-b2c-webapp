@@ -24,15 +24,30 @@ export function imgLoader(
   onLoad?: (e: any) => void,
   onError?: (e: any) => void
 ){
-  return {
-    className: Cx("img-loader", className),
-    onLoad: (e: any) => {
-      e.target.classList.remove('img-loader');
-      onLoad?.(e);
-    },
-    onError: (e: any) => {
-      e.target.classList.remove('img-loader');
-      onError?.(e);
-    },
+  if(typeof window !== 'undefined'){
+    return {
+      className: Cx("img-loader", className),
+      onLoad: (e: any) => {
+        e.target.classList.remove('img-loader');
+        onLoad?.(e);
+      },
+      onError: (e: any) => {
+        e.target.classList.remove('img-loader');
+        onError?.(e);
+      },
+    }
   }
+  return { className };
+
+  // return {
+  //   className: typeof window !== 'undefined' ? Cx("img-loader", className) : className, // Cx("img-loader", className)
+  //   onLoad: (e: any) => {
+  //     e.target.classList.remove('img-loader');
+  //     onLoad?.(e);
+  //   },
+  //   onError: (e: any) => {
+  //     e.target.classList.remove('img-loader');
+  //     onError?.(e);
+  //   },
+  // }
 }

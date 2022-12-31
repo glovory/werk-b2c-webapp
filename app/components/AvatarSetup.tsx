@@ -6,7 +6,7 @@ import Skeleton from '@mui/material/Skeleton';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Cropper from 'react-easy-crop';
-
+//
 import WerkLogo from '~/svg/werk';
 import MoveIcon from '~/svg/Move';
 import DialogWerk from '~/components/DialogWerk';
@@ -120,7 +120,6 @@ export default function AvatarSetup({
         fullScreen={fullScreen}
         fullWidth
         scroll="body"
-        className="modal-bs"
         open={openModal}
         onClose={disabled ? undefined : onCloseModal}
       >
