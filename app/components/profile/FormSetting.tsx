@@ -1,16 +1,11 @@
-import { useState } from 'react';
-// import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import InputAdornment from '@mui/material/InputAdornment';
-import Autocomplete from '@mui/material/Autocomplete';
-import CircularProgress from '@mui/material/CircularProgress';
-// import { Form } from "@remix-run/react";
 //
-import fetchData from '~/utils/fetchData';
 import { DOMAIN } from '~/config';
+import CountryProvinceCity from '~/components/form/CountryProvinceCity';
 
-interface Props {
+interface FormSettingProps {
   className?: string,
   inputPhoto?: any, // boolean
   photo?: object | undefined | any,
@@ -22,14 +17,9 @@ interface Props {
   setValue?: (...ops: any) => void,
   onSubmit?: React.FormEventHandler<HTMLFormElement>,
   onChangeFile?: React.ChangeEventHandler<HTMLInputElement>,
+  onChangeProvince?: any,
+  onChangeCity?: any,
 }
-
-const COUNTRIES = [
-  'Indonesia', // 'Malaysia', 'Thailand', 'Singapore', 'Saudi Arabia', 'Philippines',
-];
-// const STATES = ['Bali', 'DKI Jakarta', 'East Java', 'Jawa Tengah', 'Jawa Barat', 'Kalimantan Tengah', 'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Utara', 'Madura', 'Yogyakarta'];
-// const CITIES = ['Jakarta', 'Malang', 'Surabaya'];
-// const EXTERNAL_API = 'http://localhost:3000/data'; // https://api-location.netlify.app
 
 export default function FormSetting({
   className,
@@ -37,56 +27,13 @@ export default function FormSetting({
   disabled,
   register,
   errors,
-  provinceValue = '',
-  cityValue = '',
+  provinceValue,
+  cityValue,
   setValue,
   onSubmit,
-}: Props){
-  const [openStates, setOpenStates] = useState<boolean>(false);
-  const [openCity, setOpenCity] = useState<boolean>(false);
-  const [citiesAndStates, setCitiesAndStates] = useState<any>([]); // All Data
-  const [states, setStates] = useState<any>([]); // province options
-  const [stateValue, setStateValue] = useState<any>(provinceValue);
-  const [valueCity, setValueCity] = useState<any>(cityValue);
-  let loadingBased = openStates && states.length < 1;
-
-  const onOpenGetBased = () => {
-    setOpenStates(true);
-    if(!states.length){
-      // window.location.origin + '/data/cities.json' | 'https://api-location.netlify.app/id/cities.min.json'
-      fetchData(window.location.origin + '/data/cities.json', {
-        // responseType: 'text',
-        mode: 'no-cors', // no-cors | cors
-      })
-      .then((res: any) => {
-        if(Array.isArray(res)){
-          setCitiesAndStates(res); // Store All data
-          setStates([ ...new Set(res.map(f => f.province).filter(Boolean)) ]);
-        }
-      })
-      .catch((err: any) => {
-        console.log('err: ', err);
-      });
-    }
-  }
-
-  const onOpenCity = () => {
-    setOpenCity(true);
-  }
-
-  const onChangeStates = (e: any, value: any) => {
-    setStateValue(value || '');
-    if(valueCity){
-      setTimeout(() => {
-        setValueCity('');
-        setValue?.('city', '');
-      }, 1);
-    }
-  }
-
-  const onChangeCity = (e: any, value: any) => {
-    setValueCity(value);
-  }
+  onChangeProvince,
+  onChangeCity,
+}: FormSettingProps){
 
   return (
     <form
@@ -111,7 +58,6 @@ export default function FormSetting({
           variant="outlined"
           placeholder="Enter your full name"
         />
-
         <hr className="my-6" />
       
         <label htmlFor="accountName" className="font-semibold w-required">Account Name</label>
@@ -141,7 +87,6 @@ export default function FormSetting({
           }}
         />
         <div className="text-xs mt-2">Minimum character is 3 and can combine with number, underscore or period. Space or symbol are not allowed.</div>
-
         <hr className="my-6" />
 
         <label htmlFor="headLine" className="font-semibold w-required">Headline</label>
@@ -158,7 +103,6 @@ export default function FormSetting({
           placeholder="e.g. I'm an Account Executive based in Jakarta"
         />
         <div className="text-xs mt-2">100 characters.</div>
-
         <hr className="my-6" />
 
         <label htmlFor="bio" className="font-semibold">Your Bio</label>
@@ -171,7 +115,6 @@ export default function FormSetting({
           id="bio"
           disabled={disabled}
           multiline
-          // rows={4}
           fullWidth
           variant="outlined"
           placeholder="Write a few sentences about you and your experience..."
@@ -180,105 +123,26 @@ export default function FormSetting({
           }}
           inputProps={{
             className: "py-3 px-4 resize-y",
-            sx: { minHeight: 120, maxHeight: 300 },
+            sx: { overflow: 'auto!important', minHeight: 120, maxHeight: 300 },
           }}
         />
-
         <hr className="my-6" />
 
         <label htmlFor="country" className="font-semibold w-required">Where are you based?</label>
         <p className="mb-4">Find roles based in your country.</p>
-        <Autocomplete
-          {...register("country", { value: COUNTRIES[0] })}
-          id="country"
-          className="w-input-gray w-multiline"
-          fullWidth
-          disableClearable
-          readOnly
+
+        <CountryProvinceCity
+          register={register}
+          errors={errors}
+          setValue={setValue}
           disabled={disabled}
-          defaultValue={COUNTRIES[0]}
-          options={COUNTRIES}
-          renderInput={(props) => (
-            <TextField
-              {...props}
-              name="country"
-              error={!!errors.country}
-              helperText={errors?.country?.message}
-              label="Select Country"
-            />
-          )}
+          provinceValue={provinceValue}
+          cityValue={cityValue}
+          onChangeProvince={onChangeProvince}
+          onChangeCity={onChangeCity}
         />
-
-        <div className="mt-4">
-          <Autocomplete
-            {...register("province", { value: stateValue })}
-            id="province"
-            className="w-input-gray w-multiline"
-            fullWidth
-            disableClearable
-            value={stateValue}
-            disabled={disabled}
-            open={openStates}
-            loading={loadingBased}
-            onChange={onChangeStates}
-            onOpen={onOpenGetBased}
-            onClose={() => setOpenStates(false)}
-            isOptionEqualToValue={(option, value) => option === value}
-            options={states}
-            renderInput={(props) => (
-              <TextField
-                {...props}
-                name="province"
-                error={!!errors.province}
-                // @ts-ignore:next-line
-                helperText={errors?.province?.message}
-                label="Select Province/States"
-                InputProps={{
-                  ...props.InputProps,
-                  endAdornment: (
-                    <>
-                      {loadingBased && <CircularProgress color="inherit" size={20} />}
-                      {props.InputProps.endAdornment}
-                    </>
-                  ),
-                }}
-              />
-            )}
-          />
-        </div>
-
-        <div className="mt-4">
-          <Autocomplete
-            {...register("city", { value: valueCity })}
-            id="city"
-            className="w-input-gray w-multiline"
-            fullWidth
-            disableClearable
-            value={valueCity}
-            disabled={disabled}
-            open={openCity}
-            onChange={onChangeCity}
-            onOpen={onOpenCity}
-            onClose={() => setOpenCity(false)}
-            isOptionEqualToValue={(option, value) => option === value} // value !== '' || 
-            noOptionsText={stateValue.length ? 'No Options' : 'Please Select Province/States'}
-            options={stateValue.length ? citiesAndStates.filter((f: any) => f.province === stateValue).map((val: any) => val.name) : []} // CITIES
-            renderInput={(props) => (
-              <TextField
-                {...props}
-                name="city"
-                error={!!errors.city}
-                // @ts-ignore:next-line
-                helperText={errors?.city?.message}
-                label="Select City"
-              />
-            )}
-          />
-        </div>
-
         <hr className="my-6" />
 
-        {/*  sticky bottom-0 bg-white border-top py-3 px-6 mt-5 mb-n4 mx-n6 */}
         <div className="text-right">
           <LoadingButton
             size="large"

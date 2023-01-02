@@ -6,7 +6,8 @@ import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from "@remix-run/react";
 //
-import LoadingPage from '~/components/LoadingPage';
+/** @NOTE : Enable this comment after the test */
+// import LoadingPage from '~/components/LoadingPage';
 import AuthSensor from '~/components/AuthSensor';
 import WelcomeLayout from "~/components/WelcomeLayout";
 import FormSetting from '~/components/profile/FormSetting';
@@ -31,13 +32,14 @@ const SetUpProfile: React.FC = () => {
   const navigate = useNavigate();
   // Prevent access this page if isExist
   const { loading: isLoadingCheck, userData, isSuccess, isLoading } = useCheckUserExist((res: any) => {
-    if(res?.isExist){
-      navigate('/', { replace: true });
-    }else{
-      setTimeout(() => {
-        setLoadingCheckUser(false);
-      }, 95);
-    }
+    /** @NOTE : Enable this comment after the test */
+    // if(res?.isExist){
+    //   navigate('/', { replace: true });
+    // }else{
+    //   setTimeout(() => {
+    //     setLoadingCheckUser(false);
+    //   }, 95);
+    // }
   });
   const {
     refineCore: { onFinish, formLoading },
@@ -60,10 +62,13 @@ const SetUpProfile: React.FC = () => {
       city: yup.string().required('Required choice for City.'),
     }).required())
   });
-  const [loadingCheckUser, setLoadingCheckUser] = useState<boolean>(true);
+  /** @NOTE : Enable this comment after the test */
+  // const [loadingCheckUser, setLoadingCheckUser] = useState<boolean>(true);
   const [fileInput, setFileInput] = useState<any>();
   const [photoFile, setPhotoFile] = useState<any>();
   const [photo, setPhoto] = useState<any>();
+  const [provinceValue, setProvinceValue] = useState<any>(null);
+  const [cityValue, setCityValue] = useState<any>(null);
 
   useEffect(() => {
     // reset form with fetch data
@@ -87,18 +92,19 @@ const SetUpProfile: React.FC = () => {
     };
     if(photo){
       const userId = userData.$id;
-      const originalFile = new File([fileInput], userId + ".jpg", {
+      const cropName = userId + '_cropped';
+      const originalFile = new File([fileInput], userId + '.jpg', {
         type: "image/jpeg"
       });
-      const cropFile = new File([photo], userId + "_cropped.jpg", {
+      const cropFile = new File([photo], cropName + '.jpg', {
         type: "image/jpeg"
       });
 
       await storage.createFile(BUCKET_ID, userId, originalFile);
-      await storage.createFile(BUCKET_ID, userId + '_cropped', cropFile);
+      await storage.createFile(BUCKET_ID, cropName, cropFile);
 
       fixData.avatar = userId;
-      fixData.avatarCropped = userId + '_cropped';
+      fixData.avatarCropped = cropName;
     }
     
     onFinish(fixData)
@@ -106,13 +112,18 @@ const SetUpProfile: React.FC = () => {
         navigate('/', { replace: true });
       })
       .catch(() => {
-        console.log('error');
+        console.error('Failed setup profile');
       });
   }
 
-  if(isLoadingCheck || isLoading || loadingCheckUser){
-    return <LoadingPage />;
+  const onChangeProvince = (val: any) => {
+    setProvinceValue(val);
   }
+
+  /** @NOTE : Enable this comment after the test */
+  // if(isLoadingCheck || isLoading || loadingCheckUser){
+  //   return <LoadingPage />;
+  // }
 
   return (
     <AuthSensor>
@@ -174,6 +185,10 @@ const SetUpProfile: React.FC = () => {
               disabled={isLoading || formLoading || isSubmitting}
               register={register}
               errors={errors}
+              provinceValue={provinceValue}
+              cityValue={cityValue}
+              onChangeProvince={onChangeProvince}
+              onChangeCity={setCityValue}
               setValue={setValue}
               onSubmit={handleSubmit(onSave)}
             />

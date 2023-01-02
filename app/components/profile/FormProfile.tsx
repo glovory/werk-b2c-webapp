@@ -8,13 +8,15 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import DialogWerk from '~/components/DialogWerk';
 import FormSetting from '~/components/profile/FormSetting';
 
-interface Props {
+interface FormProfileProps {
   open?: boolean | any,
   values?: any,
   provinceValue?: string,
   cityValue?: string,
   onCloseModal?: () => void,
   onSubmit?: (data: any) => void,
+  onChangeProvince?: any,
+  onChangeCity?: any,
 }
 
 interface FormProfileInputs {
@@ -34,7 +36,9 @@ export default function FormProfile({
   cityValue,
   onCloseModal,
   onSubmit,
-}: Props){
+  onChangeProvince,
+  onChangeCity,
+}: FormProfileProps){
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {
@@ -57,8 +61,8 @@ export default function FormProfile({
   const processForm = formLoading || isSubmitting;
 
   useEffect(() => {
-    // console.log('useEffect open: ', open);
     if(open && values){
+      // console.log('useEffect open: ', open);
       reset(values);
     }
   }, [open, values]);
@@ -93,6 +97,8 @@ export default function FormProfile({
         errors={errors}
         setValue={setValue}
         onSubmit={handleSubmit(onSave)}
+        onChangeProvince={onChangeProvince}
+        onChangeCity={onChangeCity}
       />
     </DialogWerk>
   );

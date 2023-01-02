@@ -41,7 +41,7 @@ export default function CountryProvinceCity({
           setStates([ ...new Set(res.map(f => f.province).filter(Boolean)) ]);
         }
       })
-      .catch((err: any) => {
+      .catch((err) => {
         console.log('err: ', err);
       });
     }
@@ -49,12 +49,10 @@ export default function CountryProvinceCity({
 
   const onChangeStates = (e: any, value: any) => {
     onChangeProvince?.(value);
-    if(cityValue){
-      setTimeout(() => {
-        onChangeCity?.(null);
-        setValue?.('city', null);
-      }, 1);
-    }
+    setTimeout(() => {
+      onChangeCity?.(null);
+      setValue?.('city', null);
+    }, 9);
   }
 
   const doChangeCity = (e: any, value: any) => {
@@ -65,7 +63,7 @@ export default function CountryProvinceCity({
     <>
       <Autocomplete
         {...register("country", { value: COUNTRIES[0] })}
-        id="country"
+        // id="country"
         className="w-input-gray w-multiline"
         fullWidth
         disableClearable
@@ -85,8 +83,8 @@ export default function CountryProvinceCity({
       />
 
       <Autocomplete
-        {...register("province")}
-        id="province"
+        {...register("province", { value: provinceValue })}
+        // id="province"
         className="w-input-gray w-multiline mt-4"
         fullWidth
         disableClearable
@@ -122,16 +120,16 @@ export default function CountryProvinceCity({
 
       <Autocomplete
         {...register("city", { value: cityValue })}
-        id="city"
+        // id="city"
         className="w-input-gray w-multiline mt-4"
         fullWidth
         disableClearable
         disabled={disabled}
         value={cityValue}
         onChange={doChangeCity}
-        isOptionEqualToValue={(option, value) => option === value} // value !== '' || 
+        isOptionEqualToValue={(option, value) => option === value}
         noOptionsText={provinceValue ? 'No Options' : 'Please Select Province/States'}
-        options={provinceValue ? citiesAndStates.filter((f: any) => f.province === provinceValue).map((val: any) => val.name) : []} // CITIES
+        options={citiesAndStates.filter((f: any) => f.province === provinceValue).map((val: any) => val.name)}
         renderInput={(props) => (
           <TextField
             {...props}

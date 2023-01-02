@@ -26,7 +26,7 @@ import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
 import WerkLogo from '~/svg/werk';
 
-interface Props {
+interface LayoutLoggedProps {
   footer?: boolean | any,
   children?: ReactNode | any,
 }
@@ -39,9 +39,10 @@ const LANGUAGE = [
 export default function LayoutLogged({
   footer = true,
   children,
-}: Props){
+}: LayoutLoggedProps){
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
   const { data: currentUser, isLoading: isLoadingCurrentUser } = useList({
+    errorNotification: false,
     liveMode: "off",
     resource: CandidateProfiles,
     config: {
@@ -58,6 +59,7 @@ export default function LayoutLogged({
   // const { mutate: logout } = useLogout<string>();
   const navigate = useNavigate();
   const [identity, setIdentity] = useState<any>();
+  const [loadingIdentity, setLoadingIdentity] = useState<boolean>(true);
   const [loadingSignin, setLoadingSignin] = useState<boolean>(false);
   const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
   const [firstRenderMenuLang, setFirstRenderMenuLang] = useState<boolean>(false);
@@ -65,11 +67,14 @@ export default function LayoutLogged({
   const [language, setLanguage] = useState<string>('en');
 
   useEffect(() => {
-    const isOk = !isLoading && !isLoadingCurrentUser && currentUser && userData && isSuccess;
+    const loadingDone = !isLoading && !isLoadingCurrentUser;
+    if(loadingDone){
+      setLoadingIdentity(false);
+    }
     
-    setIdentity(isOk ? { ...userData, ...(currentUser?.data?.[0] || {}) } : null);
-    
-    if(isOk){
+    if(loadingDone && currentUser && userData && isSuccess){
+      setIdentity({ ...userData, ...(currentUser?.data?.[0] || {}) });
+
       const ava = storage.getFileView(BUCKET_ID, userData.$id);
       if(ava?.href){
         setAvatar(ava.href);
@@ -112,6 +117,7 @@ export default function LayoutLogged({
     <>
       <AppBar
         enableColorOnDark
+        id="navMain"
         elevation={0}
         color="default"
         variant="outlined"
@@ -131,7 +137,7 @@ export default function LayoutLogged({
 
             <Box className="flex items-center ml-auto">
               {isLoading || isLoadingCurrentUser ?
-                <Typography component="div" variant="h4" className="w-60">
+                <Typography component="div" variant="h4" className="hideSSR w-60">
                   <Skeleton />
                 </Typography>
                 :
@@ -304,7 +310,7 @@ export default function LayoutLogged({
 
       <div className="flex flex-col min-h-calc-nav">
         {/* {children} */}
-        {typeof children === 'function' ? children({ userData, isLoading, isSuccess }) : children}
+        {typeof children === 'function' ? children({ identity, isSuccess, loadingIdentity }) : children}
 
         {footer && <FooterMain />}
       </div>

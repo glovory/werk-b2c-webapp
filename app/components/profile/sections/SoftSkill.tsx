@@ -5,7 +5,17 @@ import Button from '@mui/material/Button';
 import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import AddIcon from '@mui/icons-material/Add';
 
-export default function SoftSkill(){
+interface SoftSkillProps {
+  isLoggedInUser?: boolean,
+  // list: Array<any>,
+  // onSave?: (val: any) => void
+  // onDelete?: (val: any, closeConfirm: any, closeModal: any) => void
+}
+
+export default function SoftSkill({
+  isLoggedInUser,
+  // list,
+}: SoftSkillProps){
   return (
     <Card variant="outlined" className="max-md:rounded-none w-card">
       <CardHeader
@@ -16,20 +26,22 @@ export default function SoftSkill(){
           className: "text-lg font-medium",
         }}
         // action={
-        //   <Switch defaultChecked />
+        //   isLoggedInUser && <Switch defaultChecked />
         // }
       />
 
       <div className="py-6 px-4">
-        <div className="grid place-items-center gap-4 text-gray-400 text-sm">
-          <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
-            <LightbulbTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
-          </p>
-          <p className="mb-4">Tell the company about your soft skill.</p>
-          <Button variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
-            <AddIcon fontSize="small" className="mr-2" />Add Soft Skill
-          </Button>
-        </div>
+        {isLoggedInUser && (
+          <div className="grid place-items-center gap-4 text-gray-400 text-sm">
+            <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
+              <LightbulbTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
+            </p>
+            <p className="mb-4">Tell the company about your soft skill.</p>
+            <Button variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
+              <AddIcon fontSize="small" className="mr-2" />Add Soft Skill
+            </Button>
+          </div>
+        )}
       </div>
     </Card>
   );
