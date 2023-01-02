@@ -49,7 +49,7 @@ const AccountSetting: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormDeleteAccountInputs>({
     // refineCoreProps: {
-    //   resource: CANDIDATE_PROFILES,
+    //   resource: CandidateProfiles,
     //   redirect: false,
     // },
     resolver: yupResolver(yup.object({

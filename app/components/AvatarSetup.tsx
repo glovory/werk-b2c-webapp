@@ -1,4 +1,6 @@
 import { useState, useCallback } from 'react';
+// import Dialog from '@mui/material/Dialog';
+// import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -24,6 +26,7 @@ export default function AvatarSetup({
   avatarProps,
   iconProps,
   onSave,
+  onDelete,
   openModalView,
   onCloseModalView,
   label,
@@ -39,6 +42,7 @@ export default function AvatarSetup({
   const [fileBlob, setFileBlob] = useState<any>();
   const [crop, setCrop] = useState(INIT_CROP);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [openConfirm, setOpenConfirm] = useState<boolean>(false);
 
   const onCloseModal = () => {
     setOpenModal(false);
@@ -75,8 +79,18 @@ export default function AvatarSetup({
   }, [croppedAreaPixels]);
 
   const openModalCrop = () => {
-    setOpenModal(true);
-    setFileBlob(cropSrc);
+    if(cropSrc){
+      setOpenModal(true);
+      setFileBlob(cropSrc);
+    }
+  }
+
+  const openConfirmDelete = () => {
+    setOpenConfirm(true);
+  }
+
+  const closeConfirm = () => {
+    setOpenConfirm(false);
   }
 
   return (
@@ -110,7 +124,7 @@ export default function AvatarSetup({
             <WerkLogo {...iconProps} className="text-blue-700" />
         }
 
-        {typeof children === 'function' ? children(onChangeFile, openModalCrop, disabled) : children}
+        {typeof children === 'function' ? children({ onChangeFile, openModalCrop, openConfirmDelete, disabled }) : children}
       </div>
 
       {typeof label === 'function' ? label(onChangeFile, disabled) : null}
@@ -176,6 +190,47 @@ export default function AvatarSetup({
             draggable={false}
           />
         </div>
+      </DialogWerk>
+
+      {/* <Dialog
+        open={openConfirm}
+        onClose={closeConfirm}
+        aria-labelledby="dialog-remove-avatar"
+      >
+        <DialogTitle id="dialog-remove-avatar">
+          Are you sure to delete this avatar?
+        </DialogTitle>
+        <DialogActions>
+          <Button onClick={closeConfirm}>No</Button>
+          <Button onClick={() => onDelete?.(closeConfirm)}>
+            Yes
+          </Button>
+        </DialogActions>
+      </Dialog> */}
+
+      <DialogWerk
+        title="Delete Photo"
+        fullWidth
+        maxWidth="xs"
+        scroll="body"
+        open={openConfirm}
+        // onClose={processForm ? undefined : closeConfirm}
+        onClose={closeConfirm}
+      >
+        <div className="p-6">
+          Are you sure want to delete this photo?
+        </div>
+        <DialogActions className="py-3 px-4 border-top">
+          <Button
+            size="large"
+            color="error"
+            variant="contained"
+            className="px-6"
+            onClick={() => onDelete?.(closeConfirm)}
+          >
+            Delete
+          </Button>
+        </DialogActions>
       </DialogWerk>
     </>
   );
