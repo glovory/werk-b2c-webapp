@@ -1,8 +1,9 @@
 import Dialog from '@mui/material/Dialog'; // , { DialogProps }
 import DialogTitle from '@mui/material/DialogTitle';
+// import DialogContent from '@mui/material/DialogContent';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
-
+//
 import { Cx } from '~/utils/dom';
 
 export default function DialogWerk({
@@ -16,9 +17,6 @@ export default function DialogWerk({
     <Dialog
       {...etc}
       // fullScreen={fullScreen}
-      // fullWidth
-      // maxWidth="lg"
-      // scroll="body"
       className={Cx("modal-bs", className)}
       onClose={onClose}
     >
@@ -36,6 +34,10 @@ export default function DialogWerk({
       </DialogTitle>
       
       {children}
+
+      {/* <DialogContent>
+        {children}
+      </DialogContent> */}
     </Dialog>
   );
 }

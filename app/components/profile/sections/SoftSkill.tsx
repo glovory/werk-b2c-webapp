@@ -9,6 +9,7 @@ export default function SoftSkill(){
   return (
     <Card variant="outlined" className="max-md:rounded-none w-card">
       <CardHeader
+        className="py-3 border-bottom"
         avatar={<LightbulbTwoToneIcon />}
         title="Soft Skill"
         titleTypographyProps={{
@@ -17,7 +18,6 @@ export default function SoftSkill(){
         // action={
         //   <Switch defaultChecked />
         // }
-        className="border-bottom"
       />
 
       <div className="py-6 px-4">
@@ -26,7 +26,7 @@ export default function SoftSkill(){
             <LightbulbTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
           </p>
           <p className="mb-4">Tell the company about your soft skill.</p>
-          <Button variant="outlined" size="large" className="min-w-50p">
+          <Button variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
             <AddIcon fontSize="small" className="mr-2" />Add Soft Skill
           </Button>
         </div>

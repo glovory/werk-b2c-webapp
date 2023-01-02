@@ -11,11 +11,13 @@ import fetchData from '~/utils/fetchData';
 import { DOMAIN } from '~/config';
 
 interface Props {
+  className?: string,
   inputPhoto?: any, // boolean
   photo?: object | undefined | any,
   disabled?: boolean,
   register?: any,
   errors?: any,
+  provinceValue?: any,
   cityValue?: any,
   setValue?: (...ops: any) => void,
   onSubmit?: React.FormEventHandler<HTMLFormElement>,
@@ -30,10 +32,12 @@ const COUNTRIES = [
 // const EXTERNAL_API = 'http://localhost:3000/data'; // https://api-location.netlify.app
 
 export default function FormSetting({
+  className,
   inputPhoto,
   disabled,
   register,
   errors,
+  provinceValue = '',
   cityValue = '',
   setValue,
   onSubmit,
@@ -42,15 +46,17 @@ export default function FormSetting({
   const [openCity, setOpenCity] = useState<boolean>(false);
   const [citiesAndStates, setCitiesAndStates] = useState<any>([]); // All Data
   const [states, setStates] = useState<any>([]); // province options
-  const [stateValue, setStateValue] = useState<any>('');
+  const [stateValue, setStateValue] = useState<any>(provinceValue);
   const [valueCity, setValueCity] = useState<any>(cityValue);
   let loadingBased = openStates && states.length < 1;
 
   const onOpenGetBased = () => {
     setOpenStates(true);
     if(!states.length){
+      // window.location.origin + '/data/cities.json' | 'https://api-location.netlify.app/id/cities.min.json'
       fetchData(window.location.origin + '/data/cities.json', {
-        mode: 'no-cors',
+        // responseType: 'text',
+        mode: 'no-cors', // no-cors | cors
       })
       .then((res: any) => {
         if(Array.isArray(res)){
@@ -84,6 +90,7 @@ export default function FormSetting({
 
   return (
     <form
+      className={className}
       noValidate
       onSubmit={onSubmit}
     >
@@ -164,10 +171,17 @@ export default function FormSetting({
           id="bio"
           disabled={disabled}
           multiline
-          rows={4}
+          // rows={4}
           fullWidth
           variant="outlined"
           placeholder="Write a few sentences about you and your experience..."
+          InputProps={{
+            className: "p-0",
+          }}
+          inputProps={{
+            className: "py-3 px-4 resize-y",
+            sx: { minHeight: 120, maxHeight: 300 },
+          }}
         />
 
         <hr className="my-6" />
@@ -197,11 +211,12 @@ export default function FormSetting({
 
         <div className="mt-4">
           <Autocomplete
-            {...register("province")}
+            {...register("province", { value: stateValue })}
             id="province"
             className="w-input-gray w-multiline"
             fullWidth
             disableClearable
+            value={stateValue}
             disabled={disabled}
             open={openStates}
             loading={loadingBased}
@@ -209,7 +224,7 @@ export default function FormSetting({
             onOpen={onOpenGetBased}
             onClose={() => setOpenStates(false)}
             isOptionEqualToValue={(option, value) => option === value}
-            options={states} // STATES
+            options={states}
             renderInput={(props) => (
               <TextField
                 {...props}

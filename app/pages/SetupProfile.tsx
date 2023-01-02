@@ -4,7 +4,6 @@ import Button from '@mui/material/Button';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-// import { useGetIdentity } from "@pankod/refine-core";
 import { useNavigate } from "@remix-run/react";
 //
 import LoadingPage from '~/components/LoadingPage';
@@ -15,7 +14,7 @@ import AvatarSetup from '~/components/AvatarSetup';
 import { enterToClick } from '~/utils/dom';
 import useCheckUserExist from '~/utils/hooks/useCheckUserExist';
 import { storage } from "~/utility";
-import { BUCKET_ID, CANDIDATE_PROFILES } from '~/config';
+import { BUCKET_ID, CandidateProfiles } from '~/config';
 
 interface FormProfileInputs {
   avatar: any
@@ -34,9 +33,12 @@ const SetUpProfile: React.FC = () => {
   const { loading: isLoadingCheck, userData, isSuccess, isLoading } = useCheckUserExist((res: any) => {
     if(res?.isExist){
       navigate('/', { replace: true });
+    }else{
+      setTimeout(() => {
+        setLoadingCheckUser(false);
+      }, 95);
     }
   });
-  // const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
   const {
     refineCore: { onFinish, formLoading },
     reset,
@@ -46,7 +48,7 @@ const SetUpProfile: React.FC = () => {
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
     refineCoreProps: {
-      resource: CANDIDATE_PROFILES,
+      resource: CandidateProfiles,
       redirect: false,
     },
     resolver: yupResolver(yup.object({
@@ -58,6 +60,7 @@ const SetUpProfile: React.FC = () => {
       city: yup.string().required('Required choice for City.'),
     }).required())
   });
+  const [loadingCheckUser, setLoadingCheckUser] = useState<boolean>(true);
   const [fileInput, setFileInput] = useState<any>();
   const [photoFile, setPhotoFile] = useState<any>();
   const [photo, setPhoto] = useState<any>();
@@ -66,7 +69,7 @@ const SetUpProfile: React.FC = () => {
     // reset form with fetch data
     if(!isLoading && isSuccess && userData){
       const { $id, name } = userData;
-      reset({ candidateId: $id, fullName: name }); // id
+      reset({ candidateId: $id, fullName: name });
     }
   }, [userData, isSuccess, isLoading]);
 
@@ -85,26 +88,21 @@ const SetUpProfile: React.FC = () => {
     if(photo){
       const userId = userData.$id;
       const originalFile = new File([fileInput], userId + ".jpg", {
-        type: "image/jpeg" // fileInput.type,
+        type: "image/jpeg"
       });
       const cropFile = new File([photo], userId + "_cropped.jpg", {
         type: "image/jpeg"
       });
 
-      // const { $id } = 
       await storage.createFile(BUCKET_ID, userId, originalFile);
-      // Cropped
-      // const { $id: cropId } = 
       await storage.createFile(BUCKET_ID, userId + '_cropped', cropFile);
-      // const avatarUrl = storage.getFileView(BUCKET_ID, $id);
-      // console.log('onSave avatarUrl: ', avatarUrl);
+
       fixData.avatar = userId;
       fixData.avatarCropped = userId + '_cropped';
     }
     
     onFinish(fixData)
       .then(() => {
-        // console.log('onSave res: ', res);
         navigate('/', { replace: true });
       })
       .catch(() => {
@@ -112,7 +110,7 @@ const SetUpProfile: React.FC = () => {
       });
   }
 
-  if(isLoadingCheck || isLoading){
+  if(isLoadingCheck || isLoading || loadingCheckUser){
     return <LoadingPage />;
   }
 
@@ -156,7 +154,6 @@ const SetUpProfile: React.FC = () => {
                           >
                             Click to Upload
                             <input
-                              // {...register("avatar")}
                               hidden
                               type="file"
                               accept=".jpg,.jpeg,.png"

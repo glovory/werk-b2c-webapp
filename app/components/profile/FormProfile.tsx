@@ -1,4 +1,4 @@
-import DialogContent from '@mui/material/DialogContent';
+import { useEffect } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useForm } from "@pankod/refine-react-hook-form";
@@ -10,6 +10,9 @@ import FormSetting from '~/components/profile/FormSetting';
 
 interface Props {
   open?: boolean | any,
+  values?: any,
+  provinceValue?: string,
+  cityValue?: string,
   onCloseModal?: () => void,
   onSubmit?: (data: any) => void,
 }
@@ -26,6 +29,9 @@ interface FormProfileInputs {
 
 export default function FormProfile({
   open,
+  values,
+  provinceValue,
+  cityValue,
   onCloseModal,
   onSubmit,
 }: Props){
@@ -33,6 +39,7 @@ export default function FormProfile({
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {
     refineCore: { onFinish, formLoading },
+    reset,
     register,
     handleSubmit,
     setValue,
@@ -47,6 +54,14 @@ export default function FormProfile({
       city: yup.string().trim().required('Required choice for City.'),
     }).required())
   });
+  const processForm = formLoading || isSubmitting;
+
+  useEffect(() => {
+    // console.log('useEffect open: ', open);
+    if(open && values){
+      reset(values);
+    }
+  }, [open, values]);
 
   const onSave = (data: any) => {
     // console.log('onSave data: ', data);
@@ -55,7 +70,7 @@ export default function FormProfile({
         onFinish(data);
         onSubmit?.(data);
         resolve();
-      }, 3000);
+      }, 1e3);
     });
   }
 
@@ -63,19 +78,22 @@ export default function FormProfile({
     <DialogWerk
       title="Edit Profile"
       fullScreen={fullScreen}
+      fullWidth
+      maxWidth="xs"
       scroll="body"
       open={open}
-      onClose={formLoading || isSubmitting ? undefined : onCloseModal}
+      onClose={processForm ? undefined : onCloseModal}
     >
-      <DialogContent className="mt-6">
-        <FormSetting
-          disabled={formLoading || isSubmitting}
-          register={register}
-          errors={errors}
-          setValue={setValue}
-          onSubmit={handleSubmit(onSave)}
-        />
-      </DialogContent>
+      <FormSetting
+        className="p-6"
+        provinceValue={provinceValue}
+        cityValue={cityValue}
+        disabled={processForm}
+        register={register}
+        errors={errors}
+        setValue={setValue}
+        onSubmit={handleSubmit(onSave)}
+      />
     </DialogWerk>
   );
 }
