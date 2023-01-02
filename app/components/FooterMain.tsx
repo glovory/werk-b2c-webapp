@@ -6,11 +6,11 @@ import TwitterIcon from '@mui/icons-material/Twitter';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
 import { Cx } from '~/utils/dom';
 
-interface Props {
+interface FooterMainProps {
   className?: string,
 }
 
-const FooterMain = ({ className }: Props) => {
+const FooterMain = ({ className }: FooterMainProps) => {
   return (
     <footer className={Cx("p-4 text-center mt-auto", className)}>
       <p className="mb-4 text-xs">

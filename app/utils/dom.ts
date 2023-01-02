@@ -13,7 +13,7 @@ export function Cx(...args: classNames.ArgumentArray){
 
 // For trigger click element when press Enter key
 export const enterToClick = (e: any) => {
-	if(e.key === 'Enter'){
+	if(e?.key === 'Enter'){
 		e.target.click();
 	}
 }
@@ -24,30 +24,15 @@ export function imgLoader(
   onLoad?: (e: any) => void,
   onError?: (e: any) => void
 ){
-  if(typeof window !== 'undefined'){
-    return {
-      className: Cx("img-loader", className),
-      onLoad: (e: any) => {
-        e.target.classList.remove('img-loader');
-        onLoad?.(e);
-      },
-      onError: (e: any) => {
-        e.target.classList.remove('img-loader');
-        onError?.(e);
-      },
-    }
+  return {
+    className: Cx("img-loader", className),
+    onLoad: (e: any) => {
+      e.target.classList.remove('img-loader');
+      onLoad?.(e);
+    },
+    onError: (e: any) => {
+      e.target.classList.remove('img-loader');
+      onError?.(e);
+    },
   }
-  return { className };
-
-  // return {
-  //   className: typeof window !== 'undefined' ? Cx("img-loader", className) : className, // Cx("img-loader", className)
-  //   onLoad: (e: any) => {
-  //     e.target.classList.remove('img-loader');
-  //     onLoad?.(e);
-  //   },
-  //   onError: (e: any) => {
-  //     e.target.classList.remove('img-loader');
-  //     onError?.(e);
-  //   },
-  // }
 }

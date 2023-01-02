@@ -133,6 +133,10 @@
   background-color: #f4f4f6;
 }
 
+.w-input-group .MuiInputBase-input:-webkit-autofill {
+  border-radius: 0;
+}
+
 /* Select with small arrow */
 .w-select-sm .MuiSelect-icon {
   font-size: 1.25rem;

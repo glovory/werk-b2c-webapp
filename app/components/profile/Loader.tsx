@@ -32,10 +32,15 @@ export const CardUser = () => {
   );
 }
 
+interface CardSectionProps {
+  contentSize: number | string
+  headerClass?: any
+}
+
 export const CardSection = ({
   contentSize,
   headerClass,
-}: any) => {
+}: CardSectionProps) => {
   return (
     <Card variant="outlined" className="max-md:rounded-none cursor-progress">
       <CardHeader
