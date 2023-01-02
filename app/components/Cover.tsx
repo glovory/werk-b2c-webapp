@@ -1,8 +1,8 @@
 import { useState, useCallback, useRef } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
+// import Dialog from '@mui/material/Dialog';
+// import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -39,6 +39,7 @@ export default function Cover({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+  const [isEdited, setIsEdited] = useState<boolean>(false);
 
   const onChangeFile = (e: any) => {
     const file = e.target.files[0];
@@ -47,6 +48,7 @@ export default function Cover({
       setParentWidth(width);
       setFileImage(file);
       setFileBlob(window.URL.createObjectURL(file));
+      setIsEdited(true);
     }
   }
 
@@ -54,6 +56,7 @@ export default function Cover({
     setFileImage({});
     setFileBlob(null);
     setCrop(INIT_CROP);
+    setIsEdited(false);
     // Reset input file
     const inputFile = refFile.current as any;
     if(inputFile?.value){
@@ -95,6 +98,17 @@ export default function Cover({
     setOpenConfirm(false);
   }
 
+  const openModalCrop = (close: any) => {
+    close();
+    if(cropSrc){
+      const { width } = (refParent.current as any)?.getBoundingClientRect() || {};
+      setParentWidth(width);
+      // setFileImage(file);
+      setFileBlob(cropSrc);
+      setIsEdited(true);
+    }
+  }
+
   const renderMenus = (close: any) => {
     let fix = [
       <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
@@ -113,7 +127,7 @@ export default function Cover({
           <VisibilityTwoToneIcon className="mr-2" />View Photo
         </MenuItem>,
         ...fix,
-        <MenuItem key="c" onClick={close}>
+        <MenuItem key="c" onClick={() => openModalCrop(close)}>
           <MoveIcon width={18} height={18} className="ml-1 mr-3" />Change Position
         </MenuItem>,
         <hr key="h" className="my-2" />,
@@ -130,7 +144,7 @@ export default function Cover({
       ref={refParent as any}
       className="relative select-none"
     >
-      {(fileBlob || cropSrc) &&
+      {(fileBlob || cropSrc) && isEdited &&
         <div className="relative cropper" style={{ height }} tabIndex={-1}>
           <Cropper
             classes={{
@@ -214,21 +228,46 @@ export default function Cover({
         </div>
       </DialogWerk>
 
-      <Dialog
+      {/* <Dialog
         open={openConfirm}
         onClose={closeConfirm}
         aria-labelledby="dialog-remove-background"
       >
         <DialogTitle id="dialog-remove-background">
-          Are you sure to delete this background?
+          Are you sure want to delete this background?
         </DialogTitle>
         <DialogActions>
           <Button onClick={closeConfirm}>No</Button>
-          <Button onClick={() => onDelete?.(closeConfirm)} autoFocus>
+          <Button onClick={() => onDelete?.(closeConfirm)}>
             Yes
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
+
+      <DialogWerk
+        title="Delete Background"
+        fullWidth
+        maxWidth="xs"
+        scroll="body"
+        open={openConfirm}
+        // onClose={processForm ? undefined : closeConfirm}
+        onClose={closeConfirm}
+      >
+        <div className="p-6">
+          Are you sure want to delete this background?
+        </div>
+        <DialogActions className="py-3 px-4 border-top">
+          <Button
+            size="large"
+            color="error"
+            variant="contained"
+            className="px-6"
+            onClick={() => onDelete?.(closeConfirm)}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </DialogWerk>
     </div>
   );
 }
