@@ -5,13 +5,13 @@ import { Link } from "@remix-run/react";
 
 import FooterMain from './FooterMain';
 
-interface Props {
+interface WelcomeLayoutProps {
   children?: ReactNode,
 }
 
 export default function WelcomeLayout({
   children,
-}: Props){
+}: WelcomeLayoutProps){
   return (
     <>
       <AppBar

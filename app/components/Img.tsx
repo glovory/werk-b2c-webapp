@@ -1,5 +1,6 @@
 import { forwardRef, useState } from 'react';
 import { Cx } from '~/utils/dom';
+import { isSSR } from "~/utils/typeChecking";
 
 const Img = forwardRef<HTMLImageElement, any>(
   (
@@ -21,7 +22,7 @@ const Img = forwardRef<HTMLImageElement, any>(
     //   initLoad = false;
     // }
 
-    const [load, setLoad] = useState(typeof window !== 'undefined'); // true
+    const [load, setLoad] = useState(!isSSR()); // true
 
     const Load = (e: React.SyntheticEvent<HTMLImageElement, Event>) => {
       // console.log('Load e: ', e);

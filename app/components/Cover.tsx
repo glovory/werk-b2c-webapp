@@ -1,8 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
-// import Dialog from '@mui/material/Dialog';
-// import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
@@ -19,13 +17,23 @@ import { enterToClick, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
 import { INITIAL_BG } from '~/config';
 
+interface CoverProps {
+  src?: string
+  cropSrc?: string
+  hide?: boolean
+  disabled?: boolean
+  onSave?: (crop: any, original: any) => void
+  onDelete?: (val: any) => void
+}
+
 export default function Cover({
   src,
   cropSrc,
+  hide,
   disabled,
   onSave,
   onDelete,
-}: any){
+}: CoverProps){
   const height = 180;
   const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
@@ -103,7 +111,6 @@ export default function Cover({
     if(cropSrc){
       const { width } = (refParent.current as any)?.getBoundingClientRect() || {};
       setParentWidth(width);
-      // setFileImage(file);
       setFileBlob(cropSrc);
       setIsEdited(true);
     }
@@ -180,18 +187,21 @@ export default function Cover({
         alt="Background"
         src={src}
       />
-      <Dropdown
-        mountOnOpen // keepMounted
-        disableAutoFocusItem
-        label={<CameraIcon />}
-        buttonProps={{
-          disabled,
-          hidden: !!fileBlob,
-          className: "min-w-0 p-1 rounded-full absolute md:top-4 max-md:bottom-4 right-4 z-1 hover:bg-white"
-        }}
-      >
-        {renderMenus}
-      </Dropdown>
+
+      {!hide &&
+        <Dropdown
+          mountOnOpen // keepMounted
+          disableAutoFocusItem
+          label={<CameraIcon />}
+          buttonProps={{
+            disabled,
+            hidden: !!fileBlob,
+            className: "min-w-0 p-1 rounded-full absolute md:top-4 max-md:bottom-4 right-4 z-1 hover:bg-white"
+          }}
+        >
+          {renderMenus}
+        </Dropdown>
+      }
 
       {fileBlob &&
         <>
@@ -227,22 +237,6 @@ export default function Cover({
           />
         </div>
       </DialogWerk>
-
-      {/* <Dialog
-        open={openConfirm}
-        onClose={closeConfirm}
-        aria-labelledby="dialog-remove-background"
-      >
-        <DialogTitle id="dialog-remove-background">
-          Are you sure want to delete this background?
-        </DialogTitle>
-        <DialogActions>
-          <Button onClick={closeConfirm}>No</Button>
-          <Button onClick={() => onDelete?.(closeConfirm)}>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog> */}
 
       <DialogWerk
         title="Delete Background"

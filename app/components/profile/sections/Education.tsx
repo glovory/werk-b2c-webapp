@@ -21,6 +21,7 @@ import DialogWerk from '~/components/DialogWerk';
 import incrementId from '~/utils/incrementId';
 
 interface EducationProps {
+  isLoggedInUser?: boolean,
   list: Array<any>,
   onSave?: (val: any) => void
   onDelete?: (val: any, closeConfirm: any, closeModal: any) => void
@@ -34,6 +35,7 @@ interface FormEducationInputs {
 }
 
 export default function Education({
+  isLoggedInUser,
   list,
   onSave,
   onDelete,
@@ -113,7 +115,7 @@ export default function Education({
           className: "text-lg font-medium",
         }}
         action={
-          !!list?.length && (
+          isLoggedInUser && !!list?.length && (
             <Button onClick={onOpenModal} className="font-bold text-blue-700">
               <AddCircleTwoToneIcon fontSize="small" className="mr-2" />Add Education
             </Button>
@@ -126,14 +128,16 @@ export default function Education({
           <div className="flex flex-col gap-5">
             {list.map((item: any) =>
               <section key={item.id} className="flex flex-row items-start">
-                <div className="grow pr-3 text-sm">
+                <div className="grow text-sm">
                   <h6 className="text-gray-700 mb-1">{item.educationTitle}</h6>
                   <p>{item.startDate} - {item.endDate}</p>
                   <p>{item.schoolName}</p>
                 </div>
-                <IconButton onClick={() => onClickEdit(item)} color="primary" aria-label="edit">
-                  <EditTwoToneIcon />
-                </IconButton>
+                {isLoggedInUser && (
+                  <IconButton onClick={() => onClickEdit(item)} color="primary" aria-label="edit" className="ml-2">
+                    <EditTwoToneIcon />
+                  </IconButton>
+                )}
               </section>
             )}
 
@@ -144,142 +148,148 @@ export default function Education({
             }
           </div>
           :
-          <div className="grid place-items-center gap-4 text-gray-400 text-sm">
-            <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
-              <SchoolTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
-            </p>
-            <p className="mb-4">Tell the company about your education.</p>
-            <Button onClick={onOpenModal} variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
-              <AddIcon fontSize="small" className="mr-2" />Add Education
-            </Button>
-          </div>
+          isLoggedInUser && (
+            <div className="grid place-items-center gap-4 text-gray-400 text-sm">
+              <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
+                <SchoolTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
+              </p>
+              <p className="mb-4">Tell the company about your education.</p>
+              <Button onClick={onOpenModal} variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
+                <AddIcon fontSize="small" className="mr-2" />Add Education
+              </Button>
+            </div>
+          )
         }
       </div>
 
-      <DialogWerk
-        title="Add Education"
-        fullScreen={fullScreen}
-        fullWidth
-        maxWidth="xs"
-        scroll="body"
-        open={openModal}
-        onClose={processForm ? undefined : onCloseModal}
-      >
-        <form
-          className="p-6"
-          noValidate
-          onSubmit={handleSubmit(doSave)}
+      {isLoggedInUser &&
+        <DialogWerk
+          title="Add Education"
+          fullScreen={fullScreen}
+          fullWidth
+          maxWidth="xs"
+          scroll="body"
+          open={openModal}
+          onClose={processForm ? undefined : onCloseModal}
         >
-          <fieldset
-            disabled={processForm}
-            className="min-w-0 p-0 m-0 border-0 text-sm"
+          <form
+            className="p-6"
+            noValidate
+            onSubmit={handleSubmit(doSave)}
           >
-            <label htmlFor="educationTitle" className="font-medium w-required">Education Title</label>
-            <TextField
-              {...register("educationTitle")}
+            <fieldset
               disabled={processForm}
-              error={!!errors.educationTitle}
-              // @ts-ignore:next-line
-              helperText={errors?.educationTitle?.message}
-              id="educationTitle"
-              className="w-input-gray mt-2"
-              required
-              fullWidth
-              variant="outlined"
-              placeholder="Enter education title"
-            />
-            <hr className="my-6" />
-
-            <label className="font-medium w-required">Join Date</label>
-            <div className="flex flex-row items-center mt-2">
+              className="min-w-0 p-0 m-0 border-0 text-sm"
+            >
+              <label htmlFor="educationTitle" className="font-medium w-required">Education Title</label>
               <TextField
-                {...register("startDate")}
+                {...register("educationTitle")}
                 disabled={processForm}
-                error={!!errors.startDate}
-                id="startDate"
-                className="w-input-gray"
+                error={!!errors.educationTitle}
+                // @ts-ignore:next-line
+                helperText={errors?.educationTitle?.message}
+                id="educationTitle"
+                className="w-input-gray mt-2"
                 required
                 fullWidth
                 variant="outlined"
-                type="date"
+                placeholder="Enter education title"
               />
-              <b className="p-2">-</b>
-              <TextField
-                {...register("endDate")}
-                disabled={processForm}
-                error={!!errors.endDate}
-                id="endDate"
-                className="w-input-gray"
-                required
-                fullWidth
-                variant="outlined"
-                type="date"
-              />
-            </div>
-            {(errors?.startDate?.message || errors?.endDate?.message) && // @ts-ignore:next-line
-              <div className="text-xs text-red-500 mt-1 pl-4">{errors?.startDate?.message || errors?.endDate?.message}</div>
-            }
-            <hr className="my-6" />
+              <hr className="my-6" />
 
-            <label htmlFor="schoolName" className="font-medium w-required">School or University Name</label>
-            <TextField
-              {...register("schoolName")}
-              disabled={processForm}
-              error={!!errors.schoolName}
-              // @ts-ignore:next-line
-              helperText={errors?.schoolName?.message}
-              id="schoolName"
-              className="w-input-gray mt-2"
-              required
-              fullWidth
-              variant="outlined"
-              placeholder="Enter school or university name"
-            />
-            <hr className="my-6" />
-
-            <div className="flex">
-              {itemToEditDelete?.educationTitle &&
-                <Button onClick={() => clickDelete(itemToEditDelete)} size="large" color="error">
-                  <DeleteTwoToneIcon className="mr-1" />Delete
-                </Button>
+              <label className="font-medium w-required">Join Date</label>
+              <div className="flex flex-row items-center mt-2">
+                <TextField
+                  {...register("startDate")}
+                  disabled={processForm}
+                  error={!!errors.startDate}
+                  id="startDate"
+                  className="w-input-gray"
+                  required
+                  fullWidth
+                  variant="outlined"
+                  type="date"
+                />
+                <b className="p-2">-</b>
+                <TextField
+                  {...register("endDate")}
+                  disabled={processForm}
+                  error={!!errors.endDate}
+                  id="endDate"
+                  className="w-input-gray"
+                  required
+                  fullWidth
+                  variant="outlined"
+                  type="date"
+                />
+              </div>
+              {(errors?.startDate?.message || errors?.endDate?.message) && // @ts-ignore:next-line
+                <div className="text-xs text-red-500 mt-1 pl-4">{errors?.startDate?.message || errors?.endDate?.message}</div>
               }
-              <LoadingButton
-                size="large"
-                variant="contained"
-                loading={processForm}
-                type="submit"
-                className="px-16 ml-auto"
-              >
-                Save
-              </LoadingButton>
-            </div>
-          </fieldset>
-        </form>
-      </DialogWerk>
+              <hr className="my-6" />
 
-      <DialogWerk
-        title="Delete Education"
-        fullWidth
-        maxWidth="sm"
-        scroll="body"
-        open={openConfirm}
-        onClose={processForm ? undefined : closeConfirm}
-      >
-        <div className="p-6">
-          Are you sure want to delete this education?
-        </div>
-        <DialogActions className="py-3 px-4 border-top">
-          <Button
-            size="large"
-            color="error"
-            variant="contained"
-            className="px-6"
-            onClick={() => onDelete?.(itemToEditDelete, closeConfirm, onCloseModal)}
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </DialogWerk>
+              <label htmlFor="schoolName" className="font-medium w-required">School or University Name</label>
+              <TextField
+                {...register("schoolName")}
+                disabled={processForm}
+                error={!!errors.schoolName}
+                // @ts-ignore:next-line
+                helperText={errors?.schoolName?.message}
+                id="schoolName"
+                className="w-input-gray mt-2"
+                required
+                fullWidth
+                variant="outlined"
+                placeholder="Enter school or university name"
+              />
+              <hr className="my-6" />
+
+              <div className="flex">
+                {itemToEditDelete?.educationTitle &&
+                  <Button onClick={() => clickDelete(itemToEditDelete)} size="large" color="error">
+                    <DeleteTwoToneIcon className="mr-1" />Delete
+                  </Button>
+                }
+                <LoadingButton
+                  size="large"
+                  variant="contained"
+                  loading={processForm}
+                  type="submit"
+                  className="px-16 ml-auto"
+                >
+                  Save
+                </LoadingButton>
+              </div>
+            </fieldset>
+          </form>
+        </DialogWerk>
+      }
+
+      {isLoggedInUser &&
+        <DialogWerk
+          title="Delete Education"
+          fullWidth
+          maxWidth="xs"
+          scroll="body"
+          open={openConfirm}
+          onClose={processForm ? undefined : closeConfirm}
+        >
+          <div className="p-6">
+            Are you sure want to delete this education?
+          </div>
+          <DialogActions className="py-3 px-4 border-top">
+            <Button
+              size="large"
+              color="error"
+              variant="contained"
+              className="px-6"
+              onClick={() => onDelete?.(itemToEditDelete, closeConfirm, onCloseModal)}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </DialogWerk>
+      }
     </Card>
   );
 }

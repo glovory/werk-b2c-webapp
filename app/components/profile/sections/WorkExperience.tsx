@@ -38,6 +38,7 @@ const COMMITMENT_TYPE = [
 ];
 
 interface WorkExperienceProps {
+  isLoggedInUser?: boolean,
   list: Array<any>,
   onSave?: (val: any) => void
   onDelete?: (val: any, closeConfirm: any, closeModal: any) => void
@@ -48,7 +49,7 @@ interface FormWorkExperienceInputs {
   joinDate: string
   endDate: string
   companyName: string
-  couuntry: string
+  country: string
   province: string
   city: string
   companyIndustry: string
@@ -58,6 +59,7 @@ interface FormWorkExperienceInputs {
 }
 
 export default function WorkExperience({
+  isLoggedInUser,
   list,
   onSave,
   onDelete,
@@ -68,8 +70,8 @@ export default function WorkExperience({
   const [isCurrentWork, setIsCurrentWork] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const [itemToEditDelete, setItemToEditDelete] = useState<any>({});
-  const [provinceValue, setProvinceValue] = useState<any>();
-  const [cityValue, setCityValue] = useState<any>();
+  const [provinceValue, setProvinceValue] = useState<any>(null);
+  const [cityValue, setCityValue] = useState<any>(null);
   const [companyIndustryValue, setCompanyIndustryValue] = useState<any>();
   const [workTypeValue, setWorkTypeValue] = useState<any>();
   const [commitmentTypeValue, setCommitmentTypeValue] = useState<any>();
@@ -171,7 +173,7 @@ export default function WorkExperience({
           className: "text-lg font-medium",
         }}
         action={
-          !!list?.length && (
+          isLoggedInUser && !!list?.length && (
             <Button onClick={onOpenModal} className="font-bold text-blue-700">
               <AddCircleTwoToneIcon fontSize="small" className="mr-2" />Add Work Experience
             </Button>
@@ -181,7 +183,7 @@ export default function WorkExperience({
 
       <div className="py-6 px-4">
         {!!list?.length ?
-          <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-6">
             {list.map((item: any) =>
               <section key={item.id} className="flex flex-row items-start">
                 <div className="grid place-items-center rounded-full w-16 h-16 bg-w-blue-1 flex-none">
@@ -190,7 +192,7 @@ export default function WorkExperience({
                 
                 <div className="grow ml-4">
                   <div className="flex flex-row items-start">
-                    <div className="grow pt-1 pr-2 text-sm text-gray-500">
+                    <div className="grow pt-1 text-sm text-gray-500">
                       <h6 className="text-gray-700">{item.jobPosition}</h6>
                       <p>{item.companyName}</p>
                       <p>{item.workType} | {item.commitmentType}</p>
@@ -199,9 +201,11 @@ export default function WorkExperience({
                       {/* Malang, East Java, Indonesia */}
                       <p>{item.city}, {item.province}, {item.country}</p>
                     </div>
-                    <IconButton onClick={() => onClickEdit(item)} color="primary" aria-label="edit">
-                      <EditTwoToneIcon />
-                    </IconButton>
+                    {isLoggedInUser && (
+                      <IconButton onClick={() => onClickEdit(item)} color="primary" aria-label="edit" className="ml-2">
+                        <EditTwoToneIcon />
+                      </IconButton>
+                    )}
                   </div>
           
                   {item.description &&
@@ -224,266 +228,272 @@ export default function WorkExperience({
               </section>
             )}
 
-            {list.length > 3 &&
+            {list.length > 3 && (
               <Button size="large" className="px-6 mx-auto bg-gray-100 text-gray-500">
                 View All {list.length} Work Experiences
               </Button>
-            }
+            )}
           </div>
           :
-          <div className="grid place-items-center gap-4 text-gray-400 text-sm">
-            <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
-              <WorkTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
-            </p>
-            <p className="mb-4">Tell the company about your work experience.</p>
-            <Button onClick={onOpenModal} variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
-              <AddIcon fontSize="small" className="mr-2" />Add Work Experience
-            </Button>
-          </div>
+          isLoggedInUser && (
+            <div className="grid place-items-center gap-4 text-gray-400 text-sm">
+              <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
+                <WorkTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
+              </p>
+              <p className="mb-4">Tell the company about your work experience.</p>
+              <Button onClick={onOpenModal} variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
+                <AddIcon fontSize="small" className="mr-2" />Add Work Experience
+              </Button>
+            </div>
+          )
         }
       </div>
 
-      <DialogWerk
-        title="Add Work Experience"
-        fullScreen={fullScreen}
-        fullWidth
-        maxWidth="xs"
-        scroll="body"
-        open={openModal}
-        onClose={processForm ? undefined : onCloseModal}
-      >
-        <form
-          className="p-6"
-          noValidate
-          onSubmit={handleSubmit(doSave)}
+      {isLoggedInUser &&
+        <DialogWerk
+          title="Add Work Experience"
+          fullScreen={fullScreen}
+          fullWidth
+          maxWidth="xs"
+          scroll="body"
+          open={openModal}
+          onClose={processForm ? undefined : onCloseModal}
         >
-          <fieldset
-            disabled={processForm}
-            className="min-w-0 p-0 m-0 border-0 text-sm"
+          <form
+            className="p-6"
+            noValidate
+            onSubmit={handleSubmit(doSave)}
           >
-            <label htmlFor="jobPosition" className="font-medium w-required">Job Position</label>
-            <TextField
-              {...register("jobPosition")}
+            <fieldset
               disabled={processForm}
-              error={!!errors.jobPosition}
-              // @ts-ignore:next-line
-              helperText={errors?.jobPosition?.message}
-              id="jobPosition"
-              className="w-input-gray mt-2"
-              required
-              fullWidth
-              variant="outlined"
-              placeholder="e.g. Account Executive"
-            />
-            <hr className="my-6" />
+              className="min-w-0 p-0 m-0 border-0 text-sm"
+            >
+              <label htmlFor="jobPosition" className="font-medium w-required">Job Position</label>
+              <TextField
+                {...register("jobPosition")}
+                disabled={processForm}
+                error={!!errors.jobPosition}
+                // @ts-ignore:next-line
+                helperText={errors?.jobPosition?.message}
+                id="jobPosition"
+                className="w-input-gray mt-2"
+                required
+                fullWidth
+                variant="outlined"
+                placeholder="e.g. Account Executive"
+              />
+              <hr className="my-6" />
 
-            <label htmlFor="joinDate" className="font-medium w-required">Join Date</label>
-            <TextField
-              {...register("joinDate")}
-              disabled={processForm}
-              error={!!errors.joinDate}
-              // @ts-ignore:next-line
-              helperText={errors?.joinDate?.message}
-              id="joinDate"
-              className="w-input-gray mt-2"
-              required
-              fullWidth
-              variant="outlined"
-              type="date"
-            />
-            <hr className="my-6" />
+              <label htmlFor="joinDate" className="font-medium w-required">Join Date</label>
+              <TextField
+                {...register("joinDate")}
+                disabled={processForm}
+                error={!!errors.joinDate}
+                // @ts-ignore:next-line
+                helperText={errors?.joinDate?.message}
+                id="joinDate"
+                className="w-input-gray mt-2"
+                required
+                fullWidth
+                variant="outlined"
+                type="date"
+              />
+              <hr className="my-6" />
 
-            <label htmlFor="endDate" className="font-medium w-required">End Date</label>
-            <TextField
-              {...register("endDate")}
-              disabled={processForm || isCurrentWork}
-              error={!!errors.endDate}
-              // @ts-ignore:next-line
-              helperText={errors?.endDate?.message}
-              id="endDate"
-              className="w-input-gray my-2"
-              required
-              fullWidth
-              variant="outlined"
-              type="date"
-            />
-            <FormControlLabel
-              control={<Checkbox checked={isCurrentWork} onChange={onChangeIsCurrentWork} size="small" />}
-              label="I'm currently working in this role."
-            />
-            <hr className="my-6" />
+              <label htmlFor="endDate" className="font-medium w-required">End Date</label>
+              <TextField
+                {...register("endDate")}
+                disabled={processForm || isCurrentWork}
+                error={!!errors.endDate}
+                // @ts-ignore:next-line
+                helperText={errors?.endDate?.message}
+                id="endDate"
+                className="w-input-gray my-2"
+                required
+                fullWidth
+                variant="outlined"
+                type="date"
+              />
+              <FormControlLabel
+                control={<Checkbox checked={isCurrentWork} onChange={onChangeIsCurrentWork} size="small" />}
+                label="I'm currently working in this role."
+              />
+              <hr className="my-6" />
 
-            <label htmlFor="companyName" className="font-medium w-required">Company Name</label>
-            <TextField
-              {...register("companyName")}
-              disabled={processForm}
-              error={!!errors.companyName}
-              // @ts-ignore:next-line
-              helperText={errors?.companyName?.message}
-              id="companyName"
-              className="w-input-gray mt-2"
-              required
-              fullWidth
-              variant="outlined"
-              placeholder="e.g. Glovory"
-            />
-            <hr className="my-6" />
+              <label htmlFor="companyName" className="font-medium w-required">Company Name</label>
+              <TextField
+                {...register("companyName")}
+                disabled={processForm}
+                error={!!errors.companyName}
+                // @ts-ignore:next-line
+                helperText={errors?.companyName?.message}
+                id="companyName"
+                className="w-input-gray mt-2"
+                required
+                fullWidth
+                variant="outlined"
+                placeholder="e.g. Glovory"
+              />
+              <hr className="my-6" />
 
-            <label className="font-medium w-required block mb-4">Company Location</label>
-            <CountryProvinceCity
-              register={register}
-              errors={errors}
-              setValue={setValue}
-              disabled={processForm}
-              provinceValue={provinceValue}
-              cityValue={cityValue}
-              onChangeProvince={setProvinceValue}
-              onChangeCity={setCityValue}
-            />
-            <hr className="my-6" />
+              <label className="font-medium w-required block mb-4">Company Location</label>
+              <CountryProvinceCity
+                register={register}
+                errors={errors}
+                setValue={setValue}
+                disabled={processForm}
+                provinceValue={provinceValue}
+                cityValue={cityValue}
+                onChangeProvince={setProvinceValue}
+                onChangeCity={setCityValue}
+              />
+              <hr className="my-6" />
 
-            <label htmlFor="companyIndustry" className="font-medium w-required">Company Industry</label>
-            <Autocomplete
-              {...register("companyIndustry")}
-              id="companyIndustry"
-              className="w-input-gray w-multiline mt-2"
-              fullWidth
-              disableClearable
-              value={companyIndustryValue}
-              onChange={(e: any, val: any) => {
-                setCompanyIndustryValue(val)
-              }}
-              disabled={processForm}
-              options={COMPANY_INDUSTRY}
-              renderInput={(props) => (
-                <TextField
-                  {...props}
-                  name="companyIndustry"
-                  error={!!errors.companyIndustry}
-                  // @ts-ignore:next-line
-                  helperText={errors?.companyIndustry?.message}
-                  placeholder="Select company industry"
-                />
-              )}
-            />
-            <hr className="my-6" />
+              <label htmlFor="companyIndustry" className="font-medium w-required">Company Industry</label>
+              <Autocomplete
+                {...register("companyIndustry")}
+                id="companyIndustry"
+                className="w-input-gray w-multiline mt-2"
+                fullWidth
+                disableClearable
+                value={companyIndustryValue}
+                onChange={(e: any, val: any) => {
+                  setCompanyIndustryValue(val)
+                }}
+                disabled={processForm}
+                options={COMPANY_INDUSTRY}
+                renderInput={(props) => (
+                  <TextField
+                    {...props}
+                    name="companyIndustry"
+                    error={!!errors.companyIndustry}
+                    // @ts-ignore:next-line
+                    helperText={errors?.companyIndustry?.message}
+                    placeholder="Select company industry"
+                  />
+                )}
+              />
+              <hr className="my-6" />
 
-            <label htmlFor="workType" className="font-medium w-required">Work Type</label>
-            <Autocomplete
-              {...register("workType")}
-              id="workType"
-              className="w-input-gray w-multiline mt-2"
-              fullWidth
-              disableClearable
-              value={workTypeValue}
-              onChange={(e: any, val: any) => {
-                setWorkTypeValue(val)
-              }}
-              disabled={processForm}
-              options={WORK_TYPE}
-              renderInput={(props) => (
-                <TextField
-                  {...props}
-                  name="workType"
-                  error={!!errors.workType}
-                  // @ts-ignore:next-line
-                  helperText={errors?.workType?.message}
-                  placeholder="Select work type"
-                />
-              )}
-            />
-            <hr className="my-6" />
+              <label htmlFor="workType" className="font-medium w-required">Work Type</label>
+              <Autocomplete
+                {...register("workType")}
+                id="workType"
+                className="w-input-gray w-multiline mt-2"
+                fullWidth
+                disableClearable
+                value={workTypeValue}
+                onChange={(e: any, val: any) => {
+                  setWorkTypeValue(val)
+                }}
+                disabled={processForm}
+                options={WORK_TYPE}
+                renderInput={(props) => (
+                  <TextField
+                    {...props}
+                    name="workType"
+                    error={!!errors.workType}
+                    // @ts-ignore:next-line
+                    helperText={errors?.workType?.message}
+                    placeholder="Select work type"
+                  />
+                )}
+              />
+              <hr className="my-6" />
 
-            <label htmlFor="commitmentType" className="font-medium w-required">Commitment Type</label>
-            <Autocomplete
-              {...register("commitmentType")}
-              id="commitmentType"
-              className="w-input-gray w-multiline mt-2"
-              fullWidth
-              disableClearable
-              value={commitmentTypeValue}
-              onChange={(e: any, val: any) => {
-                setCommitmentTypeValue(val)
-              }}
-              disabled={processForm}
-              options={COMMITMENT_TYPE}
-              renderInput={(props) => (
-                <TextField
-                  {...props}
-                  name="commitmentType"
-                  error={!!errors.commitmentType}
-                  // @ts-ignore:next-line
-                  helperText={errors?.commitmentType?.message}
-                  placeholder="Select commitment type"
-                />
-              )}
-            />
-            <hr className="my-6" />
+              <label htmlFor="commitmentType" className="font-medium w-required">Commitment Type</label>
+              <Autocomplete
+                {...register("commitmentType")}
+                id="commitmentType"
+                className="w-input-gray w-multiline mt-2"
+                fullWidth
+                disableClearable
+                value={commitmentTypeValue}
+                onChange={(e: any, val: any) => {
+                  setCommitmentTypeValue(val)
+                }}
+                disabled={processForm}
+                options={COMMITMENT_TYPE}
+                renderInput={(props) => (
+                  <TextField
+                    {...props}
+                    name="commitmentType"
+                    error={!!errors.commitmentType}
+                    // @ts-ignore:next-line
+                    helperText={errors?.commitmentType?.message}
+                    placeholder="Select commitment type"
+                  />
+                )}
+              />
+              <hr className="my-6" />
 
-            <label htmlFor="description" className="font-medium">Description</label>
-            <TextField
-              {...register("description")}
-              className="w-input-gray w-multiline mt-2"
-              id="description"
-              disabled={processForm}
-              multiline
-              // rows={4}
-              fullWidth
-              variant="outlined"
-              placeholder="Write a few sentences about your work experience..."
-              InputProps={{
-                className: "p-0",
-              }}
-              inputProps={{
-                className: "py-3 px-4 resize-y",
-                sx: { minHeight: 120, maxHeight: 300 },
-              }}
-            />
-            <hr className="my-6" />
+              <label htmlFor="description" className="font-medium">Description</label>
+              <TextField
+                {...register("description")}
+                className="w-input-gray w-multiline mt-2"
+                id="description"
+                disabled={processForm}
+                multiline
+                // rows={4}
+                fullWidth
+                variant="outlined"
+                placeholder="Write a few sentences about your work experience..."
+                InputProps={{
+                  className: "p-0",
+                }}
+                inputProps={{
+                  className: "py-3 px-4 resize-y",
+                  sx: { overflow: 'auto!important', minHeight: 120, maxHeight: 300 },
+                }}
+              />
+              <hr className="my-6" />
 
-            <div className="flex">
-              {itemToEditDelete?.jobPosition &&
-                <Button onClick={() => clickDelete(itemToEditDelete)} size="large" color="error">
-                  <DeleteTwoToneIcon className="mr-1" />Delete
-                </Button>
-              }
-              <LoadingButton
-                size="large"
-                variant="contained"
-                loading={processForm}
-                type="submit"
-                className="px-16 ml-auto"
-              >
-                Save
-              </LoadingButton>
-            </div>
-          </fieldset>
-        </form>
-      </DialogWerk>
+              <div className="flex">
+                {itemToEditDelete?.jobPosition &&
+                  <Button onClick={() => clickDelete(itemToEditDelete)} size="large" color="error">
+                    <DeleteTwoToneIcon className="mr-1" />Delete
+                  </Button>
+                }
+                <LoadingButton
+                  size="large"
+                  variant="contained"
+                  loading={processForm}
+                  type="submit"
+                  className="px-16 ml-auto"
+                >
+                  Save
+                </LoadingButton>
+              </div>
+            </fieldset>
+          </form>
+        </DialogWerk>
+      }
 
-      <DialogWerk
-        title="Delete Work Experience"
-        fullWidth
-        maxWidth="sm"
-        scroll="body"
-        open={openConfirm}
-        onClose={processForm ? undefined : closeConfirm}
-      >
-        <div className="p-6">
-          Are you sure want to delete this work experience?
-        </div>
-        <DialogActions className="py-3 px-4 border-top">
-          <Button
-            size="large"
-            color="error"
-            variant="contained"
-            className="px-6"
-            onClick={() => onDelete?.(itemToEditDelete, closeConfirm, onCloseModal)}
-          >
-            Delete
-          </Button>
-        </DialogActions>
-      </DialogWerk>
+      {isLoggedInUser &&
+        <DialogWerk
+          title="Delete Work Experience"
+          fullWidth
+          maxWidth="xs"
+          scroll="body"
+          open={openConfirm}
+          onClose={processForm ? undefined : closeConfirm}
+        >
+          <div className="p-6">
+            Are you sure want to delete this work experience?
+          </div>
+          <DialogActions className="py-3 px-4 border-top">
+            <Button
+              size="large"
+              color="error"
+              variant="contained"
+              className="px-6"
+              onClick={() => onDelete?.(itemToEditDelete, closeConfirm, onCloseModal)}
+            >
+              Delete
+            </Button>
+          </DialogActions>
+        </DialogWerk>
+      }
     </Card>
   );
 }

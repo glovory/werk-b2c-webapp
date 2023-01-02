@@ -16,7 +16,9 @@ import {
   RefineSnackbarProvider,
   CssBaseline,
   ThemeProvider,
+  // Alert,
 } from "@pankod/refine-mui";
+import Alert from '@mui/material/Alert';
 
 import routerProvider from "@pankod/refine-remix-router";
 import { dataProvider, liveProvider } from "@pankod/refine-appwrite";
@@ -27,6 +29,7 @@ import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
 
 import { LightTheme } from './theme';
+// import { isSSR } from "./utils/typeChecking";
 import { DATABASE_ID } from './config';
 import tailwindcss from "./styles/app.css";
 import ErrorComponent from '~/pages/error/ErrorComponent';
@@ -66,15 +69,33 @@ const Document = withEmotionCache(
           <link rel="icon" href="/favicon.ico" sizes="any" />
           <link rel="icon" href="/icon.svg" type="image/svg+xml" />
           <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
           <meta name="emotion-insertion-point" content="emotion-insertion-point" />
         </head>
         <body>
           <div id="werkPortalPrepend"></div>
+
           {children}
+          
+          {/** @NOTE : for disable JavaScript by user browser */}
+          <noscript>
+            <Alert
+              tabIndex={-1}
+              aria-hidden="true"
+              data-nosnippet="true"
+              variant="filled"
+              severity="warning" // error | warning
+              className="justify-center items-center py-0 rounded-none text-sm sticky bottom-0 z-1"
+            >
+              <style
+                dangerouslySetInnerHTML={{
+                  __html: '.hideSSR{display:none}'
+                }}
+              />
+              Please enable JavaScript
+            </Alert>
+          </noscript>
+
           <ScrollRestoration />
           <Scripts />
           <link rel="stylesheet" href={tailwindcss} />
