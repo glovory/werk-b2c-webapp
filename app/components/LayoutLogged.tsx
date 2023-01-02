@@ -20,7 +20,7 @@ import { useNavigate } from "@remix-run/react";
 //
 import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE, storage } from "~/utility";
 import { authProvider } from '~/authProvider';
-import { BUCKET_ID, CANDIDATE_PROFILES } from '~/config';
+import { BUCKET_ID, CandidateProfiles } from '~/config';
 import { imgLoader } from '~/utils/dom';
 import FooterMain from './FooterMain';
 import Dropdown, { menuRight } from "./Dropdown";
@@ -43,7 +43,7 @@ export default function LayoutLogged({
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
   const { data: currentUser, isLoading: isLoadingCurrentUser } = useList({
     liveMode: "off",
-    resource: CANDIDATE_PROFILES,
+    resource: CandidateProfiles,
     config: {
       hasPagination: false,
       filters: [
@@ -130,7 +130,7 @@ export default function LayoutLogged({
             </Link>
 
             <Box className="flex items-center ml-auto">
-              {isLoading ?
+              {isLoading || isLoadingCurrentUser ?
                 <Typography component="div" variant="h4" className="w-60">
                   <Skeleton />
                 </Typography>
