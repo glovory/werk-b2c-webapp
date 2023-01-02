@@ -1,6 +1,4 @@
 import { useState, useCallback } from 'react';
-// import Dialog from '@mui/material/Dialog';
-// import DialogTitle from '@mui/material/DialogTitle';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
@@ -14,6 +12,25 @@ import MoveIcon from '~/svg/Move';
 import DialogWerk from '~/components/DialogWerk';
 import { Cx, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
+
+interface AvatarSetupProps {
+  src?: string
+  cropSrc?: string
+  alt?: string
+  className?: any
+  style?: any
+  disabled?: boolean
+  loading?: boolean
+  avatarProps?: any
+  iconProps?: any
+  onSave?: (crop: any, original: any) => void
+  onDelete?: (val: any) => void
+  onCloseModalView?: () => void
+  openModalView?: boolean
+  label?: any
+  inputRef?: any
+  children?: any
+}
 
 export default function AvatarSetup({
   src,
@@ -32,7 +49,7 @@ export default function AvatarSetup({
   label,
   inputRef,
   children,
-}: any){
+}: AvatarSetupProps){
   const myAlt = alt || "Avatar";
   const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
@@ -191,22 +208,6 @@ export default function AvatarSetup({
           />
         </div>
       </DialogWerk>
-
-      {/* <Dialog
-        open={openConfirm}
-        onClose={closeConfirm}
-        aria-labelledby="dialog-remove-avatar"
-      >
-        <DialogTitle id="dialog-remove-avatar">
-          Are you sure to delete this avatar?
-        </DialogTitle>
-        <DialogActions>
-          <Button onClick={closeConfirm}>No</Button>
-          <Button onClick={() => onDelete?.(closeConfirm)}>
-            Yes
-          </Button>
-        </DialogActions>
-      </Dialog> */}
 
       <DialogWerk
         title="Delete Photo"

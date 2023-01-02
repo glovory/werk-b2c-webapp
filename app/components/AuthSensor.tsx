@@ -1,10 +1,10 @@
-import { useEffect } from 'react'; // , ReactNode
+import { useEffect } from 'react';
 import { useGetIdentity } from "@pankod/refine-core";
 import { useNavigate } from "react-router-dom";
 
 import LoadingPage from '~/components/LoadingPage';
 
-interface Props {
+interface AuthSensorProps {
   redirectTo?: string,
   children?: any,
 }
@@ -12,7 +12,7 @@ interface Props {
 export default function AuthSensor({
   redirectTo = "/",
   children
-}: Props){
+}: AuthSensorProps){
   const navigate = useNavigate();
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
 

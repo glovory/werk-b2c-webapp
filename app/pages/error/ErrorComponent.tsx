@@ -1,4 +1,3 @@
-// import { RefineErrorPageProps } from "@pankod/refine-ui-types";
 import { useTranslate } from "@pankod/refine-core";
 import { Link } from "@remix-run/react";
 import Button from "@mui/material/Button";
@@ -8,7 +7,7 @@ import Grid from "@mui/material/Grid";
 import { Cx } from '~/utils/dom';
 import FooterMain from '~/components/FooterMain';
 
-interface Props {
+interface ErrorComponentProps {
   className?: string
   code?: number | string
   title?: string
@@ -16,14 +15,13 @@ interface Props {
   footer?: boolean
 }
 
-// const ErrorComponent: React.FC<RefineErrorPageProps> = ({
 const ErrorComponent = ({
   className = "min-h-screen",
   code = 404,
   title = "Not Found",
   description = "Very commonplace on the web. The URL is not recognized;\nthe resource does not exist.",
   footer = true,
-}: Props) => {
+}: ErrorComponentProps) => {
   const translate = useTranslate();
 
   return (
