@@ -1,14 +1,14 @@
 ---
-name: Issue
+name: Issue Bug
 about: Create a report to help us improve
-title: "[ISSUE] Title"
-labels: ISSUE
+title: "[Bug][Staging/Hotfix/Production][Minor/Medium/Major/Critical]Title issue"
+labels: BUG, ISSUE
 assignees: ''
 
 ---
 
-**Feature :**
--
+**User Stories :**
+- Link User Stories
 
 **Test Data :**
 -
