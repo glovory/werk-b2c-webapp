@@ -244,6 +244,8 @@ const AccountSetting: React.FC = () => {
               <DialogWerk
                 title="Delete Your Account"
                 fullScreen={fullScreen}
+                fullWidth
+                maxWidth="xs"
                 scroll="body"
                 open={openModal}
                 onClose={processForm ? undefined : onCloseModal}

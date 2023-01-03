@@ -16,6 +16,7 @@ import { enterToClick } from '~/utils/dom';
 import useCheckUserExist from '~/utils/hooks/useCheckUserExist';
 import { storage } from "~/utility";
 import { BUCKET_ID, CandidateProfiles } from '~/config';
+import { minHeight } from '@pankod/refine-mui';
 
 interface FormProfileInputs {
   avatar: any
@@ -55,11 +56,15 @@ const SetUpProfile: React.FC = () => {
     },
     resolver: yupResolver(yup.object({
       fullName: yup.string().trim().required('Full name is required.'),
-      accountName: yup.string().trim().required("Account Name is required and can't be empty."),
+      accountName: yup.string()
+        .required("Account Name is required and can't be empty.")
+        .min(3, "Invalid account name. It can't contain symbol or space with minimum character is 3.")
+        .matches(/^[aA-zZ0-9._]+$/, "Only alphabets, number, underscore or period are allowed."),
       headLine: yup.string().trim().required('A headline is required.').max(100, 'Maximum 100 characters.'),
-      country: yup.string().trim().required('Required choice for Country.'),
-      province: yup.string().required('Required choice for Province/States.'),
-      city: yup.string().required('Required choice for City.'),
+      bio: yup.string().trim(),
+      country: yup.string().nullable().required('Required choice for Country.'),
+      province: yup.string().nullable().required('Required choice for Province/States.'),
+      city: yup.string().nullable().required('Required choice for City.'),
     }).required())
   });
   /** @NOTE : Enable this comment after the test */
