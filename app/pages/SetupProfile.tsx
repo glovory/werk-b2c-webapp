@@ -49,6 +49,7 @@ const SetUpProfile: React.FC = () => {
     register,
     handleSubmit,
     setValue,
+    setError,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
@@ -200,6 +201,7 @@ const SetUpProfile: React.FC = () => {
               onChangeProvince={onChangeProvince}
               onChangeCity={setCityValue}
               setValue={setValue}
+              setError={setError}
               clearErrors={clearErrors}
               onSubmit={handleSubmit(onSave)}
             />
