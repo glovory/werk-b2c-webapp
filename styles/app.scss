@@ -119,6 +119,22 @@
   background-color: #e0e0e6;
 }
 
+.w-input-group .MuiInputBase-adornedEnd {
+  padding-right: 0;
+}
+.w-input-group .w-input-end {
+  height: 56px;
+  max-height: 56px;
+  margin-left: 0;
+  padding: 0 14px;
+  background-color: #f4f4f6;
+}
+.w-input-group .MuiInputBase-sizeSmall .w-input-end {
+  height: 40px;
+  max-height: 40px;
+  padding: 0 8px;
+}
+
 .w-input-group .MuiInputAdornment-root > .MuiTypography-root {
   color: #1a224c;
 }
