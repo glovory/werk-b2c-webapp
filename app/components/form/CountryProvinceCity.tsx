@@ -8,8 +8,6 @@ import fetchData from '~/utils/fetchData';
 const COUNTRIES = [
   'Indonesia', // 'Malaysia', 'Thailand', 'Singapore', 'Saudi Arabia', 'Philippines',
 ];
-// const STATES = ['Bali', 'DKI Jakarta', 'East Java', 'Jawa Tengah', 'Jawa Barat', 'Kalimantan Tengah', 'Kalimantan Barat', 'Kalimantan Timur', 'Kalimantan Selatan', 'Kalimantan Utara', 'Madura', 'Yogyakarta'];
-// const CITIES = ['Jakarta', 'Malang', 'Surabaya'];
 // const EXTERNAL_API = 'http://localhost:3000/data'; // https://api-location.netlify.app
 
 export default function CountryProvinceCity({
@@ -19,6 +17,7 @@ export default function CountryProvinceCity({
   provinceValue,
   cityValue,
   setValue,
+  clearErrors,
   onChangeProvince,
   onChangeCity,
 }: any){
@@ -31,7 +30,7 @@ export default function CountryProvinceCity({
     setOpenStates(true);
     if(!states.length){
       // window.location.origin + '/data/cities.json' | 'https://api-location.netlify.app/id/cities.min.json'
-      fetchData(window.location.origin + '/data/cities.json', {
+      fetchData('/data/cities.json', {
         // responseType: 'text',
         mode: 'no-cors', // no-cors | cors
       })
@@ -47,19 +46,30 @@ export default function CountryProvinceCity({
     }
   }
 
-  const onChangeStates = (e: any, value: any) => {
-    onChangeProvince?.(value);
+  const onChangeStates = (e: any, val: any) => {
+    onChangeProvince?.(val);
+
+    if(errors.province){
+      clearErrors('province');
+    }
+    if(errors.city){
+      clearErrors('city');
+    }
+
     setTimeout(() => {
       onChangeCity?.(null);
       setValue?.('city', null);
-    }, 9);
+    }, 1);
   }
 
-  const doChangeCity = (e: any, value: any) => {
-    onChangeCity?.(value);
+  const doChangeCity = (e: any, val: any) => {
+    onChangeCity?.(val);
+    if(errors.city){
+      clearErrors('city');
+    }
   }
 
-  const getCityByProvince = () => provinceValue ? citiesAndStates.filter((f: any) => f.province === provinceValue) : [];
+  const getCityByProvince = () => citiesAndStates.filter((f: any) => f.province === provinceValue);
 
   return (
     <>
@@ -75,6 +85,7 @@ export default function CountryProvinceCity({
         renderInput={(props) => (
           <TextField
             {...props}
+            required
             name="country"
             error={!!errors.country}
             helperText={errors?.country?.message}
@@ -100,6 +111,7 @@ export default function CountryProvinceCity({
         renderInput={(props) => (
           <TextField
             {...props}
+            required
             name="province"
             error={!!errors.province}
             // @ts-ignore:next-line
@@ -118,28 +130,31 @@ export default function CountryProvinceCity({
         )}
       />
 
-      <Autocomplete
-        {...register("city")}
-        className="w-input-gray w-multiline mt-4"
-        fullWidth
-        disableClearable
-        disabled={disabled}
-        value={cityValue}
-        onChange={doChangeCity}
-        isOptionEqualToValue={(option, value) => !(option !== value && !!getCityByProvince().find((f: any) => f.name === value))}
-        noOptionsText={provinceValue ? 'No Options' : 'Please Select Province/States'}
-        options={getCityByProvince().map((f: any) => f.name)}
-        renderInput={(props) => (
-          <TextField
-            {...props}
-            name="city"
-            error={!!errors.city}
-            // @ts-ignore:next-line
-            helperText={errors?.city?.message}
-            label="Select City"
-          />
-        )}
-      />
+      {provinceValue &&
+        <Autocomplete
+          {...register("city")}
+          className="w-input-gray w-multiline mt-4"
+          fullWidth
+          disableClearable
+          disabled={disabled}
+          value={cityValue}
+          onChange={doChangeCity}
+          isOptionEqualToValue={(option, value) => !(option !== value && !!getCityByProvince().find((f: any) => f.name === value))}
+          // noOptionsText={provinceValue ? 'No Options' : 'Please Select Province/States'}
+          options={getCityByProvince().map((f: any) => f.name)}
+          renderInput={(props) => (
+            <TextField
+              {...props}
+              required
+              name="city"
+              error={!!errors.city}
+              // @ts-ignore:next-line
+              helperText={errors?.city?.message}
+              label="Select City"
+            />
+          )}
+        />
+      }
     </>
   );
 }

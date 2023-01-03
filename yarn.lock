@@ -1437,10 +1437,10 @@
   dependencies:
     appwrite "^10.0.1"
 
-"@pankod/refine-cli@1.13.6":
-  version "1.13.6"
-  resolved "https://registry.yarnpkg.com/@pankod/refine-cli/-/refine-cli-1.13.6.tgz#45f3e2bd2613ba2cc7c3794eee07bd57b8fe171f"
-  integrity sha512-AhVg4HsPjUKhvIxhHits6P8vVP2yWbWKvMITtEFCJDBgSoQ8gqbzXZeH9T2kaP1s0NLTZwpt7MFg3mGPmWxxsA==
+"@pankod/refine-cli@1.15.0":
+  version "1.15.0"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-cli/-/refine-cli-1.15.0.tgz#e31060c8e079abe5ed23806c588e8f7be4b62ef8"
+  integrity sha512-i5hmiwOif+mQBFmVCucop1WjYedBnUJPT5EY6F3oSwda7A2EhkgOvMF04OxgGwp9yG7tgUf6k+7BZOaHcmxAew==
   dependencies:
     boxen "^5.1.2"
     cardinal "^2.1.1"
@@ -1471,10 +1471,10 @@
     temp "^0.9.4"
     tslib "^2.3.1"
 
-"@pankod/refine-core@3.90.6", "@pankod/refine-core@^3.90.6":
-  version "3.90.6"
-  resolved "https://registry.yarnpkg.com/@pankod/refine-core/-/refine-core-3.90.6.tgz#15d9e1c28e87ae2f1a0582ea2149e1b556ec9f9a"
-  integrity sha512-/xoE1frM81arH3w/aZny0jqJPHueQa/uV4/CXKvwLemI+80ylW8zAZT0rPC2qaDsQOK7294FEGQxsD4M8deRQw==
+"@pankod/refine-core@3.92.0":
+  version "3.92.0"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-core/-/refine-core-3.92.0.tgz#9f55482eed494047c800e2cfbf677043ec5bd07b"
+  integrity sha512-tPZNx/HAkEq5BLzPty3LneTXNoyzLQ7OTHaflFfcrOo14Z71qF7L9jB6GFsCbVWvMVQV3lVKO9DG1P6Kzx9p7w==
   dependencies:
     "@tanstack/react-query" "^4.10.1"
     "@tanstack/react-query-devtools" "^4.10.1"
@@ -1491,6 +1491,22 @@
   version "3.90.4"
   resolved "https://registry.yarnpkg.com/@pankod/refine-core/-/refine-core-3.90.4.tgz#2d6a3dda7d8101cf312c3b1f0406c8af5f49b46e"
   integrity sha512-6wB0PvVmYSvnSsdZrs2KQ9L/zLH9iTNTQLVS2KEMDo3nKL2zWUb+nLRFFj8uMSxp6ULNijZDAa/jN4yFxDlC4w==
+  dependencies:
+    "@tanstack/react-query" "^4.10.1"
+    "@tanstack/react-query-devtools" "^4.10.1"
+    export-to-csv-fix-source-map "^0.2.1"
+    lodash "^4.17.21"
+    lodash-es "^4.17.21"
+    papaparse "^5.3.0"
+    pluralize "^8.0.0"
+    qs "^6.10.1"
+    tslib "^2.3.1"
+    warn-once "^0.1.0"
+
+"@pankod/refine-core@^3.90.6":
+  version "3.90.6"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-core/-/refine-core-3.90.6.tgz#15d9e1c28e87ae2f1a0582ea2149e1b556ec9f9a"
+  integrity sha512-/xoE1frM81arH3w/aZny0jqJPHueQa/uV4/CXKvwLemI+80ylW8zAZT0rPC2qaDsQOK7294FEGQxsD4M8deRQw==
   dependencies:
     "@tanstack/react-query" "^4.10.1"
     "@tanstack/react-query-devtools" "^4.10.1"

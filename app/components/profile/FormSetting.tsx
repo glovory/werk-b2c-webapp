@@ -15,6 +15,7 @@ interface FormSettingProps {
   provinceValue?: any,
   cityValue?: any,
   setValue?: (...ops: any) => void,
+  clearErrors?: (...ops: any) => void,
   onSubmit?: React.FormEventHandler<HTMLFormElement>,
   onChangeFile?: React.ChangeEventHandler<HTMLInputElement>,
   onChangeProvince?: any,
@@ -30,6 +31,7 @@ export default function FormSetting({
   provinceValue,
   cityValue,
   setValue,
+  clearErrors,
   onSubmit,
   onChangeProvince,
   onChangeCity,
@@ -137,6 +139,7 @@ export default function FormSetting({
           register={register}
           errors={errors}
           setValue={setValue}
+          clearErrors={clearErrors}
           disabled={disabled}
           provinceValue={provinceValue}
           cityValue={cityValue}

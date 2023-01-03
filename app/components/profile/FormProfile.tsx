@@ -29,6 +29,8 @@ interface FormProfileInputs {
   city: string
 }
 
+const accountNameValidateMessage = "Invalid account name. It can't contain symbol or space with minimum character is 3.";
+
 export default function FormProfile({
   open,
   values,
@@ -47,14 +49,17 @@ export default function FormProfile({
     register,
     handleSubmit,
     setValue,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
     resolver: yupResolver(yup.object({
-      fullName: yup.string().trim().required('Full name is required.'),
+      fullName: yup.string().trim()
+        .required('Full name is required.')
+        .min(3, "The name must be at least 3 characters or more."),
       accountName: yup.string()
-        .required("Account Name is required and can't be empty.")
-        .min(3, "Invalid account name. It can't contain symbol or space with minimum character is 3.")
-        .matches(/^[aA-zZ0-9._]+$/, "Only alphabets, number, underscore or period are allowed."),
+        .required("Account name is required and can't be empty.")
+        .min(3, accountNameValidateMessage)
+        .matches(/^[aA-zZ0-9._]+$/, accountNameValidateMessage), // "Only alphabets, number, underscore or period are allowed."
       headLine: yup.string().trim().required('A headline is required.').max(100, 'Maximum 100 characters.'),
       bio: yup.string().trim(),
       country: yup.string().nullable().required('Required choice for Country.'),
@@ -100,6 +105,7 @@ export default function FormProfile({
         register={register}
         errors={errors}
         setValue={setValue}
+        clearErrors={clearErrors}
         onSubmit={handleSubmit(onSave)}
         onChangeProvince={onChangeProvince}
         onChangeCity={onChangeCity}
