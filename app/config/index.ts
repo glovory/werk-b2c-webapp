@@ -18,6 +18,7 @@ export const BUCKET_ID = '63a117a09c198a16ae4e';
 
 // Functions
 export const CheckUserExist = '63a02b6bbf99a9acd42c';
+export const CheckAccountAvailability = '63a00f8e46d7b8fed7ca';
 
 // Collection ID
 export const CandidateProfiles = '639a94a596500ae9a7d8';

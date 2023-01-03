@@ -1,8 +1,13 @@
+import { useCallback, useState } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
-import InputAdornment from '@mui/material/InputAdornment';
+import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
+import CircularProgress from '@mui/material/CircularProgress';
+import debounce from 'lodash/debounce';
 //
-import { DOMAIN } from '~/config';
+import { DOMAIN, CheckAccountAvailability } from '~/config';
+import { functions } from '~/utility';
+import InputGroup from '~/components/form/InputGroup';
 import CountryProvinceCity from '~/components/form/CountryProvinceCity';
 
 interface FormSettingProps {
@@ -15,6 +20,7 @@ interface FormSettingProps {
   provinceValue?: any,
   cityValue?: any,
   setValue?: (...ops: any) => void,
+  setError?: (...ops: any) => void,
   clearErrors?: (...ops: any) => void,
   onSubmit?: React.FormEventHandler<HTMLFormElement>,
   onChangeFile?: React.ChangeEventHandler<HTMLInputElement>,
@@ -31,11 +37,47 @@ export default function FormSetting({
   provinceValue,
   cityValue,
   setValue,
+  setError,
   clearErrors,
   onSubmit,
   onChangeProvince,
   onChangeCity,
 }: FormSettingProps){
+  const [loadingCheckAccount, setLoadingCheckAccount] = useState<boolean>(false);
+  const [availableAccountName, setAvailableAccountName] = useState<any>();
+
+  const debouncedCheckAccountAvailability = useCallback(debounce(val => {
+    setLoadingCheckAccount(true);
+    functions.createExecution(CheckAccountAvailability, `{"accountName":"${val}"}`)
+      .then((res: any) => {
+        const { isAvailability }: any = res?.response ? JSON.parse(res.response) : {};
+        let msg = null;
+        if(isAvailability){
+          msg = "Account name is available for you to use.";
+          clearErrors?.("accountName");
+        }else{
+          setError?.('accountName', { type: "custom", message: "Account name is already used." });
+        }
+        setAvailableAccountName(msg);
+      })
+      .catch((err) => {
+        console.log('err: ', err);
+        setError?.('accountName', { type: "custom", message: `Failed check account name. ${navigator.onLine ? '' : 'please check Your internet connection.'}` });
+      })
+      .finally(() => {
+        setLoadingCheckAccount(false);
+      });
+  }, 500), []);
+
+  const onChangeAccountName = (e: any) => {
+    const val = e.target.value.trim();
+    if(val){
+      debouncedCheckAccountAvailability(val);
+      return;
+    }
+    setAvailableAccountName(null);
+    clearErrors?.("accountName");
+  }
 
   return (
     <form
@@ -65,30 +107,29 @@ export default function FormSetting({
       
         <label htmlFor="accountName" className="font-semibold w-required">Account Name</label>
         <p className="mb-3">This will also act as your profile URL slug.</p>
-        <TextField
+        <InputGroup
           {...register("accountName")}
+          onChange={onChangeAccountName}
+          className="w-input-gray"
           disabled={disabled}
+          valid={!errors.accountName && availableAccountName}
           error={!!errors.accountName}
-          helperText={errors?.accountName?.message}
-          className="w-input-group w-input-gray"
+          helperText={errors?.accountName?.message || availableAccountName}
           id="accountName"
           required
           fullWidth
           variant="outlined"
           placeholder="Set your account name"
           inputProps={{ spellCheck: false }}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment
-                position="start"
-                component="label"
-                htmlFor="accountName"
-                className="text-gray-700"
-              >
-                {DOMAIN}/@
-              </InputAdornment>
-            ),
+          start={{
+            label: DOMAIN + '/@',
+            component: "label",
+            htmlFor: "accountName",
+            className: "text-gray-700",
           }}
+          end={(loadingCheckAccount || availableAccountName) ? {
+            label: loadingCheckAccount ? <CircularProgress color="inherit" size={18} /> : availableAccountName && <CheckTwoToneIcon color="success" />,
+          } : null}
         />
         <div className="text-xs mt-2">Minimum character is 3 and can combine with number, underscore or period. Space or symbol are not allowed.</div>
         <hr className="my-6" />

@@ -29,7 +29,7 @@ import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
 
 import { LightTheme } from './theme';
-// import { isSSR } from "./utils/typeChecking";
+import { isSSR } from "./utils/typeChecking";
 import { DATABASE_ID } from './config';
 import tailwindcss from "./styles/app.css";
 import ErrorComponent from '~/pages/error/ErrorComponent';
@@ -46,6 +46,9 @@ interface DocumentProps {
   children: ReactNode;
   title?: string;
 }
+
+/** @NOTE : for disable JavaScript by user browser */
+const ssr = isSSR();
 
 const Document = withEmotionCache(
   ({ children, title }: DocumentProps, emotionCache) => {
@@ -79,21 +82,23 @@ const Document = withEmotionCache(
           
           {/** @NOTE : for disable JavaScript by user browser */}
           <noscript>
-            <Alert
-              tabIndex={-1}
-              aria-hidden="true"
-              data-nosnippet="true"
-              variant="filled"
-              severity="warning" // error | warning
-              className="justify-center items-center py-0 rounded-none text-sm sticky bottom-0 z-1"
-            >
-              <style
-                dangerouslySetInnerHTML={{
-                  __html: '.hideSSR{display:none}'
-                }}
-              />
-              Please enable JavaScript
-            </Alert>
+            {ssr && (
+              <Alert
+                data-nosnippet="true"
+                aria-hidden="true"
+                tabIndex={-1}
+                variant="filled"
+                severity="warning" // error | warning
+                className="justify-center items-center py-0 rounded-none text-sm sticky bottom-0 z-1"
+              >
+                <style
+                  dangerouslySetInnerHTML={{
+                    __html: '.hideSSR{display:none!important}'
+                  }}
+                />
+                Please enable JavaScript
+              </Alert>
+            )}
           </noscript>
 
           <ScrollRestoration />
