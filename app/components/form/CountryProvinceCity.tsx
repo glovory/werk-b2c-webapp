@@ -59,11 +59,12 @@ export default function CountryProvinceCity({
     onChangeCity?.(value);
   }
 
+  const getCityByProvince = () => provinceValue ? citiesAndStates.filter((f: any) => f.province === provinceValue) : [];
+
   return (
     <>
       <Autocomplete
         {...register("country", { value: COUNTRIES[0] })}
-        // id="country"
         className="w-input-gray w-multiline"
         fullWidth
         disableClearable
@@ -83,8 +84,7 @@ export default function CountryProvinceCity({
       />
 
       <Autocomplete
-        {...register("province", { value: provinceValue })}
-        // id="province"
+        {...register("province")}
         className="w-input-gray w-multiline mt-4"
         fullWidth
         disableClearable
@@ -119,17 +119,16 @@ export default function CountryProvinceCity({
       />
 
       <Autocomplete
-        {...register("city", { value: cityValue })}
-        // id="city"
+        {...register("city")}
         className="w-input-gray w-multiline mt-4"
         fullWidth
         disableClearable
         disabled={disabled}
         value={cityValue}
         onChange={doChangeCity}
-        isOptionEqualToValue={(option, value) => option === value}
+        isOptionEqualToValue={(option, value) => !(option !== value && !!getCityByProvince().find((f: any) => f.name === value))}
         noOptionsText={provinceValue ? 'No Options' : 'Please Select Province/States'}
-        options={citiesAndStates.filter((f: any) => f.province === provinceValue).map((val: any) => val.name)}
+        options={getCityByProvince().map((f: any) => f.name)}
         renderInput={(props) => (
           <TextField
             {...props}

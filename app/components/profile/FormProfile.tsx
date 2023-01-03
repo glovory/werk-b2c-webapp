@@ -51,11 +51,15 @@ export default function FormProfile({
   } = useForm<FormProfileInputs>({
     resolver: yupResolver(yup.object({
       fullName: yup.string().trim().required('Full name is required.'),
-      accountName: yup.string().trim().required("Account Name is required and can't be empty."),
+      accountName: yup.string()
+        .required("Account Name is required and can't be empty.")
+        .min(3, "Invalid account name. It can't contain symbol or space with minimum character is 3.")
+        .matches(/^[aA-zZ0-9._]+$/, "Only alphabets, number, underscore or period are allowed."),
       headLine: yup.string().trim().required('A headline is required.').max(100, 'Maximum 100 characters.'),
-      country: yup.string().trim().required('Required choice for Country.'),
-      province: yup.string().trim().required('Required choice for Province/States.'),
-      city: yup.string().trim().required('Required choice for City.'),
+      bio: yup.string().trim(),
+      country: yup.string().nullable().required('Required choice for Country.'),
+      province: yup.string().nullable().required('Required choice for Province/States.'),
+      city: yup.string().nullable().required('Required choice for City.'),
     }).required())
   });
   const processForm = formLoading || isSubmitting;
@@ -68,10 +72,10 @@ export default function FormProfile({
   }, [open, values]);
 
   const onSave = (data: any) => {
-    // console.log('onSave data: ', data);
+    console.log('onSave data: ', data);
     return new Promise((resolve: any) => {
       setTimeout(() => {
-        onFinish(data);
+        // onFinish(data);
         onSubmit?.(data);
         resolve();
       }, 1e3);
