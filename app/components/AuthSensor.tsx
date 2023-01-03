@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import { useGetIdentity } from "@pankod/refine-core";
 import { useNavigate } from "react-router-dom";
-
+//
 import LoadingPage from '~/components/LoadingPage';
 
 interface AuthSensorProps {
