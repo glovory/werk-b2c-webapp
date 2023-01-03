@@ -57,6 +57,7 @@ export default function FormSetting({
           fullWidth
           variant="outlined"
           placeholder="Enter your full name"
+          inputProps={{ spellCheck: false }}
         />
         <hr className="my-6" />
       
@@ -73,6 +74,7 @@ export default function FormSetting({
           fullWidth
           variant="outlined"
           placeholder="Set your account name"
+          inputProps={{ spellCheck: false }}
           InputProps={{
             startAdornment: (
               <InputAdornment

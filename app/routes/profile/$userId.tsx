@@ -193,7 +193,7 @@ const Profile: React.FC = () => {
       {!isLoading && !isLoadingCurrentUser && (
         <FormProfile
           open={modalEdit}
-          values={{ id: candidateId, fullName, accountName, headLine, bio }} // city, province, country, 
+          values={{ candidateId, fullName, accountName, headLine, bio }} // city, province, country, 
           provinceValue={provinceValue}
           cityValue={cityValue}
           onCloseModal={onCloseModal}
