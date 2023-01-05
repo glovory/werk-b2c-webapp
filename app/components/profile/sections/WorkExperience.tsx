@@ -81,6 +81,7 @@ export default function WorkExperience({
     register,
     handleSubmit,
     setValue,
+    setError,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<FormWorkExperienceInputs>({
@@ -341,6 +342,8 @@ export default function WorkExperience({
                 register={register}
                 errors={errors}
                 setValue={setValue}
+                setError={setError}
+                clearErrors={clearErrors}
                 disabled={processForm}
                 provinceValue={provinceValue}
                 cityValue={cityValue}
