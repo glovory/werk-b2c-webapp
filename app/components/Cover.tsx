@@ -2,11 +2,14 @@ import { useState, useCallback, useRef } from 'react';
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import DialogActions from '@mui/material/DialogActions';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
+import Snackbar from '@mui/material/Snackbar'; // , { SnackbarOrigin }
 import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
+import useMediaQuery from '@mui/material/useMediaQuery';
+import { useTheme } from '@mui/material/styles';
 import Cropper from 'react-easy-crop';
 //
 import Dropdown from '~/components/Dropdown';
@@ -15,7 +18,8 @@ import CameraIcon from '~/svg/Camera';
 import MoveIcon from '~/svg/Move';
 import { enterToClick, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
-import { INITIAL_BG } from '~/config';
+import { isImage } from '~/utils/typeChecking';
+import { INITIAL_BG, ACCEPT_FILE } from '~/config';
 
 interface CoverProps {
   src?: string
@@ -48,15 +52,29 @@ export default function Cover({
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const [isEdited, setIsEdited] = useState<boolean>(false);
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
 
-  const onChangeFile = (e: any) => {
+  const resetFile = (e?: any) => {
+    const inputFile = (e?.target || refFile?.current) as any;
+    if(inputFile?.value){ // Reset input file
+      inputFile.value = "";
+    }
+  }
+
+  const onChangeFile = async (e: any) => {
     const file = e.target.files[0];
     if(file){
-      const { width } = (refParent.current as any)?.getBoundingClientRect() || {};
-      setParentWidth(width);
-      setFileImage(file);
-      setFileBlob(window.URL.createObjectURL(file));
-      setIsEdited(true);
+      const imgSrc: any = await isImage(file); // , ACCEPT_FILE
+      if(imgSrc){
+        const { width } = (refParent.current as any)?.getBoundingClientRect() || {};
+        setParentWidth(width);
+        setFileImage(file);
+        setFileBlob(imgSrc); // window.URL.createObjectURL(file)
+        setIsEdited(true);
+      }else{
+        resetFile(e); // Reset input file
+        setToastOpen(true);
+      }
     }
   }
 
@@ -65,11 +83,7 @@ export default function Cover({
     setFileBlob(null);
     setCrop(INIT_CROP);
     setIsEdited(false);
-    // Reset input file
-    const inputFile = refFile.current as any;
-    if(inputFile?.value){
-      inputFile.value = "";
-    }
+    resetFile(); // Reset input file
   }
 
   const onCropComplete = useCallback((cropArea: any, cropAreaPx: any) => {
@@ -106,6 +120,10 @@ export default function Cover({
     setOpenConfirm(false);
   }
 
+  const closeToast = () => {
+    setToastOpen(false);
+  }
+
   const openModalCrop = (close: any) => {
     close();
     if(cropSrc){
@@ -120,7 +138,7 @@ export default function Cover({
     let fix = [
       <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
         <ImageTwoToneIcon className="mr-2" />Choose From Gallery
-        <input ref={refFile as any} onChange={onChangeFile} type="file" accept=".jpg,.jpeg,.png" hidden />
+        <input ref={refFile as any} onChange={onChangeFile} type="file" accept={ACCEPT_FILE} hidden />
       </MenuItem>,
       <MenuItem key="2" onClick={close}>
         <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-3" />
@@ -262,6 +280,26 @@ export default function Cover({
           </Button>
         </DialogActions>
       </DialogWerk>
+
+      <Snackbar
+        key="toastErrorBgFile"
+        autoHideDuration={2e3}
+        // disableWindowBlurListener
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={toastOpen}
+        onClose={closeToast}
+        message="Please insert image file"
+        action={
+          <IconButton
+            aria-label="close"
+            color="inherit"
+            sx={{ p: 0.5 }}
+            onClick={closeToast}
+          >
+            <CloseIcon />
+          </IconButton>
+        }
+      />
     </div>
   );
 }

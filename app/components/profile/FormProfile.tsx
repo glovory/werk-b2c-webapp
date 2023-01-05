@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useState } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useForm } from "@pankod/refine-react-hook-form";
@@ -7,6 +7,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 //
 import DialogWerk from '~/components/DialogWerk';
 import FormSetting from '~/components/profile/FormSetting';
+import { functions } from "~/utility"; // storage, 
+import { CandidateProfiles, CheckAccountAvailability } from '~/config'; // BUCKET_ID, 
 
 interface FormProfileProps {
   open?: boolean | any,
@@ -29,6 +31,8 @@ interface FormProfileInputs {
   city: string
 }
 
+const availableAccountMessage = "Account name is available for you to use.";
+const invalidAccountMessage = "Account name is already used.";
 const accountNameValidateMessage = "Invalid account name. It can't contain symbol or space with minimum character is 3.";
 
 export default function FormProfile({
@@ -49,9 +53,15 @@ export default function FormProfile({
     register,
     handleSubmit,
     setValue,
+    setError,
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
+    refineCoreProps: {
+      resource: CandidateProfiles,
+      redirect: false,
+    },
+    defaultValues: values,
     resolver: yupResolver(yup.object({
       fullName: yup.string().trim()
         .required('Full name is required.')
@@ -68,23 +78,55 @@ export default function FormProfile({
     }).required())
   });
   const processForm = formLoading || isSubmitting;
+  const [availableAccountName, setAvailableAccountName] = useState<any>();
 
-  useEffect(() => {
-    if(open && values){
-      // console.log('useEffect open: ', open);
-      reset(values);
-    }
-  }, [open, values]);
-
-  const onSave = (data: any) => {
+  const onSave = async (data: any) => {
     console.log('onSave data: ', data);
-    return new Promise((resolve: any) => {
-      setTimeout(() => {
-        // onFinish(data);
-        onSubmit?.(data);
-        resolve();
-      }, 1e3);
-    });
+    let isAvailableName = false;
+    if(values?.accountName !== data.accountName){
+      try {
+        const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
+        const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
+        // console.log('isAvailable: ', isAvailable);
+        let msg = null;
+        if(isAvailability || isAvailable){
+          msg = availableAccountMessage;
+          isAvailableName = true;
+          clearErrors?.("accountName");
+        }else{
+          setError?.('accountName', { type: "manual", message: invalidAccountMessage });
+        }
+        setAvailableAccountName(msg);
+      } catch(err) {
+        console.log('err: ', err); // type: manual | custom | focus
+        setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
+      }
+    }else{
+      isAvailableName = true;
+    }
+
+    if(isAvailableName){
+      onFinish(data)
+        .then(() => {
+          onSubmit?.(data);
+        })
+        .catch(() => {
+          console.error('Failed setup profile');
+        });
+    }
+
+    // return new Promise((resolve: any) => {
+    //   setTimeout(() => {
+    //     // onFinish(data);
+    //     onSubmit?.(data);
+    //     resolve();
+    //   }, 1e3);
+    // });
+  }
+
+  const closeModal = () => {
+    onCloseModal?.();
+    reset(values);
   }
 
   return (
@@ -95,16 +137,19 @@ export default function FormProfile({
       maxWidth="xs"
       scroll="body"
       open={open}
-      onClose={processForm ? undefined : onCloseModal}
+      onClose={processForm ? undefined : closeModal}
     >
       <FormSetting
         className="p-6"
         provinceValue={provinceValue}
         cityValue={cityValue}
+        availableAccountName={availableAccountName}
+        // conditionCheckName={(defaultCondition: any, val: any) => defaultCondition && values?.accountName !== val}
         disabled={processForm}
         register={register}
         errors={errors}
         setValue={setValue}
+        setError={setError}
         clearErrors={clearErrors}
         onSubmit={handleSubmit(onSave)}
         onChangeProvince={onChangeProvince}

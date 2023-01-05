@@ -4,6 +4,10 @@ import { useGetIdentity } from "@pankod/refine-core";
 import { functions } from '~/utility';
 import { CheckUserExist } from '~/config';
 
+/**
+ * @param action = function e.g (data, error) => {}
+ * @returns { userData, isSuccess, isLoading (useGetIdentity), loading (all loading process) }
+ */
 export default function useCheckUserExist(action: any){
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
   const [loading, setLoading] = useState<boolean>(true);

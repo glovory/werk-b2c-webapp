@@ -95,7 +95,7 @@ export default function CountryProvinceCity({
       />
 
       <Autocomplete
-        {...register("province")}
+        {...register("province", { value: provinceValue })}
         className="w-input-gray w-multiline mt-4"
         fullWidth
         disableClearable
@@ -132,7 +132,7 @@ export default function CountryProvinceCity({
 
       {provinceValue &&
         <Autocomplete
-          {...register("city")}
+          {...register("city", { value: cityValue })}
           className="w-input-gray w-multiline mt-4"
           fullWidth
           disableClearable
