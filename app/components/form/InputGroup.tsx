@@ -5,13 +5,13 @@ import InputAdornment from '@mui/material/InputAdornment'; // , { InputAdornment
 import { Cx } from '~/utils/dom';
 
 export interface InputGroupProps {
-  className?: string;
-  start?: object | any;
-  end?: object | any;
-  error?: boolean | any;
-  valid?: boolean | any;
-  FormHelperTextProps?: object | any;
-  InputProps?: object | any;
+  className?: string
+  start?: object | any
+  end?: object | any
+  error?: boolean | any
+  valid?: boolean | any
+  FormHelperTextProps?: object | any
+  InputProps?: object | any
 }
 
 const InputGroup = forwardRef(

@@ -291,8 +291,8 @@ const Profile: React.FC = () => {
                       </AvatarSetup>
                       
                       <h4 className="mb-0 mt-3 font-semibold text-gray-800">{fullName}</h4>
-
-                      {headLine && <h6 className="mb-1 text-orange-400">{headLine}</h6>}
+                      {/* text-orange-400 */}
+                      {headLine && <h6 className="mb-1 text-w-warning">{headLine}</h6>}
                       
                       {(city || province || country) && (
                         <address className="not-italic text-sm text-gray-500">
@@ -305,7 +305,7 @@ const Profile: React.FC = () => {
                       {accountName && (
                         <Button
                           color="secondary"
-                          className="mb-4 bg-gray-100 text-gray-500 hover:bg-blue-600 hover:text-white"
+                          className="mb-4 bg-gray-100 text-gray-500 hover:bg-w-blue-2 hover:text-white"
                         >
                           <WerkLogo className="mr-1" />
                           werk.id/@{accountName}
@@ -316,7 +316,7 @@ const Profile: React.FC = () => {
                         <Button
                           disabled={isLoadingCurrentUser}
                           onClick={onOpenModal}
-                          className="text-blue-600 min-w-0"
+                          className="min-w-0"
                         >
                           <EditTwoToneIcon fontSize="small" className="mr-2" />
                           Edit Profile

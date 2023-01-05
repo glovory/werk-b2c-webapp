@@ -197,7 +197,7 @@ export default function Education({
               />
               <hr className="my-6" />
 
-              <label className="font-medium w-required">Join Date</label>
+              <label className="font-medium w-required">Year Range</label>
               <div className="flex flex-row items-center mt-2">
                 <TextField
                   {...register("startDate")}

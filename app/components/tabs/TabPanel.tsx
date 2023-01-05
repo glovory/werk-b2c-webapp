@@ -1,4 +1,6 @@
-interface TabPanelProps {
+// import { useState } from 'react';
+// import Fade from '@mui/material/Fade';
+export interface TabPanelProps {
   children?: React.ReactNode;
   index: number | string;
   value: number | string;
