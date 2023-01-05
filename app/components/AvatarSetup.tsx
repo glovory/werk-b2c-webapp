@@ -3,6 +3,9 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
+import Snackbar from '@mui/material/Snackbar'; // , { SnackbarOrigin }
+import IconButton from '@mui/material/IconButton';
+import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Cropper from 'react-easy-crop';
@@ -12,6 +15,7 @@ import MoveIcon from '~/svg/Move';
 import DialogWerk from '~/components/DialogWerk';
 import { Cx, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
+import { isImage } from '~/utils/typeChecking';
 
 interface AvatarSetupProps {
   src?: string
@@ -60,23 +64,33 @@ export default function AvatarSetup({
   const [crop, setCrop] = useState(INIT_CROP);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
+  const [toastOpen, setToastOpen] = useState<boolean>(false);
 
-  const onCloseModal = () => {
-    setOpenModal(false);
-    setCrop(INIT_CROP);
-    // Reset input file
-    const inputFile = inputRef?.current as any;
-    if(inputFile?.value){
+  const resetFile = (e?: any) => {
+    const inputFile = (e?.target || inputRef?.current) as any;
+    if(inputFile?.value){ // Reset input file
       inputFile.value = "";
     }
   }
 
-  const onChangeFile = (e: any) => {
+  const onCloseModal = () => {
+    setOpenModal(false);
+    setCrop(INIT_CROP);
+    resetFile(); // Reset input file
+  }
+
+  const onChangeFile = async (e: any) => {
     const file = e.target.files[0];
     if(file){
-      setFileInput(file);
-      setFileBlob(window.URL.createObjectURL(file));
-      setOpenModal(true);
+      const imgSrc: any = await isImage(file); // , ACCEPT_FILE
+      if(imgSrc){
+        setFileInput(file);
+        setFileBlob(imgSrc); // window.URL.createObjectURL(file)
+        setOpenModal(true);
+      }else{
+        resetFile(e); // Reset input file
+        setToastOpen(true);
+      }
     }
   }
 
@@ -108,6 +122,10 @@ export default function AvatarSetup({
 
   const closeConfirm = () => {
     setOpenConfirm(false);
+  }
+
+  const closeToast = () => {
+    setToastOpen(false);
   }
 
   return (
@@ -233,6 +251,26 @@ export default function AvatarSetup({
           </Button>
         </DialogActions>
       </DialogWerk>
+
+      <Snackbar
+        key="toastErrorAvatarFile"
+        autoHideDuration={2e3}
+        // disableWindowBlurListener
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        open={toastOpen}
+        onClose={closeToast}
+        message="Please insert image file"
+        action={
+          <IconButton
+            aria-label="close"
+            color="inherit"
+            sx={{ p: 0.5 }}
+            onClick={closeToast}
+          >
+            <CloseIcon />
+          </IconButton>
+        }
+      />
     </>
   );
 }

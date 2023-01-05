@@ -326,11 +326,11 @@ const Profile: React.FC = () => {
                   </Grid>
 
                   {bio &&
-                    <p className="my-5 text-sm text-gray-500">
+                    <p className="mt-5 text-sm text-gray-500">
                       {bio}
                     </p>
                   }
-                  <div className="text-xs text-gray-400">
+                  <div className="text-xs text-gray-400 mt-5">
                     Joined Werk: {$createdAt && <Time value={$createdAt} dateTime={$createdAt} className="font-medium" />}
                   </div>
                 </CardContent>

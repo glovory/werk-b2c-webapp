@@ -3,6 +3,7 @@ export * from '../../config';
 // 
 export const DOMAIN = 'https://werk.id';
 export const INITIAL_BG = '/image/bg/cover.svg';
+export const ACCEPT_FILE = '.jpg,.jpeg,.png';
 
 // DEV      = http://localhost:3000
 // STAGING  = https://staging.werk.id

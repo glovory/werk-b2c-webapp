@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import { useForm } from "@pankod/refine-react-hook-form";
@@ -14,11 +14,10 @@ import FormSetting from '~/components/profile/FormSetting';
 import AvatarSetup from '~/components/AvatarSetup';
 import { enterToClick } from '~/utils/dom';
 import useCheckUserExist from '~/utils/hooks/useCheckUserExist';
-import { storage } from "~/utility";
-import { BUCKET_ID, CandidateProfiles } from '~/config';
+import { storage, functions } from "~/utility";
+import { BUCKET_ID, CandidateProfiles, CheckAccountAvailability } from '~/config';
 
 interface FormProfileInputs {
-  avatar: any
   fullName: string
   accountName: string
   headLine: string
@@ -28,6 +27,8 @@ interface FormProfileInputs {
   city: string
 }
 
+const availableAccountMessage = "Account name is available for you to use.";
+const invalidAccountMessage = "Account name is already used.";
 const accountNameValidateMessage = "Invalid account name. It can't contain symbol or space with minimum character is 3.";
 
 const SetUpProfile: React.FC = () => {
@@ -57,7 +58,6 @@ const SetUpProfile: React.FC = () => {
       resource: CandidateProfiles,
       redirect: false,
     },
-    // mode: "onChange",
     resolver: yupResolver(yup.object({
       fullName: yup.string().trim()
         .required('Full name is required.')
@@ -80,6 +80,8 @@ const SetUpProfile: React.FC = () => {
   const [photo, setPhoto] = useState<any>();
   const [provinceValue, setProvinceValue] = useState<any>(null);
   const [cityValue, setCityValue] = useState<any>(null);
+  const [availableAccountName, setAvailableAccountName] = useState<any>();
+  const refFile = useRef();
 
   useEffect(() => {
     // reset form with fetch data
@@ -96,35 +98,56 @@ const SetUpProfile: React.FC = () => {
   }
 
   const onSave = async (data: any) => {
-    let fixData = {
-      ...data,
-      avatar: "",
-      avatarCropped: "",
-    };
-    if(photo){
-      const userId = userData.$id;
-      const cropName = userId + '_cropped';
-      const originalFile = new File([fileInput], userId + '.jpg', {
-        type: "image/jpeg"
-      });
-      const cropFile = new File([photo], cropName + '.jpg', {
-        type: "image/jpeg"
-      });
-
-      await storage.createFile(BUCKET_ID, userId, originalFile);
-      await storage.createFile(BUCKET_ID, cropName, cropFile);
-
-      fixData.avatar = userId;
-      fixData.avatarCropped = cropName;
+    let isAvailableName = false;
+    try {
+      const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
+      const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
+      // console.log('isAvailable: ', isAvailable);
+      let msg = null;
+      if(isAvailability || isAvailable){
+        msg = availableAccountMessage;
+        isAvailableName = true;
+        clearErrors?.("accountName");
+      }else{
+        setError?.('accountName', { type: "manual", message: invalidAccountMessage });
+      }
+      setAvailableAccountName(msg);
+    } catch(err) {
+      console.log('err: ', err); // type: manual | custom | focus
+      setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
     }
-    
-    onFinish(fixData)
-      .then(() => {
-        navigate('/', { replace: true });
-      })
-      .catch(() => {
-        console.error('Failed setup profile');
-      });
+
+    if(isAvailableName){
+      let fixData = {
+        ...data,
+        avatar: "",
+        avatarCropped: "",
+      };
+      if(photo){
+        const userId = userData.$id;
+        const cropName = userId + '_cropped';
+        const originalFile = new File([fileInput], userId + '.jpg', {
+          type: "image/jpeg"
+        });
+        const cropFile = new File([photo], cropName + '.jpg', {
+          type: "image/jpeg"
+        });
+  
+        await storage.createFile(BUCKET_ID, userId, originalFile);
+        await storage.createFile(BUCKET_ID, cropName, cropFile);
+  
+        fixData.avatar = userId;
+        fixData.avatarCropped = cropName;
+      }
+      
+      onFinish(fixData)
+        .then(() => {
+          navigate('/', { replace: true });
+        })
+        .catch(() => {
+          console.error('Failed setup profile');
+        });
+    }
   }
 
   const onChangeProvince = (val: any) => {
@@ -149,6 +172,18 @@ const SetUpProfile: React.FC = () => {
             </div>
             
             <FormSetting
+              disabled={isLoading || formLoading || isSubmitting}
+              register={register}
+              errors={errors}
+              provinceValue={provinceValue}
+              cityValue={cityValue}
+              availableAccountName={availableAccountName}
+              onChangeProvince={onChangeProvince}
+              onChangeCity={setCityValue}
+              setValue={setValue}
+              setError={setError}
+              clearErrors={clearErrors}
+              onSubmit={handleSubmit(onSave)}
               inputPhoto={
                 <>
                   <b>Your Photo</b>
@@ -157,6 +192,10 @@ const SetUpProfile: React.FC = () => {
                     <AvatarSetup
                       loading={isLoading}
                       disabled={isLoading}
+                      inputRef={refFile}
+                      src={photoFile}
+                      onSave={onSaveAvatar}
+                      className="w-20 h-20"
                       avatarProps={{
                         sx: { width: 80, height: 80 },
                       }}
@@ -164,8 +203,6 @@ const SetUpProfile: React.FC = () => {
                         width: 40,
                         height: 40
                       }}
-                      src={photoFile}
-                      className="w-20 h-20"
                       label={(onChangeFile: any, disabled: any) => (
                         <div className="ml-4">
                           <Button
@@ -176,6 +213,7 @@ const SetUpProfile: React.FC = () => {
                           >
                             Select Photo Profile
                             <input
+                              ref={refFile as any}
                               hidden
                               type="file"
                               accept=".jpg,.jpeg,.png"
@@ -186,24 +224,12 @@ const SetUpProfile: React.FC = () => {
                           <div className="text-xs mt-2">Use a square image for best results.</div>
                         </div>
                       )}
-                      onSave={onSaveAvatar}
                     />
                   </div>
 
                   <hr className="my-6" />
                 </>
               }
-              disabled={isLoading || formLoading || isSubmitting}
-              register={register}
-              errors={errors}
-              provinceValue={provinceValue}
-              cityValue={cityValue}
-              onChangeProvince={onChangeProvince}
-              onChangeCity={setCityValue}
-              setValue={setValue}
-              setError={setError}
-              clearErrors={clearErrors}
-              onSubmit={handleSubmit(onSave)}
             />
           </Grid>
         </Grid>
