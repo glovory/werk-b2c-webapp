@@ -6,12 +6,12 @@ import { Cx } from '~/utils/dom';
 
 export interface InputGroupProps {
   className?: string;
-  start?: any;
-  end?: any;
-  error?: any;
-  valid?: any;
-  FormHelperTextProps?: any;
-  InputProps?: any;
+  start?: object | any;
+  end?: object | any;
+  error?: boolean | any;
+  valid?: boolean | any;
+  FormHelperTextProps?: object | any;
+  InputProps?: object | any;
 }
 
 const InputGroup = forwardRef(

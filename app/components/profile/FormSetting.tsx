@@ -1,12 +1,12 @@
-import { useCallback, useState } from 'react';
+// import { useCallback, useState } from 'react';
 import LoadingButton from '@mui/lab/LoadingButton';
 import TextField from '@mui/material/TextField';
 import CheckTwoToneIcon from '@mui/icons-material/CheckTwoTone';
 import CircularProgress from '@mui/material/CircularProgress';
-import debounce from 'lodash/debounce';
+// import debounce from 'lodash/debounce';
 //
-import { DOMAIN, CheckAccountAvailability } from '~/config';
-import { functions } from '~/utility';
+import { DOMAIN } from '~/config'; // CheckAccountAvailability
+// import { functions } from '~/utility';
 import InputGroup from '~/components/form/InputGroup';
 import CountryProvinceCity from '~/components/form/CountryProvinceCity';
 
@@ -19,6 +19,8 @@ interface FormSettingProps {
   errors?: any,
   provinceValue?: any,
   cityValue?: any,
+  availableAccountName?: any,
+  // conditionCheckName?: any,
   setValue?: (...ops: any) => void,
   setError?: (...ops: any) => void,
   clearErrors?: (...ops: any) => void,
@@ -28,6 +30,9 @@ interface FormSettingProps {
   onChangeCity?: any,
 }
 
+// const availableAccountMessage = "Account name is available for you to use.";
+// const invalidAccountMessage = "Account name is already used.";
+
 export default function FormSetting({
   className,
   inputPhoto,
@@ -36,48 +41,73 @@ export default function FormSetting({
   errors,
   provinceValue,
   cityValue,
+  // availableAccountName,
+  // conditionCheckName, // initAccountName
   setValue,
-  setError,
+  // setError,
   clearErrors,
   onSubmit,
   onChangeProvince,
   onChangeCity,
 }: FormSettingProps){
-  const [loadingCheckAccount, setLoadingCheckAccount] = useState<boolean>(false);
-  const [availableAccountName, setAvailableAccountName] = useState<any>();
+  // const [loadingCheckAccount, setLoadingCheckAccount] = useState<boolean>(false);
+  // const [canUseAccountName, setCanUseAccountName] = useState<any>();
 
-  const debouncedCheckAccountAvailability = useCallback(debounce(val => {
-    setLoadingCheckAccount(true);
-    functions.createExecution(CheckAccountAvailability, `{"accountName":"${val}"}`)
-      .then((res: any) => {
-        const { isAvailability }: any = res?.response ? JSON.parse(res.response) : {};
-        let msg = null;
-        if(isAvailability){
-          msg = "Account name is available for you to use.";
-          clearErrors?.("accountName");
-        }else{
-          setError?.('accountName', { type: "custom", message: "Account name is already used." });
-        }
-        setAvailableAccountName(msg);
-      })
-      .catch((err) => {
-        console.log('err: ', err);
-        setError?.('accountName', { type: "custom", message: `Failed check account name. ${navigator.onLine ? '' : 'please check Your internet connection.'}` });
-      })
-      .finally(() => {
-        setLoadingCheckAccount(false);
-      });
-  }, 500), []);
+  // const parseCheckName = (val: any) => {
+  //   const defaultCondition = val.length > 2 && /^[aA-zZ0-9._]+$/.test(val);
+  //   return conditionCheckName ? conditionCheckName(defaultCondition, val) : defaultCondition;
+  // }
 
-  const onChangeAccountName = (e: any) => {
-    const val = e.target.value.trim();
-    if(val){
-      debouncedCheckAccountAvailability(val);
-      return;
-    }
-    setAvailableAccountName(null);
-    clearErrors?.("accountName");
-  }
+  // const debouncedCheckAccountAvailability = useCallback(debounce((val) => {
+  //   setLoadingCheckAccount(true);
+  //   functions.createExecution(CheckAccountAvailability, `{"accountName":"${val}"}`)
+  //     .then((res: any) => {
+  //       const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
+  //       // console.log('isAvailable: ', isAvailable);
+  //       let msg = null;
+  //       if(isAvailability || isAvailable){
+  //         msg = availableAccountMessage;
+  //         clearErrors?.("accountName");
+  //       }else{
+  //         setError?.('accountName', { type: "manual", message: invalidAccountMessage });
+  //       }
+  //       setCanUseAccountName(msg);
+  //     })
+  //     .catch((err) => {
+  //       console.log('err: ', err); // manual | custom | focus
+  //       setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
+  //     })
+  //     .finally(() => {
+  //       setLoadingCheckAccount(false);
+  //     });
+  // }, 500), []); // , { leading: true, trailing: false, maxWait: 1000 }
+
+  // const onChangeAccountName = (e: any) => {
+  //   const val = e.target.value;
+  //   const valTrim = val.trim();
+  //   if(valTrim.length > 2 && /^[aA-zZ0-9._]+$/.test(val)){ // parseCheckName(val)
+  //     debouncedCheckAccountAvailability(valTrim);
+  //     return;
+  //   }
+  //   setCanUseAccountName(null);
+  //   clearErrors?.("accountName");
+  // }
+
+  // const onBlurAccountName = (e: any) => {
+  //   const val = e.target.value;
+  //   const valTrim = val.trim();
+  //   if(valTrim.length < 3 || !/^[aA-zZ0-9._]+$/.test(val)){
+  //     setCanUseAccountName(null);
+  //   }
+  // }
+
+  // const debounceInput = debounce((e) => {
+  //   onBlurAccountName(e);
+  // }, 2500);
+
+  // const onInputAccountName = (e: any) => {
+  //   debounceInput(e);
+  // }
 
   return (
     <form
@@ -94,7 +124,7 @@ export default function FormSetting({
           {...register("fullName")}
           disabled={disabled}
           error={!!errors.fullName}
-          helperText={errors?.fullName?.message}
+          helperText={errors.fullName?.message}
           id="fullName"
           className="w-input-gray"
           required
@@ -108,13 +138,15 @@ export default function FormSetting({
         <label htmlFor="accountName" className="font-semibold w-required">Account Name</label>
         <p className="mb-3">This will also act as your profile URL slug.</p>
         <InputGroup
-          {...register("accountName")}
-          onChange={onChangeAccountName}
+          {...register("accountName")} // , { onChange: onChangeAccountName, onBlur: onBlurAccountName }
+          // onInput={onInputAccountName}
           className="w-input-gray"
           disabled={disabled}
-          valid={!errors.accountName && availableAccountName}
+          // valid={!errors.accountName && (canUseAccountName || availableAccountName)}
+          // valid={!errors.accountName && availableAccountName}
           error={!!errors.accountName}
-          helperText={errors?.accountName?.message || availableAccountName}
+          // helperText={errors.accountName?.message || canUseAccountName || availableAccountName}
+          helperText={errors.accountName?.message}
           id="accountName"
           required
           fullWidth
@@ -127,9 +159,15 @@ export default function FormSetting({
             htmlFor: "accountName",
             className: "text-gray-700",
           }}
-          end={(loadingCheckAccount || availableAccountName) ? {
-            label: loadingCheckAccount ? <CircularProgress color="inherit" size={18} /> : availableAccountName && <CheckTwoToneIcon color="success" />,
-          } : null}
+          // end={(loadingCheckAccount || availableAccountName || canUseAccountName) ? {
+          //   label: loadingCheckAccount ? 
+          //     <CircularProgress color="inherit" size={18} />
+          //     :
+          //     (availableAccountName || canUseAccountName) && <CheckTwoToneIcon color="success" />,
+          // } : null}
+          // end={availableAccountName ? {
+          //   label: availableAccountName && <CheckTwoToneIcon color="success" />,
+          // } : null}
         />
         <div className="text-xs mt-2">Minimum character is 3 and can combine with number, underscore or period. Space or symbol are not allowed.</div>
         <hr className="my-6" />
@@ -140,7 +178,7 @@ export default function FormSetting({
           {...register("headLine")}
           disabled={disabled}
           error={!!errors.headLine}
-          helperText={errors?.headLine?.message}
+          helperText={errors.headLine?.message}
           className="w-input-gray"
           id="headLine"
           required

@@ -159,6 +159,13 @@ export default function LayoutLogged({
                             src={`/image/flags/${val === 'en' ? 'us' : val}.svg`}
                             className="mr-2"
                           />
+                          {/* <img
+                            width="19"
+                            className="text-0 mr-2"
+                            alt={val}
+                            src={`https://flagcdn.com/w20/${val === 'en' ? 'us' : val}.png`}
+                            srcSet={`https://flagcdn.com/w40/${val === 'en' ? 'us' : val}.png 2x`}
+                          /> */}
                           {val}
                         </div>
                       )}
@@ -178,10 +185,13 @@ export default function LayoutLogged({
                       {LANGUAGE.map((lang) => 
                         <MenuItem key={lang.value} value={lang.value}>
                           <img
+                            // width="19"
                             height="22"
                             className="text-0 mr-2"
                             alt={lang.label}
                             src={`/image/flags/${lang.value === 'en' ? 'us' : lang.value}.svg`}
+                            // src={`https://flagcdn.com/w20/${lang.value === 'en' ? 'us' : lang.value}.png`}
+                            // srcSet={`https://flagcdn.com/w40/${lang.value === 'en' ? 'us' : lang.value}.png 2x`}
                           />
                           {lang.label}
                         </MenuItem>
