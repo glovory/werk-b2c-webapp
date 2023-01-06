@@ -1,4 +1,4 @@
-import { type ReactNode, useContext } from "react";
+import { useEffect, type ReactNode, useContext } from "react";
 import { type MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -95,7 +95,7 @@ const Document = withEmotionCache(
   }
 );
 
-export default function App() {
+export default function App(){
   return (
     <Document>
       <ThemeProvider theme={LightTheme}>

@@ -1,23 +1,25 @@
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useForm } from "@pankod/refine-react-hook-form";
+import { useUpdate } from "@pankod/refine-core";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 //
 import DialogWerk from '~/components/DialogWerk';
 import FormSetting from '~/components/profile/FormSetting';
-import { functions } from "~/utility"; // storage, 
-import { CandidateProfiles, CheckAccountAvailability } from '~/config'; // BUCKET_ID, 
+import { functions } from "~/utility";
+import { CandidateProfiles, CheckAccountAvailability } from '~/config';
 
 interface FormProfileProps {
-  open?: boolean | any,
-  values?: any,
-  provinceValue?: string,
-  cityValue?: string,
-  onCloseModal?: () => void,
-  onSubmit?: (data: any) => void,
-  onChangeProvince?: any,
-  onChangeCity?: any,
+  open: boolean
+  documentId?: any
+  values?: any
+  provinceValue?: string
+  cityValue?: string
+  onCloseModal?: () => void
+  onChangeProvince?: (data: any) => void
+  onChangeCity?: (data: any) => void
+  onSuccess?: (data: any) => void
 }
 
 interface FormProfileInputs {
@@ -36,18 +38,20 @@ const accountNameValidateMessage = "Invalid account name. It can't contain symbo
 
 export default function FormProfile({
   open,
+  documentId,
   values,
   provinceValue,
   cityValue,
   onCloseModal,
-  onSubmit,
   onChangeProvince,
   onChangeCity,
+  onSuccess,
 }: FormProfileProps){
   const theme = useTheme();
   const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const { mutate } = useUpdate();
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { formLoading }, // onFinish, 
     reset,
     register,
     handleSubmit,
@@ -56,10 +60,6 @@ export default function FormProfile({
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<FormProfileInputs>({
-    refineCoreProps: {
-      resource: CandidateProfiles,
-      redirect: false,
-    },
     defaultValues: values,
     resolver: yupResolver(yup.object({
       fullName: yup.string().trim()
@@ -79,15 +79,14 @@ export default function FormProfile({
   const processForm = formLoading || isSubmitting;
 
   const onSave = async (data: any) => {
-    // console.log('onSave data: ', data);
-    let isAvailableName = false;
-    if(values?.accountName !== data.accountName){
+    let isEditAccountName = values.accountName !== data.accountName;
+    if(isEditAccountName){
       try {
         const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
         const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
         // console.log('isAvailable: ', isAvailable);
         if(isAvailability || isAvailable){
-          isAvailableName = true;
+          isEditAccountName = false;
           clearErrors?.("accountName");
         }else{
           setError?.('accountName', { type: "manual", message: invalidAccountMessage });
@@ -96,27 +95,18 @@ export default function FormProfile({
         console.log('err: ', err); // type: manual | custom | focus
         setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
       }
-    }else{
-      isAvailableName = true;
     }
 
-    if(isAvailableName){
-      onFinish(data)
-        .then(() => {
-          onSubmit?.(data);
-        })
-        .catch(() => {
-          console.error('Failed setup profile');
-        });
-    }
+    if(!isEditAccountName){
+      mutate({
+        resource: CandidateProfiles,
+        id: documentId,
+        values: data,
+        // mutationMode: "optimistic", // Default = pessimistic | optimistic | undoable
+      });
 
-    // return new Promise((resolve: any) => {
-    //   setTimeout(() => {
-    //     // onFinish(data);
-    //     onSubmit?.(data);
-    //     resolve();
-    //   }, 1e3);
-    // });
+      onSuccess?.(data);
+    }
   }
 
   const closeModal = () => {
