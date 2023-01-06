@@ -75,7 +75,7 @@ const Profile: React.FC = () => {
     },
   });
   const { $id: logId } = loggedInUser || {};
-  const { candidateId, fullName, accountName, headLine, city, province, country, bio, $createdAt } = currentUser?.data?.[0] || {};
+  const { id: documentId, candidateId, fullName, accountName, headLine, city, province, country, bio, $createdAt } = currentUser?.data?.[0] || {};
   const isLoggedInUser = candidateId === logId;
   
   const [modalEdit, setModalEdit] = useState<boolean>(false);
@@ -153,13 +153,6 @@ const Profile: React.FC = () => {
     openModalCrop(); // Open dialog
   }
 
-  const onSaveProfile = (data: any) => {
-    console.log('onSaveProfile data: ', data);
-    if(data){
-      setModalEdit(false);
-    }
-  }
-
   const onOpenModal = () => {
     setModalEdit(true);
   }
@@ -188,16 +181,23 @@ const Profile: React.FC = () => {
     onCloseModal();
   }
 
+  const onSaveProfile = (data: any) => {
+    if(data){
+      setModalEdit(false);
+    }
+  }
+
   return (
     <LayoutLogged>
       {!isLoading && !isLoadingCurrentUser && (
         <FormProfile
           open={modalEdit}
+          documentId={documentId}
           values={{ candidateId, fullName, accountName, headLine, bio }} // city, province, country, 
           provinceValue={provinceValue}
           cityValue={cityValue}
           onCloseModal={onCloseModal}
-          onSubmit={onSaveProfile}
+          onSuccess={onSaveProfile}
           onChangeProvince={setProvinceValue}
           onChangeCity={setCityValue}
         />
@@ -291,7 +291,7 @@ const Profile: React.FC = () => {
                       </AvatarSetup>
                       
                       <h4 className="mb-0 mt-3 font-semibold text-gray-800">{fullName}</h4>
-                      {/* text-orange-400 */}
+                      
                       {headLine && <h6 className="mb-1 text-w-warning">{headLine}</h6>}
                       
                       {(city || province || country) && (

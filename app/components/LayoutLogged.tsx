@@ -27,8 +27,8 @@ import Dropdown, { menuRight } from "./Dropdown";
 import WerkLogo from '~/svg/werk';
 
 interface LayoutLoggedProps {
-  footer?: boolean | any,
-  children?: ReactNode | any,
+  footer?: boolean | any
+  children?: ReactNode | any
 }
 
 const LANGUAGE = [
@@ -122,9 +122,7 @@ export default function LayoutLogged({
         color="default"
         variant="outlined"
         position="sticky"
-        sx={{
-          borderBottom: '1px solid #dedede',
-        }}
+        sx={{ borderBottom: '1px solid #dedede' }}
       >
         <Container>
           <Toolbar variant="dense" className="px-0">
@@ -146,7 +144,7 @@ export default function LayoutLogged({
                     variant="standard"
                     size="small"
                     className="mr-5"
-                    sx={{ minWidth: 72.5 }}
+                    sx={{ width: 72.5 }}
                   >
                     <Select
                       value={language}
@@ -192,6 +190,14 @@ export default function LayoutLogged({
                   {isSuccess && identity ?
                     <Dropdown
                       mountOnOpen // keepMounted
+                      buttonProps={{
+                        className: "p-0",
+                      }}
+                      id="accountMenu"
+                      sx={{ mt: '5px' }}
+                      MenuListProps={{
+                        className: "min-w-[275px]",
+                      }}
                       labelAs={IconButton}
                       label={
                         loadingAvatar ?
@@ -209,14 +215,6 @@ export default function LayoutLogged({
                               <WerkLogo width={20} height={20} />
                             </div>
                       }
-                      buttonProps={{
-                        className: "p-0",
-                      }}
-                      id="accountMenu"
-                      sx={{ mt: '5px' }}
-                      MenuListProps={{
-                        className: "min-w-[275px]",
-                      }}
                     >
                       {(close: any) => [
                         <MenuItem
