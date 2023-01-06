@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useForm } from "@pankod/refine-react-hook-form";
@@ -31,7 +30,7 @@ interface FormProfileInputs {
   city: string
 }
 
-const availableAccountMessage = "Account name is available for you to use.";
+// const availableAccountMessage = "Account name is available for you to use.";
 const invalidAccountMessage = "Account name is already used.";
 const accountNameValidateMessage = "Invalid account name. It can't contain symbol or space with minimum character is 3.";
 
@@ -78,25 +77,21 @@ export default function FormProfile({
     }).required())
   });
   const processForm = formLoading || isSubmitting;
-  const [availableAccountName, setAvailableAccountName] = useState<any>();
 
   const onSave = async (data: any) => {
-    console.log('onSave data: ', data);
+    // console.log('onSave data: ', data);
     let isAvailableName = false;
     if(values?.accountName !== data.accountName){
       try {
         const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
         const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
         // console.log('isAvailable: ', isAvailable);
-        let msg = null;
         if(isAvailability || isAvailable){
-          msg = availableAccountMessage;
           isAvailableName = true;
           clearErrors?.("accountName");
         }else{
           setError?.('accountName', { type: "manual", message: invalidAccountMessage });
         }
-        setAvailableAccountName(msg);
       } catch(err) {
         console.log('err: ', err); // type: manual | custom | focus
         setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
@@ -143,13 +138,11 @@ export default function FormProfile({
         className="p-6"
         provinceValue={provinceValue}
         cityValue={cityValue}
-        availableAccountName={availableAccountName}
         // conditionCheckName={(defaultCondition: any, val: any) => defaultCondition && values?.accountName !== val}
         disabled={processForm}
         register={register}
         errors={errors}
         setValue={setValue}
-        setError={setError}
         clearErrors={clearErrors}
         onSubmit={handleSubmit(onSave)}
         onChangeProvince={onChangeProvince}

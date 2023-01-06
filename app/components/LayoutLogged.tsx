@@ -137,7 +137,7 @@ export default function LayoutLogged({
 
             <Box className="flex items-center ml-auto">
               {isLoading || isLoadingCurrentUser ?
-                <Typography component="div" variant="h4" className="hideSSR w-60">
+                <Typography component="div" variant="h4" className="hideSSR" width={240}>
                   <Skeleton />
                 </Typography>
                 :
@@ -149,6 +149,18 @@ export default function LayoutLogged({
                     sx={{ minWidth: 72.5 }}
                   >
                     <Select
+                      value={language}
+                      onChange={languageChange}
+                      onOpen={openMenuLang}
+                      displayEmpty
+                      IconComponent={ExpandMoreTwoToneIcon}
+                      // @ts-ignore:next-line
+                      MenuProps={{
+                        ...menuRight,
+                        sx: { mt: '5px' },
+                        id: "menuAppLang",
+                        keepMounted: firstRenderMenuLang,
+                      }}
                       className="w-select-sm"
                       renderValue={(val) => (
                         <div className="flex items-center uppercase">
@@ -159,39 +171,17 @@ export default function LayoutLogged({
                             src={`/image/flags/${val === 'en' ? 'us' : val}.svg`}
                             className="mr-2"
                           />
-                          {/* <img
-                            width="19"
-                            className="text-0 mr-2"
-                            alt={val}
-                            src={`https://flagcdn.com/w20/${val === 'en' ? 'us' : val}.png`}
-                            srcSet={`https://flagcdn.com/w40/${val === 'en' ? 'us' : val}.png 2x`}
-                          /> */}
                           {val}
                         </div>
                       )}
-                      value={language}
-                      onChange={languageChange}
-                      onOpen={openMenuLang}
-                      displayEmpty
-                      IconComponent={ExpandMoreTwoToneIcon} // ArrowSmall | ExpandMoreTwoToneIcon
-                      // @ts-ignore:next-line
-                      MenuProps={{
-                        ...menuRight,
-                        sx: { mt: '5px' },
-                        id: "menuAppLang",
-                        keepMounted: firstRenderMenuLang,
-                      }}
                     >
                       {LANGUAGE.map((lang) => 
                         <MenuItem key={lang.value} value={lang.value}>
                           <img
-                            // width="19"
                             height="22"
                             className="text-0 mr-2"
                             alt={lang.label}
                             src={`/image/flags/${lang.value === 'en' ? 'us' : lang.value}.svg`}
-                            // src={`https://flagcdn.com/w20/${lang.value === 'en' ? 'us' : lang.value}.png`}
-                            // srcSet={`https://flagcdn.com/w40/${lang.value === 'en' ? 'us' : lang.value}.png 2x`}
                           />
                           {lang.label}
                         </MenuItem>
@@ -212,9 +202,7 @@ export default function LayoutLogged({
                               sx={{ width: 32, height: 32 }}
                               alt={identity.name}
                               src={avatar}
-                              imgProps={{
-                                ...imgLoader()
-                              }}
+                              imgProps={imgLoader()}
                             />
                             :
                             <div className="grid place-items-center rounded-full w-8 h-8 bg-w-blue-1 text-blue-700">
@@ -243,9 +231,7 @@ export default function LayoutLogged({
                               sx={{ width: 48, height: 48 }}
                               alt={identity.name}
                               src={avatar}
-                              imgProps={{
-                                ...imgLoader()
-                              }}
+                              imgProps={imgLoader()}
                             />
                             :
                             <div className="grid place-items-center rounded-md w-12 h-12 bg-w-blue-1 text-blue-700">
@@ -261,8 +247,7 @@ export default function LayoutLogged({
                         <MenuItem
                           key="3"
                           component={Link}
-                          // to={`/profile/${identity.$id}`} // ${identity.accountName || identity.$id}
-                          to={`/profile/${identity.accountName || identity.candidateId}`}
+                          to={`/profile/${identity.accountName}`}
                           onClick={close}
                         >
                           <Typography textAlign="center">My Profile</Typography>

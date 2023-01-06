@@ -17,8 +17,8 @@
     "@next-boost/hybrid-disk-cache": "^0.3.0",
     "@pankod/refine-appwrite": "^5.1.0",
     "@pankod/refine-cli": "1.15.0",
-    "@pankod/refine-core": "3.92.0",
-    "@pankod/refine-inferencer": "^1.2.0",
+    "@pankod/refine-core": "3.94.0",
+    "@pankod/refine-inferencer": "2.0.2",
     "@pankod/refine-mui": "3.61.2",
     "@pankod/refine-react-hook-form": "3.37.2",
     "@pankod/refine-remix-router": "^1.0.2",
@@ -35,6 +35,7 @@
     "react-easy-crop": "^4.6.3",
     "remix-image": "^1.4.0",
     "store2": "^2.14.2",
+    "unsplash-js": "^7.0.15",
     "yup": "^0.32.11"
   },
   "devDependencies": {
