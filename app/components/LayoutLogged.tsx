@@ -190,14 +190,10 @@ export default function LayoutLogged({
                   {isSuccess && identity ?
                     <Dropdown
                       mountOnOpen // keepMounted
-                      buttonProps={{
-                        className: "p-0",
-                      }}
+                      buttonProps={{ className: "p-0" }}
                       id="accountMenu"
                       sx={{ mt: '5px' }}
-                      MenuListProps={{
-                        className: "min-w-[275px]",
-                      }}
+                      MenuListProps={{ className: "min-w-[275px]" }}
                       labelAs={IconButton}
                       label={
                         loadingAvatar ?

@@ -9,7 +9,6 @@ export const ACCEPT_FILE = '.jpg,.jpeg,.png';
 // STAGING  = https://staging.werk.id
 
 /** @Appwrite : */
-
 // For redirect after success
 export const REDIRECT_SUCCESS = "/process/signin";
 // For redirect after failed
