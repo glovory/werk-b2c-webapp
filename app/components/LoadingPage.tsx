@@ -1,9 +1,5 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import CodeTwoToneIcon from '@mui/icons-material/CodeTwoTone';
-//
-import { isSSR } from "~/utils/typeChecking";
-
-const ssr = isSSR();
 
 export default function LoadingPage(){
   return (
@@ -19,13 +15,8 @@ export default function LoadingPage(){
       </div>
 
       <noscript>
-        {/** @NOTE : Only SSR, for disable JavaScript by user browser */}
-        {ssr && (
-          <>
-            <CodeTwoToneIcon className="block mx-auto" />
-            Please enable JavaScript
-          </>
-        )}
+        <CodeTwoToneIcon className="block mx-auto" />
+        Please enable JavaScript
       </noscript>
     </div>
   );

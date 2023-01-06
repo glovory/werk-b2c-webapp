@@ -27,7 +27,7 @@ interface FormProfileInputs {
   city: string
 }
 
-const availableAccountMessage = "Account name is available for you to use.";
+// const availableAccountMessage = "Account name is available for you to use.";
 const invalidAccountMessage = "Account name is already used.";
 const accountNameValidateMessage = "Invalid account name. It can't contain symbol or space with minimum character is 3.";
 
@@ -80,7 +80,6 @@ const SetUpProfile: React.FC = () => {
   const [photo, setPhoto] = useState<any>();
   const [provinceValue, setProvinceValue] = useState<any>(null);
   const [cityValue, setCityValue] = useState<any>(null);
-  const [availableAccountName, setAvailableAccountName] = useState<any>();
   const refFile = useRef();
 
   useEffect(() => {
@@ -103,15 +102,12 @@ const SetUpProfile: React.FC = () => {
       const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
       const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
       // console.log('isAvailable: ', isAvailable);
-      let msg = null;
       if(isAvailability || isAvailable){
-        msg = availableAccountMessage;
         isAvailableName = true;
         clearErrors?.("accountName");
       }else{
         setError?.('accountName', { type: "manual", message: invalidAccountMessage });
       }
-      setAvailableAccountName(msg);
     } catch(err) {
       console.log('err: ', err); // type: manual | custom | focus
       setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
@@ -177,11 +173,9 @@ const SetUpProfile: React.FC = () => {
               errors={errors}
               provinceValue={provinceValue}
               cityValue={cityValue}
-              availableAccountName={availableAccountName}
               onChangeProvince={onChangeProvince}
               onChangeCity={setCityValue}
               setValue={setValue}
-              setError={setError}
               clearErrors={clearErrors}
               onSubmit={handleSubmit(onSave)}
               inputPhoto={

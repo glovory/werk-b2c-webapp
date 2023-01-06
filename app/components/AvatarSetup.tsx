@@ -1,9 +1,11 @@
 import { useState, useCallback } from 'react';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
+import LoadingButton from '@mui/lab/LoadingButton';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
 import Snackbar from '@mui/material/Snackbar'; // , { SnackbarOrigin }
+import CircularProgress from '@mui/material/CircularProgress';
 import IconButton from '@mui/material/IconButton';
 import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -57,12 +59,13 @@ export default function AvatarSetup({
   const myAlt = alt || "Avatar";
   const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [fileInput, setFileInput] = useState<any>();
   const [fileBlob, setFileBlob] = useState<any>();
   const [crop, setCrop] = useState(INIT_CROP);
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
+  const [loadingCrop, setLoadingCrop] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const [toastOpen, setToastOpen] = useState<boolean>(false);
 
@@ -99,6 +102,7 @@ export default function AvatarSetup({
   }, [])
 
   const saveFile = useCallback(async () => {
+    setLoadingCrop(true);
     try {
       const croppedImage = await getCroppedImg(fileBlob, croppedAreaPixels);
       // console.log('saveFile croppedImage: ', croppedImage);
@@ -106,6 +110,8 @@ export default function AvatarSetup({
       onCloseModal();
     } catch (e) {
       console.error(e)
+    } finally {
+      setLoadingCrop(false);
     }
   }, [croppedAreaPixels]);
 
@@ -166,15 +172,15 @@ export default function AvatarSetup({
 
       <DialogWerk
         title="Edit Photo Profile"
-        fullScreen={fullScreen}
+        fullScreen={isFullScreen}
         fullWidth
         scroll="body"
         open={openModal}
         onClose={disabled ? undefined : onCloseModal}
       >
         <div className="p-4">
-          {(fileBlob || src) &&
-            <div className="w-80 h-80 mx-auto rounded-lg overflow-hidden relative cropper" tabIndex={-1}>
+          {(fileBlob || src) && (
+            <div tabIndex={-1} className="w-80 h-80 mx-auto rounded-lg overflow-hidden relative cropper">
               <Cropper
                 objectFit="horizontal-cover"
                 showGrid={false}
@@ -188,29 +194,39 @@ export default function AvatarSetup({
                   ...imgLoader(),
                   draggable: false,
                 }}
-                image={fileBlob || cropSrc} // src
+                image={fileBlob || cropSrc}
                 crop={crop}
                 onCropChange={setCrop}
                 onCropComplete={onCropComplete}
               />
 
-              <div className="absolute inset-0 flex pointer-events-none select-none">
+              <div className={`absolute inset-0 flex ${loadingCrop ? 'bg-gray-500/30 text-white cursor-wait' : 'pointer-events-none'}`}>
+                {loadingCrop && <CircularProgress color="inherit" className="absolute inset-0 m-auto z-2" />}
+
                 <b className="text-white bg-gray-700/60 m-auto py-1 px-4 rounded-md text-xs shadow-sm">
                   <MoveIcon className="align-middle mr-2" />
                   Drag to change the image position
                 </b>
               </div>
             </div>
-          }
+          )}
         </div>
         <DialogActions className="py-3 px-4 border-top">
-          <Button onClick={saveFile} size="large" variant="contained" className="px-7">Save</Button>
+          <LoadingButton
+            loading={loadingCrop}
+            onClick={saveFile}
+            size="large"
+            variant="contained"
+            className="px-7 w-btn-loading"
+          >
+            Save
+          </LoadingButton>
         </DialogActions>
       </DialogWerk>
 
       <DialogWerk
         title="Profile Photo"
-        fullScreen={fullScreen}
+        fullScreen={isFullScreen}
         fullWidth
         maxWidth="lg"
         scroll="body"
