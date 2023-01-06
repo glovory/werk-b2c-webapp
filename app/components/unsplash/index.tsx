@@ -1,9 +1,10 @@
-import { useRef, useState} from "react";
+import { useRef, useState, useCallback } from "react";
 import Skeleton from '@mui/material/Skeleton';
 import LoadingButton from '@mui/lab/LoadingButton';
 import RefreshTwoToneIcon from '@mui/icons-material/RefreshTwoTone';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import debounce from 'lodash/debounce';
 //
 import DialogWerk from "../DialogWerk";
 import InputGroup from '~/components/form/InputGroup';
@@ -30,19 +31,27 @@ export default function ModalGallery({
   const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const refController: any = useRef();
   const [loadingUnsplash, setLoadingUnsplash] = useState<boolean>(false);
+  const [loadingSearch, setLoadingSearch] = useState<boolean>(false);
   const [dataUnsplash, setDataUnsplash] = useState<any>();
+  const [queryValue, setQueryValue] = useState<any>('');
 
-  const doOpenUnsplash = () => {
+  const fetchUnsplash = (query?: any) => {
     setLoadingUnsplash(true);
 
     const controller = new AbortController();
     const signal = controller.signal;
     refController.current = controller;
 
-    onFetch?.(refController.current);
+    onFetch?.(refController.current); // For abort signal in parent component
+
+    const searching = typeof query === 'string';
      // query: "work" | username: "surface"
     unsplashApi.search // search | users
-      .getPhotos({ query: "work", perPage: 12, orientation: "landscape" }, { signal })
+      .getPhotos({
+        orientation: "landscape",
+        perPage: 12,
+        query: searching ? query : "work",
+      }, { signal })
       .then((res) => {
         // console.log('res: ', res);
         setDataUnsplash(res);
@@ -55,14 +64,33 @@ export default function ModalGallery({
       })
       .finally(() => {
         setLoadingUnsplash(false);
-        onDoneFetch?.();
+        if(searching){
+          setLoadingSearch(false);
+        }
+        onDoneFetch?.(); // For abort signal in parent component
         refController.current = null;
       });
   }
 
+  const debouncedSearch = useCallback(debounce((val) => {
+    setLoadingSearch(true);
+    fetchUnsplash(val);
+  }, 500), []); // , { leading: true, trailing: false, maxWait: 1000 }
+
+  const onSearch = (e: any) => {
+    const val = e.target.value;
+    const valTrim = val.trim();
+    setQueryValue(val);
+    if(valTrim.length > 2){ //  && /^[aA-zZ0-9._]+$/.test(val)
+      debouncedSearch(valTrim);
+      return;
+    }
+    setLoadingUnsplash(false);
+    setLoadingSearch(false);
+  }
+
   const onCloseModalUnsplash = () => {
     const controller = refController.current;
-    // console.log('onCloseModalUnsplash controller: ', controller);
     if(controller){
       controller.abort();
       refController.current = null;
@@ -78,7 +106,7 @@ export default function ModalGallery({
       scroll="body"
       open={open}
       onClose={onClose}
-      onEnter={doOpenUnsplash}
+      onEnter={fetchUnsplash}
       onExit={onCloseModalUnsplash}
     >
       <div className="pt-3 pb-4 px-6 max-md:p-3">
@@ -86,15 +114,19 @@ export default function ModalGallery({
           <InputGroup
             className="w-input-gray"
             // @ts-ignore
-            disabled={loadingUnsplash}
+            disabled={loadingUnsplash && !queryValue.length}
             size="small"
             fullWidth
             variant="outlined"
             label="Search for an image"
+            type="search"
+            value={queryValue}
+            onChange={onSearch}
           />
           <LoadingButton
-            loading={loadingUnsplash}
-            onClick={doOpenUnsplash}
+            disabled={loadingSearch}
+            loading={loadingUnsplash && !loadingSearch}
+            onClick={fetchUnsplash}
             variant="outlined"
             className="px-2 ml-2 min-w-0"
             title="Reload"
