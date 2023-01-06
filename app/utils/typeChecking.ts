@@ -8,7 +8,7 @@ export const isSSR = () => !(typeof window !== 'undefined');
  * Strict check image file
  * @param data : file object | string
  * @param accept : string | Array<string>, string e.g like accept input file attribute, Array<string> e.g ['jpg', 'jpeg', 'png']
- * @returns blob string
+ * @returns blob string | undefined
 */
 export const isImage = async (
   data: any,
@@ -24,13 +24,9 @@ export const isImage = async (
       if(img?.naturalWidth && img?.naturalHeight){
         return src;
       }
-      return null;
     } catch(e) {
-      return null;
     }
   }
-
-  return null;
 }
 
 // const returnError = (message: string | number, returnData?: any) => {

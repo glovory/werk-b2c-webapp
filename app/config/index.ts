@@ -23,3 +23,7 @@ export const CheckAccountAvailability = '63a00f8e46d7b8fed7ca';
 
 // Collection ID
 export const CandidateProfiles = '639a94a596500ae9a7d8';
+
+/** @unsplash */
+export const UNSPLASH_ACCESS_KEY = '_MMQom9PLjY5mdp4yXYQNJiv9b_MEN8K36C8fuUWoq8';
+export const UNSPLASH_SECRET_KEY = 'dUnBDITPRx1YXfXg3lRtdS8rUGZfoAHjWGLUmAnJvjo';

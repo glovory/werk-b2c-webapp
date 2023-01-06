@@ -152,6 +152,14 @@
   padding: 0 8px;
 }
 
+.w-btn-loading.MuiLoadingButton-loading {
+  background-color: #5c636a; /* #071ec3 | #5c636a */
+}
+
+.w-btn-loading.MuiLoadingButton-loading svg circle {
+  stroke: #fff;
+}
+
 /* Select with small arrow */
 .w-select-sm .MuiSelect-icon {
   font-size: 1.25rem;

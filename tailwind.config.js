@@ -42,6 +42,16 @@ module.exports = {
       },
       backgroundColor: {
         'w-blue-1': '#cfd9ff',
+        'w-blue-2': '#1234ff',
+        'w-warning': '#f37421',
+        'w-error': '#e92f39',
+        'w-success': '#86bb40',
+      },
+      colors: {
+        'w-primary': '#1234ff', // Same with w-blue-2
+        'w-warning': '#f37421',
+        'w-error': '#e92f39',
+        'w-success': '#86bb40',
       },
       fontSize: {
         '0': '0',
