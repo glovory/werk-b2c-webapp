@@ -91,7 +91,6 @@ export default function ModalGallery({
 
   const onCloseModalUnsplash = () => {
     const controller = refController.current;
-    // console.log('onCloseModalUnsplash controller: ', controller);
     if(controller){
       controller.abort();
       refController.current = null;
