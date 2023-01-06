@@ -22,12 +22,12 @@ export default function CountryProvinceCity({
   onChangeCity,
 }: any){
   const [openStates, setOpenStates] = useState<boolean>(false);
+  const [openCity, setOpenCity] = useState<boolean>(false);
   const [citiesAndStates, setCitiesAndStates] = useState<any>([]); // All Data
   const [states, setStates] = useState<any>([]); // province options
-  let loadingBased = openStates && states.length < 1;
+  let loadingBased = (openStates || openCity) && states.length < 1;
 
-  const onOpenGetBased = () => {
-    setOpenStates(true);
+  const fetchOptions = () => {
     if(!states.length){
       // window.location.origin + '/data/cities.json' | 'https://api-location.netlify.app/id/cities.min.json'
       fetchData('/data/cities.json', {
@@ -46,6 +46,11 @@ export default function CountryProvinceCity({
     }
   }
 
+  const onOpenGetBased = () => {
+    setOpenStates(true);
+    fetchOptions();
+  }
+
   const onChangeStates = (e: any, val: any) => {
     onChangeProvince?.(val);
 
@@ -60,6 +65,13 @@ export default function CountryProvinceCity({
       onChangeCity?.(null);
       setValue?.('city', null);
     }, 1);
+  }
+
+  const onOpenCity = () => {
+    setOpenCity(true);
+    if(provinceValue && cityValue){
+      fetchOptions();
+    }
   }
 
   const doChangeCity = (e: any, val: any) => {
@@ -101,7 +113,7 @@ export default function CountryProvinceCity({
         disableClearable
         disabled={disabled}
         open={openStates}
-        loading={loadingBased}
+        loading={!openCity && loadingBased}
         value={provinceValue}
         onChange={onChangeStates}
         onOpen={onOpenGetBased}
@@ -121,7 +133,7 @@ export default function CountryProvinceCity({
               ...props.InputProps,
               endAdornment: (
                 <>
-                  {loadingBased && <CircularProgress color="inherit" size={20} />}
+                  {(!openCity && loadingBased) && <CircularProgress color="inherit" size={20} />}
                   {props.InputProps.endAdornment}
                 </>
               ),
@@ -137,8 +149,12 @@ export default function CountryProvinceCity({
           fullWidth
           disableClearable
           disabled={disabled}
+          open={openCity}
+          loading={openCity && loadingBased}
           value={cityValue}
           onChange={doChangeCity}
+          onOpen={onOpenCity}
+          onClose={() => setOpenCity(false)}
           isOptionEqualToValue={(option, value) => !(option !== value && !!getCityByProvince().find((f: any) => f.name === value))}
           // noOptionsText={provinceValue ? 'No Options' : 'Please Select Province/States'}
           options={getCityByProvince().map((f: any) => f.name)}
@@ -151,6 +167,15 @@ export default function CountryProvinceCity({
               // @ts-ignore:next-line
               helperText={errors?.city?.message}
               label="Select City"
+              InputProps={{
+                ...props.InputProps,
+                endAdornment: (
+                  <>
+                    {(openCity && loadingBased) && <CircularProgress color="inherit" size={20} />}
+                    {props.InputProps.endAdornment}
+                  </>
+                ),
+              }}
             />
           )}
         />

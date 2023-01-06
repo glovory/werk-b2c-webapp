@@ -1,7 +1,7 @@
 import type { AuthProvider } from "@pankod/refine-core";
 import Cookies from "js-cookie";
 import * as cookie from "cookie";
-import store from "store2";
+// import store from "store2"; // OPTION: Custom for delete localStorage
 
 import { account, appwriteClient, TOKEN_KEY } from "~/utility";
 
@@ -23,19 +23,19 @@ export const authProvider: AuthProvider = {
     try {
       Cookies.remove(TOKEN_KEY);
       await account.deleteSession("current");
-      store.remove("cookieFallback");
+      // store.remove("cookieFallback"); // OPTION: Custom for delete localStorage
       return Promise.resolve(redirectPath);
     } catch(e) {
       return Promise.reject(e);
     }
   },
-  // checkError: () => Promise.resolve(),
-  checkError: (err) => {
-    if(err?.response?.status === 401){
-      return Promise.reject("/register");
-    }
-    return Promise.resolve();
-  },
+  checkError: () => Promise.resolve(),
+  // checkError: (err) => {
+  //   if(err?.response?.status === 401){
+  //     return Promise.reject("/register");
+  //   }
+  //   return Promise.resolve();
+  // },
   checkAuth: async (context) => {
     let token = undefined;
     if (context) {
