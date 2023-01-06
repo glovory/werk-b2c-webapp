@@ -1,5 +1,5 @@
-import React from "react";
-import type { MetaFunction } from "@remix-run/node";
+import { type ReactNode, useContext } from "react";
+import { type MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -8,48 +8,43 @@ import {
   Scripts,
   ScrollRestoration,
 } from "@remix-run/react";
-
 import { Refine } from "@pankod/refine-core";
 import {
   AuthPage,
   notificationProvider,
   RefineSnackbarProvider,
   CssBaseline,
-  GlobalStyles,
   ThemeProvider,
-  // LightTheme,
-  // ReadyPage,
-  ErrorComponent,
 } from "@pankod/refine-mui";
-
 import routerProvider from "@pankod/refine-remix-router";
-
 import { dataProvider, liveProvider } from "@pankod/refine-appwrite";
 import { withEmotionCache } from "@emotion/react";
 import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
-// import { Title, Sider, Layout, Header } from "~/components/layout";
 
-import { light } from './theme';
-import WelcomePage from '~/components/WelcomePage';
+import { LightTheme } from './theme';
+import { DATABASE_ID } from './config';
 import tailwindcss from "./styles/app.css";
+import ErrorComponent from '~/pages/error/ErrorComponent';
+import WelcomePage from '~/pages/WelcomePage';
+import SetUpProfile from '~/pages/SetupProfile';
 
 export const meta: MetaFunction = () => ({
   charset: "utf-8",
-  title: "Werk B2C",
   viewport: "width=device-width,initial-scale=1",
+  title: "Werk",
 });
 
 interface DocumentProps {
-  children: React.ReactNode;
+  children: ReactNode;
   title?: string;
 }
 
 const Document = withEmotionCache(
   ({ children, title }: DocumentProps, emotionCache) => {
-    const clientStyleData = React.useContext(ClientStyleContext);
+    const clientStyleData = useContext(ClientStyleContext);
     useEnhancedEffect(() => {
       emotionCache.sheet.container = document.head;
       const tags = emotionCache.sheet.tags;
@@ -63,22 +58,36 @@ const Document = withEmotionCache(
     return (
       <html lang="en">
         <head>
-          <meta charSet="utf-8" />
-          <meta name="viewport" content="width=device-width,initial-scale=1" />
-          {title ? <title>{title}</title> : null}
           <Meta />
+          {title ? <title>{title}</title> : null}
           <Links />
-          <link
-            rel="stylesheet"
-            href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-          />
+          <link rel="icon" href="/favicon.ico" sizes="any" />
+          <link rel="icon" href="/icon.svg" type="image/svg+xml" />
+          <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+          <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
           <meta name="emotion-insertion-point" content="emotion-insertion-point" />
         </head>
         <body>
+          <div id="werkPortalPrepend"></div>
+
           {children}
-          <link rel="stylesheet" href={tailwindcss} />
+          
+          {/** @NOTE : for disable JavaScript by user browser */}
+          <noscript>
+            <div
+              data-nosnippet="true"
+              aria-hidden="true"
+              tabIndex={-1}
+              className="bg-w-warning flex justify-center items-center py-2 px-4 text-sm text-white font-medium sticky bottom-0 z-1"
+            >
+              <style dangerouslySetInnerHTML={{ __html: '.hideSSR{display:none!important}' }} />
+              Please enable JavaScript
+            </div>
+          </noscript>
+
           <ScrollRestoration />
           <Scripts />
+          <link rel="stylesheet" href={tailwindcss} />
           <LiveReload />
         </body>
       </html>
@@ -89,38 +98,28 @@ const Document = withEmotionCache(
 export default function App() {
   return (
     <Document>
-      <ThemeProvider theme={light}>
+      <ThemeProvider theme={LightTheme}>
         <CssBaseline enableColorScheme />
-        <GlobalStyles
-          styles={{
-            html: { WebkitFontSmoothing: "auto" }
-          }}
-        />
         <RefineSnackbarProvider>
           <Refine
             routerProvider={routerProvider}
             dataProvider={dataProvider(appwriteClient, {
-              databaseId: "default",
+              databaseId: DATABASE_ID, // default
             })}
             liveProvider={liveProvider(appwriteClient, {
-              databaseId: "default",
+              databaseId: DATABASE_ID, // default
             })}
-            liveMode="auto"
+            options={{ liveMode: "auto" }} // liveMode="auto" // @deprecated — liveMode property is deprecated. Use it from within options instead.
             authProvider={authProvider}
-            LoginPage={AuthPage}
             notificationProvider={notificationProvider}
-            // ReadyPage={ReadyPage}
+            LoginPage={AuthPage}
             DashboardPage={WelcomePage}
-            catchAll={<ErrorComponent />}
-            // Title={Title}
-            // Sider={Sider}
-            // Layout={Layout}
-            // Header={Header}
+            catchAll={<ErrorComponent />} // For 404 = https://refine.dev/docs/api-reference/core/components/refine-config/#catchall
             resources={[
               {
-                name: "home",
-                // list: WelcomePage,
-              }
+                name: "setup-profile",
+                list: SetUpProfile,
+              },
             ]}
           >
             <Outlet />

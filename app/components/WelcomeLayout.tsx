@@ -1,16 +1,17 @@
 import type { ReactNode } from "react";
 import AppBar from '@mui/material/AppBar';
 import Toolbar from '@mui/material/Toolbar';
+import { Link } from "@remix-run/react";
 
 import FooterMain from './FooterMain';
 
-interface Props {
+interface WelcomeLayoutProps {
   children?: ReactNode,
 }
 
 export default function WelcomeLayout({
   children,
-}: Props){
+}: WelcomeLayoutProps){
   return (
     <>
       <AppBar
@@ -27,14 +28,14 @@ export default function WelcomeLayout({
           variant="dense" // dense | regular
           className="justify-center"
         >
-          <a href="/">
+          <Link to="/">
             <img
-              width="32"
-              height="32"
-              src="/image/werk-logo-symbol-space.svg"
+              // width="32"
+              // height="32"
+              src="/image/logo/werk-logo-symbol.svg" // /image/werk-logo-symbol-space.svg
               alt="Werk"
             />
-          </a>
+          </Link>
         </Toolbar>
       </AppBar>
 

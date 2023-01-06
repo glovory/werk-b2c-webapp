@@ -1,13 +1,26 @@
-import { Account, Appwrite, Storage } from "@pankod/refine-appwrite";
+import { Account, Appwrite, Storage, Functions } from "@pankod/refine-appwrite";
 
-const APPWRITE_URL = "https://app.microstack.id/v1"; // your-appwrite-url
-const APPWRITE_PROJECT = "werk-b2c"; // your-appwrite-project
-const TOKEN_KEY = "token-werk-b2c"; // token
+import { APPWRITE_URL, APPWRITE_PROJECT, TOKEN_KEY, REDIRECT_SUCCESS, REDIRECT_FAILURE } from '~/config';
 
 const appwriteClient = new Appwrite();
 
 appwriteClient.setEndpoint(APPWRITE_URL).setProject(APPWRITE_PROJECT);
+
+// for authentication
 const account = new Account(appwriteClient);
+
+// for file upload
 const storage = new Storage(appwriteClient);
 
-export { appwriteClient, account, storage, TOKEN_KEY };
+//
+const functions = new Functions(appwriteClient);
+
+export {
+  appwriteClient,
+  account,
+  storage,
+  functions,
+  TOKEN_KEY,
+  REDIRECT_SUCCESS,
+  REDIRECT_FAILURE,
+};

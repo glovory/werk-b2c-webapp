@@ -2,6 +2,9 @@
 @tailwind base;
 
 @layer base {
+  html {
+    -webkit-font-smoothing: auto;
+  }
   h1, .h1,
   h2, .h2,
   h3, .h3,
@@ -48,26 +51,41 @@
     display: inline-block;
     vertical-align: middle;
   }
+  [hidden] {
+    display: none !important;
+  }
 }
 /* END BASE */
 
 /* COMPONENTS */
 @tailwind components;
 
+/* This won't be included in your compiled CSS unless you actually use it */
 @layer components {
-  /* This won't be included in your compiled CSS unless you actually use it */
-  .border-top {
-    border-top: 1px solid #dee2e6;
-  }
-  .border-bottom {
-    border-bottom: 1px solid #dee2e6;
-  }
-
   .w-required::after {
     content: "*";
     color: #e92f39;
     vertical-align: top;
     margin-left: 5px;
+  }
+
+  .img-loader {
+    position: relative;
+    overflow: hidden;
+    background-color: #f1f1f1;
+  }
+  .img-loader::before,
+  .img-loader::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background-color: #f1f1f1;
+  }
+  .img-loader::after {
+    background: #fff linear-gradient(to right, rgba(0,0,0,.08) 0, rgba(0,0,0,.15) 15%, rgba(0,0,0,.08) 30%);
+    background-size: 1200px 100%;
+    animation: w-loader 2s linear infinite;
   }
   
   .line-clamp {
@@ -81,12 +99,22 @@
     text-overflow: ellipsis;
     white-space: normal;
   }
+
+  /* Cropper */
+  @media (hover: hover) {
+    .cropper:active:not(:focus-within)::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      z-index: 1301;
+      cursor: move;
+    }
+  }
 }
 /* END COMPONENTS */
 
 /* CUSTOM */
 /* This will always be included in your compiled CSS */
-
 .w-input-group .MuiInputBase-root {
   background-color: #e0e0e6;
 }
@@ -101,38 +129,85 @@
 }
 
 .w-input-gray .MuiInputBase-input,
-.w-input-gray.w-multiline {
+.w-input-gray.w-multiline .MuiInputBase-root {
   background-color: #f4f4f6;
 }
 
-.no-icon.MuiLoadingButton-loading {
-  padding-left: 2.25rem !important;
+.w-input-group .MuiInputBase-input:-webkit-autofill {
+  border-radius: 0;
+}
+/* <InputGroup /> */
+.w-input-group .MuiInputBase-adornedEnd {
+  padding-right: 0;
+}
+.w-input-group .w-adornment-end {
+  height: 56px;
+  max-height: 100%;
+  margin-left: 0;
+  padding: 0 14px;
+  background-color: #f4f4f6;
+}
+.w-input-group .MuiInputBase-sizeSmall .w-adornment-end {
+  height: 40px;
+  padding: 0 8px;
 }
 
-.modal-bs .MuiDialog-paper,
+.w-btn-loading.MuiLoadingButton-loading {
+  background-color: #5c636a; /* #071ec3 | #5c636a */
+}
+
+.w-btn-loading.MuiLoadingButton-loading svg circle {
+  stroke: #fff;
+}
+
+/* Select with small arrow */
+.w-select-sm .MuiSelect-icon {
+  font-size: 1.25rem;
+}
+
+.w-card .MuiCardHeader-avatar {
+  margin-right: .5rem;
+}
+
 .modal-bs .MuiDialogContent-root {
   overflow-y: unset;
 }
+
+.modal-bs .MuiDialog-paper {
+  overflow-y: unset;
+  height: auto;
+}
+
+@keyframes w-loader {
+	0% {
+		background-position: -1200px 0;
+	}
+	100% {
+		background-position: 1200px 0;
+	}
+}
 /* END CUSTOM */
 
+/* UTILITIES */
 @tailwind utilities;
+
+/* This won't be included in your compiled CSS unless you actually use it */
+@layer utilities {
+  .border-top {
+    border-top: 1px solid #e8e9ed; /* #dee2e6 */
+  }
+  .border-bottom {
+    border-bottom: 1px solid #e8e9ed;
+  }
+  
+}
+/* END UTILITIES */
 
 /* RESPONSIVE */
 
 /* FOR Smartphone Landscape & Portrait */
+/*
 @media (max-width: 767px) {
-  .px-xs-0,
-  .pe-xs-0 {
-    padding-right: 0;
-  }
-
-  .px-xs-0,
-  .ps-xs-0 {
-    padding-left: 0;
-  }
-
-  .rounded-xs-0 {
-    border-radius: 0;
-  }
-
+  
 }
+*/

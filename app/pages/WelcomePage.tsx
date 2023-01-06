@@ -1,18 +1,18 @@
-import StartLayout from "~/components/StartLayout";
+import LayoutLogged from "~/components/LayoutLogged";
 
 const WelcomePage: React.FC = () => {
   return (
-    <StartLayout>
+    <LayoutLogged footer={false}>
       <img
+        className="w-full object-cover"
         loading="lazy"
         decoding="async"
         draggable={false}
         height={450}
-        className="w-full object-cover"
         alt="Hero"
         src="/image/bg/bg-hero.jpg"
       />
-    </StartLayout>
+    </LayoutLogged>
   );
 }
 

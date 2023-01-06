@@ -1,19 +1,18 @@
-import type { ReactNode, ElementType } from "react";
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, ReactNode, ElementType } from 'react';
 import Button from '@mui/material/Button';
-
+//
 import { Cx } from '~/utils/dom';
 
-interface Props {
+interface LineClampProps {
   as?: ElementType,
   open?: boolean,
-  line?: number | undefined | null,
+  line: number,
   id?: string | undefined,
   label?: ReactNode,
   labelShow?: ReactNode,
   labelProps?: object | undefined,
   className?: string | undefined,
-  children?: ReactNode,
+  children: ReactNode,
 }
 
 export default function LineClamp({
@@ -26,7 +25,7 @@ export default function LineClamp({
   labelProps,
   className,
   children,
-}: Props){
+}: LineClampProps){
   const asRef = useRef();
   const [isOverflow, setIsOverflow] = useState<boolean>(false);
   const [show, setShow] = useState<boolean>(!!open);
@@ -40,7 +39,7 @@ export default function LineClamp({
         setIsOverflow(true);
       }
     }
-  }, [asRef.current, line]);
+  }, [asRef, line]);
 
   const toggle = () => {
     setShow(!show);
