@@ -122,12 +122,9 @@ const SetUpProfile: React.FC = () => {
       if(photo){
         const userId = userData.$id;
         const cropName = userId + '_cropped';
-        const originalFile = new File([fileInput], userId + '.jpg', {
-          type: "image/jpeg"
-        });
-        const cropFile = new File([photo], cropName + '.jpg', {
-          type: "image/jpeg"
-        });
+        const ext = { type: "image/jpeg" };
+        const originalFile = new File([fileInput], userId + '.jpg', ext);
+        const cropFile = new File([photo], cropName + '.jpg', ext);
   
         await storage.createFile(BUCKET_ID, userId, originalFile);
         await storage.createFile(BUCKET_ID, cropName, cropFile);

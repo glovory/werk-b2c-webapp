@@ -1,9 +1,10 @@
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
+import { useUpdate, useNotification } from "@pankod/refine-core";
 import { useForm } from "@pankod/refine-react-hook-form";
-import { useUpdate } from "@pankod/refine-core";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
+import isEqual from "react-fast-compare";
 //
 import DialogWerk from '~/components/DialogWerk';
 import FormSetting from '~/components/profile/FormSetting';
@@ -48,7 +49,8 @@ export default function FormProfile({
   onSuccess,
 }: FormProfileProps){
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const { open: openNotif } = useNotification(); // , close: closeNotif
   const { mutate } = useUpdate();
   const {
     refineCore: { formLoading }, // onFinish, 
@@ -79,33 +81,38 @@ export default function FormProfile({
   const processForm = formLoading || isSubmitting;
 
   const onSave = async (data: any) => {
-    let isEditAccountName = values.accountName !== data.accountName;
-    if(isEditAccountName){
-      try {
-        const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
-        const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
-        // console.log('isAvailable: ', isAvailable);
-        if(isAvailability || isAvailable){
-          isEditAccountName = false;
-          clearErrors?.("accountName");
-        }else{
-          setError?.('accountName', { type: "manual", message: invalidAccountMessage });
-        }
-      } catch(err) {
-        console.log('err: ', err); // type: manual | custom | focus
-        setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
-      }
-    }
-
-    if(!isEditAccountName){
-      mutate({
-        resource: CandidateProfiles,
-        id: documentId,
-        values: data,
-        // mutationMode: "optimistic", // Default = pessimistic | optimistic | undoable
-      });
-
+    if(isEqual(values, data)){ // Prevent hit API if value same with initial value
+      // @ts-ignore
+      openNotif({ type: "success", message: "Saved", key: "notifSaveNoEdit" });
       onSuccess?.(data);
+    }else{
+      let isEditAccountName = values.accountName !== data.accountName;
+      if(isEditAccountName){
+        try {
+          const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
+          const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
+          if(isAvailability || isAvailable){
+            isEditAccountName = false;
+            clearErrors?.("accountName");
+          }else{
+            setError?.('accountName', { type: "manual", message: invalidAccountMessage });
+          }
+        } catch(err) {
+          // console.log('err: ', err); // type: manual | custom | focus
+          setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
+        }
+      }
+
+      if(!isEditAccountName){
+        // https://refine.dev/docs/api-reference/core/hooks/data/useUpdate/
+        mutate({
+          resource: CandidateProfiles,
+          id: documentId,
+          values: data,
+        });
+
+        onSuccess?.(data);
+      }
     }
   }
 
@@ -117,7 +124,7 @@ export default function FormProfile({
   return (
     <DialogWerk
       title="Edit Profile"
-      fullScreen={fullScreen}
+      fullScreen={isFullScreen}
       fullWidth
       maxWidth="xs"
       scroll="body"

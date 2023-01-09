@@ -1,5 +1,6 @@
 import { useRef, useState, useCallback } from "react";
 import Skeleton from '@mui/material/Skeleton';
+import TextField from '@mui/material/TextField';
 import LoadingButton from '@mui/lab/LoadingButton';
 import RefreshTwoToneIcon from '@mui/icons-material/RefreshTwoTone';
 import useMediaQuery from '@mui/material/useMediaQuery';
@@ -7,7 +8,6 @@ import { useTheme } from '@mui/material/styles';
 import debounce from 'lodash/debounce';
 //
 import DialogWerk from "../DialogWerk";
-import InputGroup from '~/components/form/InputGroup';
 import { imgLoader, enterToClick } from '~/utils/dom';
 import { unsplashApi } from './api';
 
@@ -111,15 +111,15 @@ export default function ModalGallery({
     >
       <div className="pt-3 pb-4 px-6 max-md:p-3">
         <div className="flex sticky top-14 z-1 bg-white p-3 mx-n3">
-          <InputGroup
+          <TextField
             className="w-input-gray"
-            // @ts-ignore
             disabled={loadingUnsplash && !queryValue.length}
             size="small"
             fullWidth
-            variant="outlined"
             label="Search for an image"
             type="search"
+            id="findUnsplashImage"
+            autoComplete="findUnsplashImage"
             value={queryValue}
             onChange={onSearch}
           />

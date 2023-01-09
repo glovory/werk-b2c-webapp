@@ -23,6 +23,13 @@ export interface DialogWerkProps extends DialogProps {
   children?: any
 }
 
+/** 
+ * ## Docs : 
+ * 
+ * - [Dialog](https://mui.com/material-ui/api/dialog/)
+ * - [Transition](http://reactcommunity.org/react-transition-group/transition)
+ * ## 
+*/
 export default function DialogWerk({
   title,
   stickyHeader = true,

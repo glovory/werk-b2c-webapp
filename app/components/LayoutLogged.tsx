@@ -18,7 +18,7 @@ import { Link } from "@remix-run/react";
 import { useGetIdentity, useList } from "@pankod/refine-core"; // useLogout
 import { useNavigate } from "@remix-run/react";
 //
-import { account, REDIRECT_SUCCESS, REDIRECT_FAILURE, storage } from "~/utility";
+import { account, storage, REDIRECT_SUCCESS, REDIRECT_FAILURE } from "~/utility";
 import { authProvider } from '~/authProvider';
 import { BUCKET_ID, CandidateProfiles } from '~/config';
 import { imgLoader } from '~/utils/dom';
@@ -189,7 +189,6 @@ export default function LayoutLogged({
                 
                   {isSuccess && identity ?
                     <Dropdown
-                      mountOnOpen // keepMounted
                       buttonProps={{ className: "p-0" }}
                       id="accountMenu"
                       sx={{ mt: '5px' }}
@@ -244,7 +243,7 @@ export default function LayoutLogged({
                           to={`/profile/${identity.accountName}`}
                           onClick={close}
                         >
-                          <Typography textAlign="center">My Profile</Typography>
+                          My Profile
                         </MenuItem>,
                         <MenuItem
                           key="4"
@@ -252,11 +251,11 @@ export default function LayoutLogged({
                           to="/account-setting"
                           onClick={close}
                         >
-                          <Typography textAlign="center">Account Setting</Typography>
+                          Account Setting
                         </MenuItem>,
                         <hr key="5" className="my-3" />,
                         <MenuItem key="6" onClick={() => onLogout(close)}>
-                          <Typography textAlign="center">Sign Out</Typography>
+                          Sign Out
                         </MenuItem>
                       ]}
                     </Dropdown>

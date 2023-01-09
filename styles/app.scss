@@ -140,14 +140,14 @@
 .w-input-group .MuiInputBase-adornedEnd {
   padding-right: 0;
 }
-.w-input-group .w-adornment-end {
+.w-input-group .MuiInputAdornment-positionEnd {
   height: 56px;
   max-height: 100%;
   margin-left: 0;
   padding: 0 14px;
   background-color: #f4f4f6;
 }
-.w-input-group .MuiInputBase-sizeSmall .w-adornment-end {
+.w-input-group .MuiInputBase-sizeSmall .MuiInputAdornment-positionEnd {
   height: 40px;
   padding: 0 8px;
 }
@@ -176,6 +176,13 @@
 .modal-bs .MuiDialog-paper {
   overflow-y: unset;
   height: auto;
+}
+
+.MuiPickersCalendarHeader-root {
+  min-height: 45px;
+  max-height: 45px;
+  margin: 0;
+  box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
 }
 
 @keyframes w-loader {

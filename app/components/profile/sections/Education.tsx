@@ -18,10 +18,11 @@ import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 //
 import DialogWerk from '~/components/DialogWerk';
+import DatePickerWerk from '~/components/form/DatePickerWerk';
 import incrementId from '~/utils/incrementId';
 
 interface EducationProps {
-  isLoggedInUser?: boolean,
+  editable?: boolean,
   list: Array<any>,
   onSave?: (val: any) => void
   onDelete?: (val: any, closeConfirm: any, closeModal: any) => void
@@ -35,22 +36,23 @@ interface FormEducationInputs {
 }
 
 export default function Education({
-  isLoggedInUser,
+  editable, // isLoggedInUser
   list,
   onSave,
   onDelete,
 }: EducationProps){
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isMediaQuery = useMediaQuery(theme.breakpoints.down('md'));
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const [itemToEditDelete, setItemToEditDelete] = useState<any>({});
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { formLoading }, // onFinish, 
     reset,
     register,
     handleSubmit,
-    // setValue,
+    setValue,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<FormEducationInputs>({
     // refineCoreProps: {
@@ -105,6 +107,11 @@ export default function Education({
     setOpenConfirm(true);
   }
 
+  const changeYear = (val: any, field: string) => {
+    setValue(field, val?.$y);
+    clearErrors(field); // Manual clear error
+  }
+
   return (
     <Card variant="outlined" className="max-md:rounded-none w-card">
       <CardHeader
@@ -115,9 +122,10 @@ export default function Education({
           className: "text-lg font-medium",
         }}
         action={
-          isLoggedInUser && !!list?.length && (
-            <Button onClick={onOpenModal} className="font-bold text-blue-700">
-              <AddCircleTwoToneIcon fontSize="small" className="mr-2" />Add Education
+          editable && !!list?.length && (
+            <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
+              <AddCircleTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
+              {!isMediaQuery && 'Add Education'}
             </Button>
           )
         }
@@ -129,11 +137,12 @@ export default function Education({
             {list.map((item: any) =>
               <section key={item.id} className="flex flex-row items-start">
                 <div className="grow text-sm">
-                  <h6 className="text-gray-700 mb-1">{item.educationTitle}</h6>
-                  <p>{item.startDate} - {item.endDate}</p>
-                  <p>{item.schoolName}</p>
+                  <h6 className="mb-1">{item.educationTitle}</h6>
+                  <p className="text-gray-500">{item.startDate} - {item.endDate}</p>
+                  <p className="text-gray-500">{item.schoolName}</p>
                 </div>
-                {isLoggedInUser && (
+
+                {editable && (
                   <IconButton onClick={() => onClickEdit(item)} color="primary" aria-label="edit" className="ml-2">
                     <EditTwoToneIcon />
                   </IconButton>
@@ -141,14 +150,14 @@ export default function Education({
               </section>
             )}
 
-            {list.length > 3 &&
+            {list.length > 3 && (
               <Button size="large" className="px-6 mx-auto bg-gray-100 text-gray-500">
                 View All {list.length} Education
               </Button>
-            }
+            )}
           </div>
           :
-          isLoggedInUser && (
+          editable && (
             <div className="grid place-items-center gap-4 text-gray-400 text-sm">
               <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
                 <SchoolTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
@@ -162,10 +171,10 @@ export default function Education({
         }
       </div>
 
-      {isLoggedInUser &&
+      {editable &&
         <DialogWerk
           title="Add Education"
-          fullScreen={fullScreen}
+          fullScreen={isMediaQuery}
           fullWidth
           maxWidth="xs"
           scroll="body"
@@ -192,39 +201,46 @@ export default function Education({
                 className="w-input-gray mt-2"
                 required
                 fullWidth
-                variant="outlined"
                 placeholder="Enter education title"
               />
               <hr className="my-6" />
 
               <label className="font-medium w-required">Year Range</label>
               <div className="flex flex-row items-center mt-2">
-                <TextField
+                <DatePickerWerk
                   {...register("startDate")}
+                  value=""
+                  onChange={(val: any) => changeYear(val, 'startDate')}
+                  // disableFuture
+                  // disableHighlightToday
+                  openTo="year"
+                  views={['year']}
+                  fullWidth
+                  required
                   disabled={processForm}
+                  autoComplete="off"
                   error={!!errors.startDate}
                   id="startDate"
                   className="w-input-gray"
-                  required
-                  fullWidth
-                  variant="outlined"
-                  type="date"
                 />
                 <b className="p-2">-</b>
-                <TextField
+                <DatePickerWerk
                   {...register("endDate")}
+                  value=""
+                  onChange={(val: any) => changeYear(val, 'endDate')}
+                  openTo="year"
+                  views={['year']}
+                  fullWidth
+                  required
                   disabled={processForm}
+                  autoComplete="off"
                   error={!!errors.endDate}
                   id="endDate"
                   className="w-input-gray"
-                  required
-                  fullWidth
-                  variant="outlined"
-                  type="date"
                 />
               </div>
-              {(errors?.startDate?.message || errors?.endDate?.message) && // @ts-ignore:next-line
-                <div className="text-xs text-red-500 mt-1 pl-4">{errors?.startDate?.message || errors?.endDate?.message}</div>
+              {(errors.startDate?.message || errors.endDate?.message) && // @ts-ignore:next-line
+                <div className="text-xs text-w-error mt-1 pl-4">{errors.startDate?.message || errors.endDate?.message}</div>
               }
               <hr className="my-6" />
 
@@ -239,7 +255,6 @@ export default function Education({
                 className="w-input-gray mt-2"
                 required
                 fullWidth
-                variant="outlined"
                 placeholder="Enter school or university name"
               />
               <hr className="my-6" />
@@ -265,7 +280,7 @@ export default function Education({
         </DialogWerk>
       }
 
-      {isLoggedInUser &&
+      {editable &&
         <DialogWerk
           title="Delete Education"
           fullWidth

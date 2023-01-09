@@ -1,15 +1,13 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
+import { useNotification } from "@pankod/refine-core";
 import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogActions from '@mui/material/DialogActions';
 import CircularProgress from '@mui/material/CircularProgress';
-import Snackbar from '@mui/material/Snackbar'; // , { SnackbarOrigin }
 import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Cropper from 'react-easy-crop';
@@ -22,7 +20,7 @@ import MoveIcon from '~/svg/Move';
 import { enterToClick, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
 import { isImage } from '~/utils/typeChecking';
-import { INITIAL_BG, ACCEPT_FILE } from '~/config';
+import { INITIAL_BG, ACCEPT_IMG } from '~/config';
 
 interface CoverProps {
   src?: string
@@ -33,6 +31,12 @@ interface CoverProps {
   onDelete?: (val: any) => void
 }
 
+/** 
+ * ## Docs : 
+ * 
+ * - [Cropper](https://github.com/ValentinH/react-easy-crop)
+ * ## 
+*/
 export default function Cover({
   src,
   cropSrc,
@@ -44,7 +48,8 @@ export default function Cover({
   const height = 180;
   const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const { open: openNotif } = useNotification(); // , close: closeNotif
   const refParent: any = useRef();
   const refFile: any = useRef();
   const refControllerUnsplash: any = useRef();
@@ -57,9 +62,9 @@ export default function Cover({
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const [isEdited, setIsEdited] = useState<boolean>(false);
-  const [toastOpen, setToastOpen] = useState<boolean>(false);
   const [openUnsplashModal, setOpenUnsplashModal] = useState<boolean>(false);
 
+  /** @NOTE : Can be set useRef() controller here */
   useEffect(() => {
     return () => {
       if(refControllerUnsplash.current){
@@ -83,7 +88,7 @@ export default function Cover({
   const onChangeFile = async (e: any) => {
     const file = e.target.files[0];
     if(file){
-      const imgSrc: any = await isImage(file); // , ACCEPT_FILE
+      const imgSrc: any = await isImage(file); // , ACCEPT_IMG
       if(imgSrc){
         setCropSize();
         setFileImage(file);
@@ -91,7 +96,8 @@ export default function Cover({
         setIsEdited(true);
       }else{
         resetFile(e); // Reset input file
-        setToastOpen(true);
+        // @ts-ignore
+        openNotif({ type: "error", message: "Please insert image file", key: "notifErrorBgFile" });
       }
     }
   }
@@ -140,10 +146,6 @@ export default function Cover({
     setOpenConfirm(false);
   }
 
-  const closeToast = () => {
-    setToastOpen(false);
-  }
-
   const openModalCrop = (close: any) => {
     close();
     if(cropSrc){
@@ -159,7 +161,7 @@ export default function Cover({
   }
 
   const onClickImageUnsplash = (item: any) => {
-    console.log('onClickImageUnsplash item: ', item);
+    // console.log('onClickImageUnsplash item: ', item);
     setCropSize();
     setFileBlob(item?.urls?.full); // full | raw | regular | small | small_s3 | thumb
     setOpenUnsplashModal(false);
@@ -174,11 +176,17 @@ export default function Cover({
     refControllerUnsplash.current = null;
   }
 
+  const onErrorLoadBg = () => {
+    doCancel();
+    // @ts-ignore
+    openNotif({ type: "error", message: "Failed load image", key: "notifErrorBgFile" });
+  }
+
   const renderMenus = (close: any) => {
     let fix = [
       <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
         <ImageTwoToneIcon className="mr-2" />Choose From Gallery
-        <input ref={refFile} onChange={onChangeFile} type="file" accept={ACCEPT_FILE} hidden />
+        <input ref={refFile} onChange={onChangeFile} type="file" accept={ACCEPT_IMG} hidden />
       </MenuItem>,
       <MenuItem key="2" onClick={() => openUnsplash(close)}>
         <img src="/image/brand/unsplash.svg" alt="Unsplash" width="15.5" className="ml-1 mr-3" />
@@ -209,14 +217,6 @@ export default function Cover({
       ref={refParent}
       className="relative select-none"
     >
-      <ModalGallery
-        open={openUnsplashModal}
-        onClose={() => setOpenUnsplashModal(false)} // onCloseModalUnsplash
-        onClickImage={onClickImageUnsplash}
-        onFetch={fetchUnsplash}
-        onDoneFetch={doneFetch}
-      />
-
       {(fileBlob || cropSrc) && isEdited &&
         <div className="relative cropper" style={{ height }} tabIndex={-1}>
           <Cropper
@@ -231,7 +231,7 @@ export default function Cover({
               width: parentWidth, // Must Calc from parent width
             }}
             mediaProps={{
-              ...imgLoader(),
+              ...imgLoader('', null, onErrorLoadBg),
               draggable: false,
             }}
             image={fileBlob || cropSrc} // fileBlob || src
@@ -256,7 +256,6 @@ export default function Cover({
 
       {!hide &&
         <Dropdown
-          mountOnOpen // keepMounted
           disableAutoFocusItem
           label={<CameraIcon />}
           buttonProps={{
@@ -273,7 +272,7 @@ export default function Cover({
         <>
           <div className="absolute top-0 right-0 mt-3 mr-3">
             <Button
-              disabled={loadingCrop}
+              disabled={loadingCrop || disabled}
               onClick={doCancel}
               variant="outlined"
               color="primary"
@@ -282,7 +281,7 @@ export default function Cover({
               Cancel
             </Button>
             <LoadingButton
-              loading={loadingCrop}
+              loading={loadingCrop || disabled}
               onClick={doSave}
               variant="contained"
               className="min-w-80 w-btn-loading"
@@ -291,8 +290,8 @@ export default function Cover({
             </LoadingButton>
           </div>
 
-          <div className={`absolute inset-0 flex ${loadingCrop ? 'bg-gray-500/30 text-white cursor-wait' : 'pointer-events-none'}`}>
-            {loadingCrop && <CircularProgress color="inherit" className="absolute inset-0 m-auto z-2" />}
+          <div className={`absolute inset-0 flex ${(loadingCrop || disabled) ? 'bg-gray-500/30 text-white cursor-wait' : 'pointer-events-none'}`}>
+            {(loadingCrop || disabled) && <CircularProgress color="inherit" className="absolute inset-0 m-auto z-2" />}
 
             <b className="text-white bg-gray-700/60 m-auto py-1 px-4 rounded-md text-xs shadow-sm">
               <MoveIcon className="align-middle mr-2" />
@@ -304,7 +303,7 @@ export default function Cover({
 
       <DialogWerk
         title="Background Photo"
-        fullScreen={fullScreen}
+        fullScreen={isFullScreen}
         fullWidth
         maxWidth="lg"
         scroll="body"
@@ -327,43 +326,31 @@ export default function Cover({
         maxWidth="xs"
         scroll="body"
         open={openConfirm}
-        // onClose={processForm ? undefined : closeConfirm}
-        onClose={closeConfirm}
+        onClose={disabled ? undefined : closeConfirm}
       >
         <div className="p-6">
           Are you sure want to delete this background?
         </div>
         <DialogActions className="py-3 px-4 border-top">
-          <Button
+          <LoadingButton
             size="large"
             color="error"
             variant="contained"
             className="px-6"
+            loading={disabled}
             onClick={() => onDelete?.(closeConfirm)}
           >
             Delete
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </DialogWerk>
 
-      <Snackbar
-        key="toastErrorBgFile"
-        autoHideDuration={2e3}
-        // disableWindowBlurListener
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={toastOpen}
-        onClose={closeToast}
-        message="Please insert image file"
-        action={
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            sx={{ p: 0.5 }}
-            onClick={closeToast}
-          >
-            <CloseIcon />
-          </IconButton>
-        }
+      <ModalGallery
+        open={openUnsplashModal}
+        onClose={() => setOpenUnsplashModal(false)}
+        onClickImage={onClickImageUnsplash}
+        onFetch={fetchUnsplash}
+        onDoneFetch={doneFetch}
       />
     </div>
   );
