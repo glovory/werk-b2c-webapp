@@ -34,7 +34,7 @@ export const lightPalette: PaletteOptions = {
     main: "#0b82f0",
     contrastText,
   },
-  divider: "rgba(0,0,0,0)",
+  divider: "#e8e9ed", // rgba(0,0,0,0)
   text: {
     primary: "#212529", // Design = #1a224c | Default Refine = #626262 | Bs = #212529
     secondary: "#9f9f9f",

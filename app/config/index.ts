@@ -3,7 +3,7 @@ export * from '../../config';
 // 
 export const DOMAIN = 'https://werk.id';
 export const INITIAL_BG = '/image/bg/cover.svg';
-export const ACCEPT_FILE = '.jpg,.jpeg,.png';
+export const ACCEPT_IMG = '.jpg,.jpeg,.png';
 
 // DEV      = http://localhost:3000
 // STAGING  = https://staging.werk.id
@@ -19,6 +19,7 @@ export const BUCKET_ID = '63a117a09c198a16ae4e';
 // Functions
 export const CheckUserExist = '63a02b6bbf99a9acd42c';
 export const CheckAccountAvailability = '63a00f8e46d7b8fed7ca';
+export const DeleteAvatarBackground = '63b25b05cb9092f8a3c0';
 
 // Collection ID
 export const CandidateProfiles = '639a94a596500ae9a7d8';

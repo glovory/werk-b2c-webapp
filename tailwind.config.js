@@ -41,14 +41,14 @@ module.exports = {
         'n6': '-1.5rem',
       },
       backgroundColor: {
-        'w-blue-1': '#cfd9ff',
-        'w-blue-2': '#1234ff',
+        'w-primary': '#1234ff',
         'w-warning': '#f37421',
         'w-error': '#e92f39',
         'w-success': '#86bb40',
+        'w-blue-1': '#cfd9ff',
       },
       colors: {
-        'w-primary': '#1234ff', // Same with w-blue-2
+        'w-primary': '#1234ff',
         'w-warning': '#f37421',
         'w-error': '#e92f39',
         'w-success': '#86bb40',

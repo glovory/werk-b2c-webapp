@@ -3,7 +3,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 //
-import fetchData from '~/utils/fetchData';
+import fetchApi from '~/utils/fetchApi';
 
 const COUNTRIES = [
   'Indonesia', // 'Malaysia', 'Thailand', 'Singapore', 'Saudi Arabia', 'Philippines',
@@ -30,7 +30,7 @@ export default function CountryProvinceCity({
   const fetchOptions = () => {
     if(!states.length){
       // window.location.origin + '/data/cities.json' | 'https://api-location.netlify.app/id/cities.min.json'
-      fetchData('/data/cities.json', {
+      fetchApi('/data/cities.json', {
         // responseType: 'text',
         mode: 'no-cors', // no-cors | cors
       })

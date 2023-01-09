@@ -59,7 +59,6 @@ export default function FormSetting({
           className="w-input-gray"
           required
           fullWidth
-          variant="outlined"
           placeholder="Enter your full name"
           inputProps={{ spellCheck: false }}
         />
@@ -76,7 +75,6 @@ export default function FormSetting({
           id="accountName"
           required
           fullWidth
-          variant="outlined"
           placeholder="Set your account name"
           inputProps={{ spellCheck: false }}
           start={{
@@ -116,7 +114,6 @@ export default function FormSetting({
           disabled={disabled}
           multiline
           fullWidth
-          variant="outlined"
           placeholder="Write a few sentences about you and your experience..."
           InputProps={{
             className: "p-0",
