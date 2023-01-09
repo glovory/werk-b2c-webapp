@@ -24,8 +24,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 //
 import DialogWerk from '~/components/DialogWerk';
 import LineClamp from '~/components/LineClamp';
+import Time from '~/components/Time';
+import DatePickerWerk from '~/components/form/DatePickerWerk';
 import CountryProvinceCity from '~/components/form/CountryProvinceCity';
 import incrementId from '~/utils/incrementId';
+import dayjs from '~/utils/dayjs';
 
 const COMPANY_INDUSTRY = [
   'Information Technology',
@@ -38,7 +41,7 @@ const COMMITMENT_TYPE = [
 ];
 
 interface WorkExperienceProps {
-  isLoggedInUser?: boolean,
+  editable?: boolean,
   list: Array<any>,
   onSave?: (val: any) => void
   onDelete?: (val: any, closeConfirm: any, closeModal: any) => void
@@ -58,14 +61,19 @@ interface FormWorkExperienceInputs {
   description: string
 }
 
+// if(typeof window !== 'undefined'){
+//   // @ts-ignore
+//   window.dayjs = dayjs;
+// }
+
 export default function WorkExperience({
-  isLoggedInUser,
+  editable,
   list,
   onSave,
   onDelete,
 }: WorkExperienceProps){
   const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isMediaQuery = useMediaQuery(theme.breakpoints.down('md'));
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [isCurrentWork, setIsCurrentWork] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
@@ -76,7 +84,7 @@ export default function WorkExperience({
   const [workTypeValue, setWorkTypeValue] = useState<any>();
   const [commitmentTypeValue, setCommitmentTypeValue] = useState<any>();
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { formLoading }, // onFinish, 
     reset,
     register,
     handleSubmit,
@@ -89,6 +97,7 @@ export default function WorkExperience({
     //   resource: CandidateProfiles,
     //   redirect: false,
     // },
+    defaultValues: itemToEditDelete,
     resolver: yupResolver(yup.object({
       jobPosition: yup.string().trim().required('Job Position is required.'),
       joinDate: yup.string().trim().required("Join Date is required and can't be empty."),
@@ -109,6 +118,7 @@ export default function WorkExperience({
   
   const onOpenModal = () => {
     reset({}); // Reset / clear form
+    setItemToEditDelete({});
     setProvinceValue(null);
     setCityValue(null);
     setCompanyIndustryValue(null);
@@ -125,7 +135,7 @@ export default function WorkExperience({
 
   const doSave = (val: any) => {
     const value = { ...val, id: incrementId() };
-    // console.log('doSave val: ', val);
+    console.log('doSave value: ', value);
     return new Promise((resolve: any) => {
       setTimeout(() => {
         // onFinish(value);
@@ -147,7 +157,7 @@ export default function WorkExperience({
   }
 
   const onClickEdit = (item: any) => {
-    // console.log('onClickEdit item: ', item);
+    console.log('onClickEdit item: ', item);
     setItemToEditDelete(item);
     setProvinceValue(item.province);
     setCityValue(item.city);
@@ -156,12 +166,41 @@ export default function WorkExperience({
     setCommitmentTypeValue(item.commitmentType);
     setIsCurrentWork(!item.endDate);
     setOpenModal(true);
-    reset(item);
+    // reset(item);
   }
 
   const clickDelete = (item: any) => {
     setItemToEditDelete(item);
     setOpenConfirm(true);
+  }
+
+  const changeDate = (val: any, field: string) => {
+    // console.log('changeDate val: ', val);
+    setValue(field, val?.$d?.toISOString());
+    clearErrors(field); // Manual clear error
+  }
+
+  const renderEndDate = (joinDate: any, endDate: any) => {
+    // const years = dayjs(endDate).diff(oldDate, 'year');
+    // const months = newDate.diff(oldDate, 'month') - years * 12;
+    // const days = newDate.diff(oldDate.add(years, 'year').add(months, 'month'), 'day');
+
+    let diffMonth = dayjs(endDate || new Date()).diff(joinDate, 'M');
+    let years = parseInt('' + diffMonth / 12);
+    let modMonth = diffMonth % 12;
+    let fixValue = years ? ` | ${years} Years${modMonth ? ` ${modMonth} Months` : ''}` : diffMonth ? ` | ${diffMonth} Months` : '';
+    
+    if(endDate){
+      return (
+        <Time
+          format="MMM YYYY"
+          value={endDate}
+          dateTime={endDate}
+          end={fixValue}
+        />
+      )
+    }
+    return 'Now' + fixValue;
   }
 
   return (
@@ -174,9 +213,10 @@ export default function WorkExperience({
           className: "text-lg font-medium",
         }}
         action={
-          isLoggedInUser && !!list?.length && (
-            <Button onClick={onOpenModal} className="font-bold text-blue-700">
-              <AddCircleTwoToneIcon fontSize="small" className="mr-2" />Add Work Experience
+          editable && !!list?.length && (
+            <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
+              <AddCircleTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
+              {!isMediaQuery && 'Add Work Experience'}
             </Button>
           )
         }
@@ -198,11 +238,17 @@ export default function WorkExperience({
                       <p>{item.companyName}</p>
                       <p>{item.workType} | {item.commitmentType}</p>
                       {/* Mar 2022 - Now | 9 Months */}
-                      <p>{item.joinDate} - {item.endDate || 'Now'}</p>
-                      {/* Malang, East Java, Indonesia */}
+                      <p>
+                        <Time
+                          format="MMM YYYY"
+                          value={item.joinDate}
+                          dateTime={item.joinDate}
+                        /> - {renderEndDate(item.joinDate, item.endDate)}
+                      </p>
                       <p>{item.city}, {item.province}, {item.country}</p>
                     </div>
-                    {isLoggedInUser && (
+
+                    {editable && (
                       <IconButton onClick={() => onClickEdit(item)} color="primary" aria-label="edit" className="ml-2">
                         <EditTwoToneIcon />
                       </IconButton>
@@ -217,10 +263,10 @@ export default function WorkExperience({
                       labelShow="Read less"
                       labelProps={{
                         disableRipple: true,
-                        // color: "primary",
-                        className: "p-0 mt-2 underline font-normal text-blue-700",
+                        color: "primary",
+                        className: "p-0 mt-2 underline font-normal",
                       }}
-                      className="text-sm mt-2 text-gray-700"
+                      className="text-sm mt-2"
                     >
                       {item.description}
                     </LineClamp>
@@ -236,7 +282,7 @@ export default function WorkExperience({
             )}
           </div>
           :
-          isLoggedInUser && (
+          editable && (
             <div className="grid place-items-center gap-4 text-gray-400 text-sm">
               <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
                 <WorkTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
@@ -250,10 +296,10 @@ export default function WorkExperience({
         }
       </div>
 
-      {isLoggedInUser &&
+      {editable &&
         <DialogWerk
           title="Add Work Experience"
-          fullScreen={fullScreen}
+          fullScreen={isMediaQuery}
           fullWidth
           maxWidth="xs"
           scroll="body"
@@ -280,40 +326,42 @@ export default function WorkExperience({
                 className="w-input-gray mt-2"
                 required
                 fullWidth
-                variant="outlined"
                 placeholder="e.g. Account Executive"
               />
               <hr className="my-6" />
 
               <label htmlFor="joinDate" className="font-medium w-required">Join Date</label>
-              <TextField
+              <DatePickerWerk
                 {...register("joinDate")}
+                value={itemToEditDelete?.joinDate || ''}
+                onChange={(val: any) => changeDate(val, 'joinDate')}
+                // disableFuture
+                // disableHighlightToday
+                // views={['year', 'day', 'month']}
+                inputFormat="DD/MM/YYYY"
+                fullWidth
+                required
                 disabled={processForm}
                 error={!!errors.joinDate}
-                // @ts-ignore:next-line
                 helperText={errors?.joinDate?.message}
                 id="joinDate"
                 className="w-input-gray mt-2"
-                required
-                fullWidth
-                variant="outlined"
-                type="date"
               />
               <hr className="my-6" />
 
               <label htmlFor="endDate" className="font-medium w-required">End Date</label>
-              <TextField
+              <DatePickerWerk
                 {...register("endDate")}
+                value={itemToEditDelete?.endDate || ''}
+                onChange={(val: any) => changeDate(val, 'endDate')}
+                inputFormat="DD/MM/YYYY"
+                fullWidth
+                required
                 disabled={processForm || isCurrentWork}
                 error={!!errors.endDate}
-                // @ts-ignore:next-line
                 helperText={errors?.endDate?.message}
                 id="endDate"
-                className="w-input-gray my-2"
-                required
-                fullWidth
-                variant="outlined"
-                type="date"
+                className="w-input-gray mt-2"
               />
               <FormControlLabel
                 control={<Checkbox checked={isCurrentWork} onChange={onChangeIsCurrentWork} size="small" />}
@@ -332,7 +380,6 @@ export default function WorkExperience({
                 className="w-input-gray mt-2"
                 required
                 fullWidth
-                variant="outlined"
                 placeholder="e.g. Glovory"
               />
               <hr className="my-6" />
@@ -439,7 +486,6 @@ export default function WorkExperience({
                 multiline
                 // rows={4}
                 fullWidth
-                variant="outlined"
                 placeholder="Write a few sentences about your work experience..."
                 InputProps={{
                   className: "p-0",
@@ -472,7 +518,7 @@ export default function WorkExperience({
         </DialogWerk>
       }
 
-      {isLoggedInUser &&
+      {editable &&
         <DialogWerk
           title="Delete Work Experience"
           fullWidth

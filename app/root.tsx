@@ -1,4 +1,4 @@
-import { useEffect, type ReactNode, useContext } from "react";
+import { type ReactNode, useContext } from "react";
 import { type MetaFunction } from "@remix-run/node";
 import {
   Links,
@@ -23,6 +23,8 @@ import { unstable_useEnhancedEffect as useEnhancedEffect } from "@mui/material";
 import { authProvider } from "~/authProvider";
 import { appwriteClient } from "~/utility";
 import ClientStyleContext from "~/contexts/ClientStyleContext";
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 
 import { LightTheme } from './theme';
 import { DATABASE_ID } from './config';
@@ -122,7 +124,9 @@ export default function App(){
               },
             ]}
           >
-            <Outlet />
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <Outlet />
+            </LocalizationProvider>
           </Refine>
         </RefineSnackbarProvider>
       </ThemeProvider>

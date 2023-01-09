@@ -1,3 +1,5 @@
+// When using TypeScript 4.x and above
+import type {} from '@mui/x-date-pickers/themeAugmentation';
 import { createTheme, ThemeOptions } from "@mui/material";
 
 import { lightPalette } from "./palette/lightPalette";
@@ -43,6 +45,14 @@ export const LightTheme = createTheme({
       styleOverrides: {
         root: {
           textTransform: 'none',
+        },
+      },
+    },
+    MuiDatePicker: {
+      styleOverrides: {
+        root: {
+          textTransform: 'none',
+          // backgroundColor: 'red',
         },
       },
     },

@@ -28,10 +28,10 @@ import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useParams } from "@remix-run/react";
-import { useGetIdentity, useList } from "@pankod/refine-core";
-// import { DateField } from '@pankod/refine-mui';
+import { useGetIdentity, useList, useUpdate, useNotification } from "@pankod/refine-core"; // useIsExistAuthentication
 //
-import { storage } from "~/utility";
+import { storage, functions } from "~/utility";
+import { INITIAL_BG, ACCEPT_IMG, BUCKET_ID, CandidateProfiles, DeleteAvatarBackground } from '~/config';
 import LayoutLogged from '~/components/LayoutLogged';
 import { CardUser, CardSection } from '~/components/profile/Loader';
 import Time from '~/components/Time';
@@ -47,7 +47,6 @@ import Education from '~/components/profile/sections/Education';
 import HardSkill from '~/components/profile/sections/HardSkill';
 import SoftSkill from '~/components/profile/sections/SoftSkill';
 import { enterToClick } from '~/utils/dom';
-import { INITIAL_BG, BUCKET_ID, CandidateProfiles } from '~/config';
 
 export const meta: MetaFunction = () => ({
   title: "Profile | Werk",
@@ -56,8 +55,10 @@ export const meta: MetaFunction = () => ({
 const Profile: React.FC = () => {
   const params = useParams();
   const theme = useTheme();
-  const isDeviceMd = useMediaQuery(theme.breakpoints.down('md'));
-  const refFile = useRef();
+  const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const { open: openNotif } = useNotification(); // , close: closeNotif
+  const { mutate } = useUpdate();
+  const refFile: any = useRef();
   const { data: loggedInUser, isLoading } = useGetIdentity<any>(); // isSuccess
   const { data: currentUser, isLoading: isLoadingCurrentUser } = useList({
     errorNotification: false,
@@ -75,7 +76,7 @@ const Profile: React.FC = () => {
     },
   });
   const { $id: logId } = loggedInUser || {};
-  const { id: documentId, candidateId, fullName, accountName, headLine, city, province, country, bio, $createdAt } = currentUser?.data?.[0] || {};
+  const { id: documentId, candidateId, fullName, accountName, headLine, bio, country, province, city, avatar: avatarVal, avatarCropped, backgroundPhoto, backgroundPhotoCropped, $createdAt } = currentUser?.data?.[0] || {};
   const isLoggedInUser = candidateId === logId;
   
   const [modalEdit, setModalEdit] = useState<boolean>(false);
@@ -84,6 +85,7 @@ const Profile: React.FC = () => {
   const [avatar, setAvatar] = useState<any>();
   const [avatarDefault, setAvatarDefault] = useState<any>();
   const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
+  const [loadingSaveBgCover, setLoadingSaveBgCover] = useState<any>(false);
   const [provinceValue, setProvinceValue] = useState<any>(null);
   const [cityValue, setCityValue] = useState<any>(null);
   const [openModalView, setOpenModalView] = useState<boolean>(false);
@@ -91,34 +93,101 @@ const Profile: React.FC = () => {
   const [listEducation, setListEducation] = useState<any>([]);
 
   useEffect(() => {
-    if(candidateId){
-      const avatarSrc = storage.getFileView(BUCKET_ID, candidateId + '_cropped');
-      if(avatarSrc?.href){
-        setAvatar(avatarSrc.href);
-        setLoadingAvatar(false);
+    if(!isLoadingCurrentUser){
+      if(province && city){
+        setProvinceValue(province);
+        setCityValue(city);
       }
-      const avatarOriSrc = storage.getFileView(BUCKET_ID, candidateId);
-      if(avatarOriSrc?.href){
-        setAvatarDefault(avatarOriSrc.href);
+      // Avatar
+      if(avatarCropped){
+        // const avatarSrc = storage.getFileView(BUCKET_ID, avatarCropped);
+        // if(avatarSrc?.href) setAvatar(avatarSrc.href);
+        setAvatar(storage.getFileView(BUCKET_ID, avatarCropped)?.href);
       }
-
-      setProvinceValue(province);
-      setCityValue(city);
+      if(avatarVal){
+        setAvatarDefault(storage.getFileView(BUCKET_ID, avatarVal)?.href);
+      }
+      // Background
+      if(backgroundPhotoCropped){
+        const bgCrop = storage.getFileView(BUCKET_ID, backgroundPhotoCropped);
+        // console.log('backgroundPhotoCropped: ', backgroundPhotoCropped);
+        // console.log('bgCrop: ', bgCrop);
+        setCover(bgCrop?.href);
+      }
+      if(backgroundPhoto){
+        const bgOri = storage.getFileView(BUCKET_ID, backgroundPhoto);
+        // console.log('backgroundPhoto: ', backgroundPhoto);
+        // console.log('bgOri: ', bgOri);
+        setCoverDefault(bgOri?.href);
+      }
+  
+      setLoadingAvatar(false);
     }
-  }, [candidateId]);
+  }, [isLoadingCurrentUser, province, city, avatarVal, avatarCropped, backgroundPhoto, backgroundPhotoCropped]);
 
-  const onSaveCover = (file: any, originalFile: any) => {
-    console.log('Hit API to save background & backgroundCropped here');
-    // console.log('onSaveCover file: ', file);
-    setCover(window.URL.createObjectURL(file)); // file
-    originalFile?.name && setCoverDefault(window.URL.createObjectURL(originalFile));
+  const notifFailedSaveBg = () => {
+    // @ts-ignore
+    openNotif({ type: "error", message: "Failed to save Background", key: "notifEditBg" });
+  }
+
+  const onSaveCover = async (crop: any, original: any) => {
+    if(candidateId && documentId){
+      const filename = 'bg_' + candidateId;
+      const cropName = filename + '_cropped';
+      setLoadingSaveBgCover(true);
+      try {
+        const ext = { type: "image/jpeg" };
+        const originalFile = new File([original], filename + '.jpg', ext);
+        await storage.createFile(BUCKET_ID, filename, originalFile);
+  
+        const cropFile = new File([crop], cropName + '.jpg', ext);
+        await storage.createFile(BUCKET_ID, cropName, cropFile);
+        // https://refine.dev/docs/api-reference/core/hooks/data/useUpdate/
+        mutate({
+          resource: CandidateProfiles,
+          id: documentId,
+          values: { backgroundPhoto: filename, backgroundPhotoCropped: cropName },
+        });
+        // @ts-ignore
+        openNotif({ type: "success", message: "Background saved successfully", key: "notifEditBg" });
+      } catch(e){
+        notifFailedSaveBg();
+      } finally {
+        const urlCrop = storage.getFileView(BUCKET_ID, cropName);
+        const urlOriginal = storage.getFileView(BUCKET_ID, filename);
+        console.log('urlCrop: ', urlCrop);
+        console.log('urlOriginal: ', urlOriginal);
+        if(urlCrop?.href){
+          setCover(urlCrop.href);
+        }
+        if(urlOriginal?.href){
+          setCoverDefault(urlOriginal.href);
+        }
+        setLoadingSaveBgCover(false);
+      }
+    }
   }
 
   const onDeleteCover = (closeConfirm: any) => {
-    setTimeout(() => {
-      setCover(INITIAL_BG);
-      closeConfirm();
-    }, 1e3);
+    setLoadingSaveBgCover(true);
+    functions.createExecution(DeleteAvatarBackground, `{"candidateId":"${logId}","delete":"background"}`)
+      .then((res: any) => {
+        const fixRes = res?.response ? JSON.parse(res.response) : {};
+        console.log('res: ', res);
+        console.log('fixRes: ', fixRes);
+        if(fixRes.success){
+          setCover(INITIAL_BG);
+          closeConfirm();
+        }else{
+          notifFailedSaveBg();
+        }
+      })
+      .catch(() => {
+        notifFailedSaveBg();
+      })
+      .finally(() => {
+        setLoadingSaveBgCover(false);
+      });
   }
 
   const onSaveAvatar = (file: any) => {
@@ -193,7 +262,7 @@ const Profile: React.FC = () => {
         <FormProfile
           open={modalEdit}
           documentId={documentId}
-          values={{ candidateId, fullName, accountName, headLine, bio }} // city, province, country, 
+          values={{ candidateId, fullName, accountName, headLine, bio, country, province, city }}
           provinceValue={provinceValue}
           cityValue={cityValue}
           onCloseModal={onCloseModal}
@@ -212,7 +281,7 @@ const Profile: React.FC = () => {
               <Card variant="outlined" className="max-md:rounded-none">
                 <Cover
                   hide={!isLoggedInUser}
-                  disabled={isLoading}
+                  disabled={isLoading || loadingSaveBgCover}
                   src={cover}
                   cropSrc={coverDefault}
                   onSave={onSaveCover}
@@ -250,8 +319,7 @@ const Profile: React.FC = () => {
                           isLoggedInUser && (
                             avatar ?
                               <Dropdown
-                                {...(isDeviceMd ? menuCenter : menuLeft)}
-                                mountOnOpen
+                                {...(isFullScreen ? menuCenter : menuLeft)}
                                 disableAutoFocusItem
                                 label={<CameraIcon />}
                                 buttonProps={{
@@ -265,7 +333,7 @@ const Profile: React.FC = () => {
                                   </MenuItem>,
                                   <MenuItem key="1" component="label" onClick={close} onKeyDown={enterToClick}>
                                     <ImageTwoToneIcon className="mr-2" />Choose From Gallery
-                                    <input ref={refFile as any} onChange={onChangeFile} disabled={disabled} type="file" accept=".jpg,.jpeg,.png" hidden />
+                                    <input ref={refFile} onChange={onChangeFile} disabled={disabled} type="file" accept={ACCEPT_IMG} hidden />
                                   </MenuItem>,
                                   <MenuItem key="c" onClick={() => doChangePositionAvatar(close, openModalCrop)}>
                                     <MoveIcon width={18} height={18} className="ml-1 mr-3" />Change Position
@@ -284,28 +352,24 @@ const Profile: React.FC = () => {
                                 onKeyDown={enterToClick}
                               >
                                 <CameraIcon />
-                                <input ref={refFile as any} onChange={onChangeFile} disabled={disabled} type="file" accept=".jpg,.jpeg,.png" hidden />
+                                <input ref={refFile} onChange={onChangeFile} disabled={disabled} type="file" accept={ACCEPT_IMG} hidden />
                               </Button>
                           )
                         )}
                       </AvatarSetup>
                       
                       <h4 className="mb-0 mt-3 font-semibold text-gray-800">{fullName}</h4>
-                      
-                      {headLine && <h6 className="mb-1 text-w-warning">{headLine}</h6>}
-                      
-                      {(city || province || country) && (
-                        <address className="not-italic text-sm text-gray-500">
-                          <RoomTwoToneIcon sx={{ fontSize: 16 }} className="align-middle" /> {[city, province, country].filter((f: any) => f).join(', ')}
-                        </address>
-                      )}
+                      <h6 className="mb-1 text-w-warning">{headLine}</h6>
+                      <address className="not-italic text-sm text-gray-500">
+                        <RoomTwoToneIcon sx={{ fontSize: 16 }} className="align-middle" /> {[city, province, country].join(', ')}
+                      </address>
                     </Grid>
                     
                     <Grid item lg={3} xs={12} className="lg:text-right max-md:flex max-md:flex-col items-center">
                       {accountName && (
                         <Button
                           color="secondary"
-                          className="mb-4 bg-gray-100 text-gray-500 hover:bg-w-blue-2 hover:text-white"
+                          className="mb-4 bg-gray-100 text-gray-500 hover:bg-w-primary hover:text-white"
                         >
                           <WerkLogo className="mr-1" />
                           werk.id/@{accountName}
@@ -325,11 +389,11 @@ const Profile: React.FC = () => {
                     </Grid>
                   </Grid>
 
-                  {bio &&
+                  {bio && (
                     <p className="mt-5 text-sm text-gray-500">
                       {bio}
                     </p>
-                  }
+                  )}
                   <div className="text-xs text-gray-400 mt-5">
                     Joined Werk: {$createdAt && <Time value={$createdAt} dateTime={$createdAt} className="font-medium" />}
                   </div>
@@ -342,7 +406,7 @@ const Profile: React.FC = () => {
               :
               <>
                 <WorkExperience
-                  isLoggedInUser={isLoggedInUser}
+                  editable={isLoggedInUser}
                   list={listWorkExperience}
                   // list={[
                   //   { 
@@ -358,7 +422,7 @@ const Profile: React.FC = () => {
                 />
 
                 <Education
-                  isLoggedInUser={isLoggedInUser}
+                  editable={isLoggedInUser}
                   // list={[
                   //   { id: 1, educationTitle: "Magister of Science", startDate: "2019-07-11", endDate: "2021-01-01", schoolName: "Harvard University" },
                   //   { id: 2, educationTitle: "Bachelor of Arts", startDate: "2019-07-11", endDate: "2021-01-01", schoolName: "Standford University" },
@@ -371,13 +435,17 @@ const Profile: React.FC = () => {
                 />
 
                 <HardSkill
-                  // list={}
-                  isLoggedInUser={isLoggedInUser}
+                  editable={isLoggedInUser}
+                  list={[]}
+                  // list={[
+                  //   { id: 1, name: 'Adobe After Effect' },
+                  //   { id: 2, name: 'Adobe XD' },
+                  // ]}
                 />
 
                 <SoftSkill
-                  // list={}
-                  isLoggedInUser={isLoggedInUser}
+                  editable={isLoggedInUser}
+                  // list={[]}
                 />
               </>
             }

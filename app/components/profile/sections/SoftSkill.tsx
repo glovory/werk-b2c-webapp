@@ -6,14 +6,14 @@ import LightbulbTwoToneIcon from '@mui/icons-material/LightbulbTwoTone';
 import AddIcon from '@mui/icons-material/Add';
 
 interface SoftSkillProps {
-  isLoggedInUser?: boolean,
+  editable?: boolean,
   // list: Array<any>,
   // onSave?: (val: any) => void
   // onDelete?: (val: any, closeConfirm: any, closeModal: any) => void
 }
 
 export default function SoftSkill({
-  isLoggedInUser,
+  editable,
   // list,
 }: SoftSkillProps){
   return (
@@ -26,12 +26,17 @@ export default function SoftSkill({
           className: "text-lg font-medium",
         }}
         // action={
-        //   isLoggedInUser && <Switch defaultChecked />
+        //   editable && !!list?.length && (
+        //     <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
+        //       <EditTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
+        //       {!isMediaQuery && 'Edit Hard Skill'}
+        //     </Button>
+        //   )
         // }
       />
 
       <div className="py-6 px-4">
-        {isLoggedInUser && (
+        {editable && (
           <div className="grid place-items-center gap-4 text-gray-400 text-sm">
             <p className="rounded-full bg-gray-100 w-20 h-20 grid place-items-center mx-auto">
               <LightbulbTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />

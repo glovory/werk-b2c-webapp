@@ -38,12 +38,20 @@ export const menuCenter = {
   }
 };
 
+/** 
+ * ## Docs : 
+ * 
+ * - [Menu](https://mui.com/material-ui/api/menu/)
+ * - [MenuItem](https://mui.com/material-ui/api/menu-item/)
+ * - [Button](https://mui.com/material-ui/api/button/)
+ * ## 
+*/
 export default function Dropdown({
   buttonProps,
   label,
   labelAs: LabelAs = Button,
   keepMounted = false,
-  mountOnOpen,
+  mountOnOpen = true, // Custom for render first open, next toggle hide
   onClose,
   children,
   ...etc
@@ -51,12 +59,12 @@ export default function Dropdown({
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [firstRender, setFirstRender] = useState<boolean>(false);
 
-  const handleClick = (e: React.MouseEvent<HTMLElement>) => {
+  const doClick = (e: React.MouseEvent<HTMLElement>) => {
     (mountOnOpen && !firstRender) && setFirstRender(true);
     setAnchorEl(e.currentTarget);
   }
 
-  const handleClose = () => {
+  const doClose = () => {
     setAnchorEl(null);
     onClose?.();
   }
@@ -68,7 +76,7 @@ export default function Dropdown({
         // aria-controls={open ? 'demo-customized-menu' : undefined}
         aria-haspopup="true"
         aria-expanded={!!anchorEl}
-        onClick={handleClick}
+        onClick={doClick}
       >
         {label}
       </LabelAs>
@@ -79,9 +87,9 @@ export default function Dropdown({
         keepMounted={keepMounted || firstRender}
         anchorEl={anchorEl}
         open={!!anchorEl}
-        onClose={handleClose}
+        onClose={doClose}
       >
-        {typeof children === "function" ? children(handleClose) : children}
+        {typeof children === "function" ? children(doClose) : children}
       </Menu>
     </>
   );

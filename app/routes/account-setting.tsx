@@ -15,11 +15,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Switch from '@mui/material/Switch';
 import TextField from '@mui/material/TextField';
-import DialogActions from '@mui/material/DialogActions';
 import Alert from '@mui/material/Alert';
 import Portal from '@mui/base/Portal';
-import useMediaQuery from '@mui/material/useMediaQuery';
-import { useTheme } from '@mui/material/styles';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -28,7 +25,6 @@ import LoadingPage from '~/components/LoadingPage';
 import ErrorComponent from '~/pages/error/ErrorComponent';
 import LayoutLogged from '~/components/LayoutLogged';
 import { TabPanel, a11yProps } from '~/components/tabs';
-import DialogWerk from '~/components/DialogWerk';
 
 export const meta: MetaFunction = () => ({
   title: "Account Setting | Werk",
@@ -40,10 +36,8 @@ interface FormDeleteAccountInputs {
 
 const AccountSetting: React.FC = () => {
   const TABS = ['Privacy Setting', 'Delete Account'];
-  const theme = useTheme();
-  const fullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const {
-    refineCore: { onFinish, formLoading },
+    refineCore: { formLoading }, // onFinish, 
     reset,
     register,
     handleSubmit,
@@ -59,16 +53,11 @@ const AccountSetting: React.FC = () => {
   });
   const processForm = formLoading || isSubmitting;
   const [tab, setTab] = useState(0);
-  const [openModal, setOpenModal] = useState<boolean>(false);
   const [hasDeletedAccount, setHasDeletedAccount] = useState<boolean>(false);
   const [isLoadingRestore, setIsLoadingRestore] = useState<boolean>(false);
 
   const tabChange = (e: React.SyntheticEvent, newValue: number) => {
     setTab(newValue);
-  }
-
-  const onCloseModal = () => {
-    setOpenModal(false);
   }
 
   const onDeleteAccount = (data: any) => {
@@ -77,7 +66,7 @@ const AccountSetting: React.FC = () => {
       setTimeout(() => {
         // onFinish(data);
         setHasDeletedAccount(true);
-        onCloseModal();
+        // onCloseModal();
         reset({});
         resolve();
       }, 1e3);
@@ -212,14 +201,43 @@ const AccountSetting: React.FC = () => {
                               </LoadingButton>
                             </>
                             :
-                            <LoadingButton
-                              onClick={() => setOpenModal(true)}
-                              variant="outlined"
-                              size="large"
-                              className="border-red-500 hover:border-red-700 hover:bg-red-700 text-red-500 hover:text-white"
+                            <form
+                              noValidate
+                              onSubmit={handleSubmit(onDeleteAccount)}
                             >
-                              Delete Your Account
-                            </LoadingButton>
+                              <p>
+                                You are about to start the process of deleting your account. Your data will no longer available on werk.id.
+                              </p>
+                              <p className="my-4">
+                                To continue to delete your account, please confirm your email address below:
+                              </p>
+                              <label htmlFor="email" className="font-semibold">Email Address</label>
+                              <TextField
+                                {...register("email")}
+                                error={!!errors.email}
+                                fullWidth
+                                // @ts-ignore
+                                helperText={errors.email?.message}
+                                id="email"
+                                type="email"
+                                required
+                                disabled={processForm}
+                                className="w-input-gray mt-1"
+                                placeholder="Confirm your email address"
+                              />
+
+                              <div className="text-right mt-3">
+                                <LoadingButton
+                                  size="large"
+                                  variant="contained"
+                                  loading={processForm}
+                                  type="submit"
+                                  className="border-red-500 hover:border-red-700 bg-red-500 hover:bg-red-700 text-white"
+                                >
+                                  Delete Account
+                                </LoadingButton>
+                              </div>
+                            </form>
                           }
                         </div>
                       </Card>
@@ -240,56 +258,6 @@ const AccountSetting: React.FC = () => {
                   </Alert>
                 </Portal>
               }
-
-              <DialogWerk
-                title="Delete Your Account"
-                fullScreen={fullScreen}
-                fullWidth
-                maxWidth="xs"
-                scroll="body"
-                open={openModal}
-                onClose={processForm ? undefined : onCloseModal}
-              >
-                <form
-                  id="formDeleteAccount"
-                  className="p-5"
-                  noValidate
-                  onSubmit={handleSubmit(onDeleteAccount)}
-                >
-                  <p>
-                    You are about to start the process of deleting your account. Your data will no longer available on werk.id.
-                  </p>
-                  <p className="my-4">
-                    To continue to delete your account, please confirm your email address below:
-                  </p>
-                  <label htmlFor="email" className="font-semibold">Email Address</label>
-                  <TextField
-                    {...register("email")}
-                    error={!!errors.email}
-                    fullWidth
-                    // @ts-ignore
-                    helperText={errors?.email?.message}
-                    id="email"
-                    type="email"
-                    required
-                    disabled={processForm}
-                    className="w-input-gray mt-2"
-                    placeholder="Confirm your email address"
-                  />
-                </form>
-                <DialogActions className="px-5 py-4 border-top">
-                  <LoadingButton
-                    size="large"
-                    variant="contained"
-                    loading={processForm}
-                    form="formDeleteAccount"
-                    type="submit"
-                    className="border-red-500 hover:border-red-700 bg-red-500 hover:bg-red-700 text-white"
-                  >
-                    Delete Account
-                  </LoadingButton>
-                </DialogActions>
-              </DialogWerk>
             </>
       )}
     </LayoutLogged>
