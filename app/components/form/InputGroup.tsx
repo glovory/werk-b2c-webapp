@@ -14,6 +14,13 @@ export interface InputGroupProps {
   InputProps?: object | any
 }
 
+/** 
+ * ## Docs : 
+ * 
+ * - [TextField](https://mui.com/material-ui/api/text-field/)
+ * - [InputAdornment](https://mui.com/material-ui/api/input-adornment/)
+ * ## 
+*/
 const InputGroup = forwardRef(
   (
     {

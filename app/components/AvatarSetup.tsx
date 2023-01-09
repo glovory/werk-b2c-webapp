@@ -1,13 +1,11 @@
 import { useState, useCallback } from 'react';
+import { useNotification } from "@pankod/refine-core";
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
-import Snackbar from '@mui/material/Snackbar'; // , { SnackbarOrigin }
 import CircularProgress from '@mui/material/CircularProgress';
-import IconButton from '@mui/material/IconButton';
-import CloseIcon from '@mui/icons-material/Close';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import Cropper from 'react-easy-crop';
@@ -38,6 +36,12 @@ interface AvatarSetupProps {
   children?: any
 }
 
+/** 
+ * ## Docs : 
+ * 
+ * - [Cropper](https://github.com/ValentinH/react-easy-crop)
+ * ## 
+*/
 export default function AvatarSetup({
   src,
   cropSrc,
@@ -60,6 +64,7 @@ export default function AvatarSetup({
   const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
   const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const { open: openNotif } = useNotification(); // , close: closeNotif
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [fileInput, setFileInput] = useState<any>();
   const [fileBlob, setFileBlob] = useState<any>();
@@ -67,7 +72,6 @@ export default function AvatarSetup({
   const [croppedAreaPixels, setCroppedAreaPixels] = useState(null);
   const [loadingCrop, setLoadingCrop] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
-  const [toastOpen, setToastOpen] = useState<boolean>(false);
 
   const resetFile = (e?: any) => {
     const inputFile = (e?.target || inputRef?.current) as any;
@@ -85,14 +89,15 @@ export default function AvatarSetup({
   const onChangeFile = async (e: any) => {
     const file = e.target.files[0];
     if(file){
-      const imgSrc: any = await isImage(file); // , ACCEPT_FILE
+      const imgSrc: any = await isImage(file); // , ACCEPT_IMG
       if(imgSrc){
         setFileInput(file);
         setFileBlob(imgSrc); // window.URL.createObjectURL(file)
         setOpenModal(true);
       }else{
         resetFile(e); // Reset input file
-        setToastOpen(true);
+        // @ts-ignore
+        openNotif({ type: "error", message: "Please insert image file", key: "notifErrorAvatarFile" });
       }
     }
   }
@@ -128,10 +133,6 @@ export default function AvatarSetup({
 
   const closeConfirm = () => {
     setOpenConfirm(false);
-  }
-
-  const closeToast = () => {
-    setToastOpen(false);
   }
 
   return (
@@ -267,26 +268,6 @@ export default function AvatarSetup({
           </Button>
         </DialogActions>
       </DialogWerk>
-
-      <Snackbar
-        key="toastErrorAvatarFile"
-        autoHideDuration={2e3}
-        // disableWindowBlurListener
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-        open={toastOpen}
-        onClose={closeToast}
-        message="Please insert image file"
-        action={
-          <IconButton
-            aria-label="close"
-            color="inherit"
-            sx={{ p: 0.5 }}
-            onClick={closeToast}
-          >
-            <CloseIcon />
-          </IconButton>
-        }
-      />
     </>
   );
 }

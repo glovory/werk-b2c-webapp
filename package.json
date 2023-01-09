@@ -34,6 +34,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-easy-crop": "^4.6.3",
+    "react-fast-compare": "^3.2.0",
     "remix-image": "^1.4.0",
     "store2": "^2.14.2",
     "unsplash-js": "^7.0.15",
