@@ -57,6 +57,9 @@ const SetUpProfile: React.FC = () => {
     refineCoreProps: {
       resource: CandidateProfiles,
       redirect: false,
+      // onMutationSuccess: ({ data }) => {
+      //   console.log('onMutationSuccess data: ', data);
+      // }
     },
     resolver: yupResolver(yup.object({
       fullName: yup.string().trim()

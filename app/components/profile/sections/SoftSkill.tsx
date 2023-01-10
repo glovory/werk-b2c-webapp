@@ -42,7 +42,7 @@ export default function SoftSkill({
               <LightbulbTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
             </p>
             <p className="mb-4">Tell the company about your soft skill.</p>
-            <Button variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
+            <Button variant="outlined" size="large" className="min-w-40p max-md:min-w-full">
               <AddIcon fontSize="small" className="mr-2" />Add Soft Skill
             </Button>
           </div>
