@@ -28,7 +28,7 @@ import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
 import { useParams } from "@remix-run/react";
-import { useGetIdentity, useList, useUpdate, useNotification } from "@pankod/refine-core"; // useIsExistAuthentication
+import { useGetIdentity, useList, useUpdate, useNotification, useNavigation } from "@pankod/refine-core"; // , useIsExistAuthentication
 //
 import { storage, functions } from "~/utility";
 import { INITIAL_BG, ACCEPT_IMG, BUCKET_ID, CandidateProfiles, DeleteAvatarBackground } from '~/config';
@@ -55,9 +55,10 @@ export const meta: MetaFunction = () => ({
 const Profile: React.FC = () => {
   const params = useParams();
   const theme = useTheme();
-  const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isMediaQuery = useMediaQuery(theme.breakpoints.down('md'));
   const { open: openNotif } = useNotification(); // , close: closeNotif
   const { mutate } = useUpdate();
+  const { replace } = useNavigation(); // push | replace
   const refFile: any = useRef();
   const { data: loggedInUser, isLoading } = useGetIdentity<any>(); // isSuccess
   const { data: currentUser, isLoading: isLoadingCurrentUser } = useList({
@@ -99,101 +100,93 @@ const Profile: React.FC = () => {
         setCityValue(city);
       }
       // Avatar
-      if(avatarCropped){
-        // const avatarSrc = storage.getFileView(BUCKET_ID, avatarCropped);
-        // if(avatarSrc?.href) setAvatar(avatarSrc.href);
-        setAvatar(storage.getFileView(BUCKET_ID, avatarCropped)?.href);
-      }
-      if(avatarVal){
-        setAvatarDefault(storage.getFileView(BUCKET_ID, avatarVal)?.href);
-      }
+      setAvatar(avatarCropped ? storage.getFileView(BUCKET_ID, avatarCropped)?.href : null);
+      setAvatarDefault(avatarVal ? storage.getFileView(BUCKET_ID, avatarVal)?.href : null);
       // Background
-      if(backgroundPhotoCropped){
-        const bgCrop = storage.getFileView(BUCKET_ID, backgroundPhotoCropped);
-        // console.log('backgroundPhotoCropped: ', backgroundPhotoCropped);
-        // console.log('bgCrop: ', bgCrop);
-        setCover(bgCrop?.href);
-      }
-      if(backgroundPhoto){
-        const bgOri = storage.getFileView(BUCKET_ID, backgroundPhoto);
-        // console.log('backgroundPhoto: ', backgroundPhoto);
-        // console.log('bgOri: ', bgOri);
-        setCoverDefault(bgOri?.href);
-      }
+      setCover(backgroundPhotoCropped ? storage.getFileView(BUCKET_ID, backgroundPhotoCropped)?.href : INITIAL_BG);
+      setCoverDefault(backgroundPhoto ? storage.getFileView(BUCKET_ID, backgroundPhoto)?.href : null);
   
       setLoadingAvatar(false);
     }
   }, [isLoadingCurrentUser, province, city, avatarVal, avatarCropped, backgroundPhoto, backgroundPhotoCropped]);
 
-  const notifFailedSaveBg = () => {
-    // @ts-ignore
-    openNotif({ type: "error", message: "Failed to save Background", key: "notifEditBg" });
+  const notifFailedDeleteImage = (msg: string, type: string) => { // @ts-ignore
+    openNotif({ type: "error", message: msg, key: "notifErrDel" + type });
   }
 
-  const onSaveCover = async (crop: any, original: any) => {
+  const onSaveCoverOrAvatar = async (crop: any, original: any, type: string) => {
     if(candidateId && documentId){
-      const filename = 'bg_' + candidateId;
+      const isAvatar = type === 'avatar';
+      const filename = (isAvatar ? ''  : 'bg_') + candidateId;
       const cropName = filename + '_cropped';
-      setLoadingSaveBgCover(true);
+      isAvatar ? setLoadingAvatar(true) : setLoadingSaveBgCover(true);
       try {
         const ext = { type: "image/jpeg" };
-        const originalFile = new File([original], filename + '.jpg', ext);
-        await storage.createFile(BUCKET_ID, filename, originalFile);
-  
-        const cropFile = new File([crop], cropName + '.jpg', ext);
-        await storage.createFile(BUCKET_ID, cropName, cropFile);
+        await storage.createFile(BUCKET_ID, filename, new File([original], filename + '.jpg', ext));
+        await storage.createFile(BUCKET_ID, cropName, new File([crop], cropName + '.jpg', ext));
         // https://refine.dev/docs/api-reference/core/hooks/data/useUpdate/
         mutate({
           resource: CandidateProfiles,
           id: documentId,
-          values: { backgroundPhoto: filename, backgroundPhotoCropped: cropName },
+          values: isAvatar ? { avatar: filename, avatarCropped: cropName } : { backgroundPhoto: filename, backgroundPhotoCropped: cropName },
+          // mutationMode: "optimistic",
+          errorNotification: false,
+          successNotification: false,
         });
+
+        if(isAvatar){
+          replace(`/process/profile-update?u=${params.userId}`);
+        }else{
+          setLoadingSaveBgCover(true);
+          setCover(null);
+          setCoverDefault(null);
+          setTimeout(() => {
+            setCover(storage.getFileView(BUCKET_ID, cropName)?.href);
+            setCoverDefault(storage.getFileView(BUCKET_ID, filename)?.href);
+            setLoadingSaveBgCover(false);
+          }, 9);
+        }
+
         // @ts-ignore
-        openNotif({ type: "success", message: "Background saved successfully", key: "notifEditBg" });
-      } catch(e){
-        notifFailedSaveBg();
+        openNotif({
+          type: "success",
+          key: "notifEdit" + type,
+          message: isAvatar ? "Avatar saved successfully" : "Background saved successfully"
+        });
+      } catch(e){ // @ts-ignore
+        openNotif({
+          type: "error",
+          key: "notifEdit" + type,
+          message: isAvatar ? "Failed to save Avatar" : "Failed to save Background"
+        });
       } finally {
-        const urlCrop = storage.getFileView(BUCKET_ID, cropName);
-        const urlOriginal = storage.getFileView(BUCKET_ID, filename);
-        console.log('urlCrop: ', urlCrop);
-        console.log('urlOriginal: ', urlOriginal);
-        if(urlCrop?.href){
-          setCover(urlCrop.href);
-        }
-        if(urlOriginal?.href){
-          setCoverDefault(urlOriginal.href);
-        }
-        setLoadingSaveBgCover(false);
+        isAvatar ? setLoadingAvatar(false) : setLoadingSaveBgCover(false);
       }
     }
   }
 
-  const onDeleteCover = (closeConfirm: any) => {
-    setLoadingSaveBgCover(true);
-    functions.createExecution(DeleteAvatarBackground, `{"candidateId":"${logId}","delete":"background"}`)
+  const onDeleteCoverOrAvatar = (closeConfirm: any, type: string) => {
+    const isAvatar = type === 'avatar';
+    const notifFailed = () => {
+      notifFailedDeleteImage(isAvatar ? "Failed to delete Avatar" : "Failed to delete Background", type);
+    }
+    isAvatar ? setLoadingAvatar(true) : setLoadingSaveBgCover(true);
+    functions.createExecution(DeleteAvatarBackground, `{"candidateId":"${logId}","delete":"${type}"}`)
       .then((res: any) => {
         const fixRes = res?.response ? JSON.parse(res.response) : {};
-        console.log('res: ', res);
-        console.log('fixRes: ', fixRes);
         if(fixRes.success){
-          setCover(INITIAL_BG);
-          closeConfirm();
+          isAvatar ? replace(`/process/profile-update?u=${params.userId}`) : setCover(INITIAL_BG);
+          closeConfirm(); // Close modal
         }else{
-          notifFailedSaveBg();
+          notifFailed();
         }
       })
       .catch(() => {
-        notifFailedSaveBg();
+        notifFailed();
       })
       .finally(() => {
-        setLoadingSaveBgCover(false);
+        isAvatar ? setLoadingAvatar(false) : setLoadingSaveBgCover(false);
       });
-  }
-
-  const onSaveAvatar = (file: any) => {
-    console.log('Hit API to save avatar & avatarCropped here');
-    // console.log('onSaveAvatar file: ', file);
-    setAvatar(window.URL.createObjectURL(file)); // file
   }
 
   const viewPhotoAvatar = (close: any) => {
@@ -210,13 +203,6 @@ const Profile: React.FC = () => {
     openConfirmDelete(); // Open confirm
   }
 
-  const onDeleteAvatar = (closeConfirm: any) => {
-    setTimeout(() => {
-      setAvatar(null);
-      closeConfirm(); // Close confirm
-    }, 1500);
-  }
-
   const doChangePositionAvatar = (close: any, openModalCrop: any) => {
     close(); // Close menu
     openModalCrop(); // Open dialog
@@ -225,7 +211,6 @@ const Profile: React.FC = () => {
   const onOpenModal = () => {
     setModalEdit(true);
   }
-
   const onCloseModal = () => {
     setModalEdit(false);
   }
@@ -251,27 +236,11 @@ const Profile: React.FC = () => {
   }
 
   const onSaveProfile = (data: any) => {
-    if(data){
-      setModalEdit(false);
-    }
+    data && setModalEdit(false);
   }
 
   return (
     <LayoutLogged>
-      {!isLoading && !isLoadingCurrentUser && (
-        <FormProfile
-          open={modalEdit}
-          documentId={documentId}
-          values={{ candidateId, fullName, accountName, headLine, bio, country, province, city }}
-          provinceValue={provinceValue}
-          cityValue={cityValue}
-          onCloseModal={onCloseModal}
-          onSuccess={onSaveProfile}
-          onChangeProvince={setProvinceValue}
-          onChangeCity={setCityValue}
-        />
-      )}
-
       <Container className="pb-7 md:pt-7 max-md:px-0">
         <Grid container spacing={3} justifyContent="center">
           <Grid item lg={9} xs={12} className="flex flex-col gap-6">
@@ -280,12 +249,13 @@ const Profile: React.FC = () => {
               :
               <Card variant="outlined" className="max-md:rounded-none">
                 <Cover
-                  hide={!isLoggedInUser}
-                  disabled={isLoading || loadingSaveBgCover}
                   src={cover}
                   cropSrc={coverDefault}
-                  onSave={onSaveCover}
-                  onDelete={onDeleteCover}
+                  loading={loadingSaveBgCover}
+                  editable={isLoggedInUser}
+                  disabled={isLoading || loadingSaveBgCover}
+                  onSave={(crop, original) => onSaveCoverOrAvatar(crop, original, 'background')}
+                  onDelete={(close) => onDeleteCoverOrAvatar(close, "background")}
                 />
 
                 <CardContent className="max-md:text-center">
@@ -312,14 +282,14 @@ const Profile: React.FC = () => {
                         inputRef={refFile}
                         openModalView={openModalView}
                         onCloseModalView={onCloseModalView}
-                        onSave={onSaveAvatar}
-                        onDelete={onDeleteAvatar}
+                        onSave={(crop, original) => onSaveCoverOrAvatar(crop, original, 'avatar')}
+                        onDelete={(close) => onDeleteCoverOrAvatar(close, 'avatar')}
                       >
                         {({ onChangeFile, openModalCrop, openConfirmDelete, disabled }: any) => (
                           isLoggedInUser && (
                             avatar ?
                               <Dropdown
-                                {...(isFullScreen ? menuCenter : menuLeft)}
+                                {...(isMediaQuery ? menuCenter : menuLeft)}
                                 disableAutoFocusItem
                                 label={<CameraIcon />}
                                 buttonProps={{
@@ -588,6 +558,20 @@ const Profile: React.FC = () => {
           </Grid>
         </Grid>
       </Container>
+
+      {!isLoading && !isLoadingCurrentUser && (
+        <FormProfile
+          open={modalEdit}
+          documentId={documentId}
+          values={{ candidateId, fullName, accountName, headLine, bio, country, province, city }}
+          provinceValue={provinceValue}
+          cityValue={cityValue}
+          onCloseModal={onCloseModal}
+          onSuccess={onSaveProfile}
+          onChangeProvince={setProvinceValue}
+          onChangeCity={setCityValue}
+        />
+      )}
     </LayoutLogged>
   );
 }

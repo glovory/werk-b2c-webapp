@@ -1,7 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useNotification } from "@pankod/refine-core";
 import DialogActions from '@mui/material/DialogActions';
-import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import Avatar from '@mui/material/Avatar';
 import Skeleton from '@mui/material/Skeleton';
@@ -37,7 +36,7 @@ interface AvatarSetupProps {
 }
 
 /** 
- * ## Docs : 
+ * ### Docs : 
  * 
  * - [Cropper](https://github.com/ValentinH/react-easy-crop)
  * ## 
@@ -63,7 +62,7 @@ export default function AvatarSetup({
   const myAlt = alt || "Avatar";
   const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
-  const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isMediaQuery = useMediaQuery(theme.breakpoints.down('md'));
   const { open: openNotif } = useNotification(); // , close: closeNotif
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [fileInput, setFileInput] = useState<any>();
@@ -92,7 +91,7 @@ export default function AvatarSetup({
       const imgSrc: any = await isImage(file); // , ACCEPT_IMG
       if(imgSrc){
         setFileInput(file);
-        setFileBlob(imgSrc); // window.URL.createObjectURL(file)
+        setFileBlob(imgSrc);
         setOpenModal(true);
       }else{
         resetFile(e); // Reset input file
@@ -153,6 +152,7 @@ export default function AvatarSetup({
           src ?
             <Avatar
               {...avatarProps}
+              className="avatarSetup"
               src={src}
               alt={myAlt}
               imgProps={{
@@ -173,7 +173,7 @@ export default function AvatarSetup({
 
       <DialogWerk
         title="Edit Photo Profile"
-        fullScreen={isFullScreen}
+        fullScreen={isMediaQuery}
         fullWidth
         scroll="body"
         open={openModal}
@@ -224,10 +224,10 @@ export default function AvatarSetup({
           </LoadingButton>
         </DialogActions>
       </DialogWerk>
-
+      
       <DialogWerk
         title="Profile Photo"
-        fullScreen={isFullScreen}
+        fullScreen={isMediaQuery}
         fullWidth
         maxWidth="lg"
         scroll="body"
@@ -250,22 +250,22 @@ export default function AvatarSetup({
         maxWidth="xs"
         scroll="body"
         open={openConfirm}
-        // onClose={processForm ? undefined : closeConfirm}
-        onClose={closeConfirm}
+        onClose={disabled || loading ? undefined : closeConfirm}
       >
         <div className="p-6">
           Are you sure want to delete this photo?
         </div>
         <DialogActions className="py-3 px-4 border-top">
-          <Button
+          <LoadingButton
             size="large"
             color="error"
             variant="contained"
             className="px-6"
+            loading={disabled || loading}
             onClick={() => onDelete?.(closeConfirm)}
           >
             Delete
-          </Button>
+          </LoadingButton>
         </DialogActions>
       </DialogWerk>
     </>
