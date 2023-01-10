@@ -7,11 +7,11 @@ const ProcessProfileUpdate: React.FC = () => {
   const { replace, goBack } = useNavigation();
 
   useEffect(() => {
-    const user = new URLSearchParams(window.location.search).get('u');;
+    const user = new URLSearchParams(window.location.search).get('u');
     user ? replace(`/profile/${user}`) : goBack();
   }, []);
 
-  return <LoadingPage />;
+  return <LoadingPage noscript={false} />;
 }
 
 export default ProcessProfileUpdate;

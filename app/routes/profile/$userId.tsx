@@ -122,8 +122,11 @@ const Profile: React.FC = () => {
       isAvatar ? setLoadingAvatar(true) : setLoadingSaveBgCover(true);
       try {
         const ext = { type: "image/jpeg" };
-        await storage.createFile(BUCKET_ID, filename, new File([original], filename + '.jpg', ext));
-        await storage.createFile(BUCKET_ID, cropName, new File([crop], cropName + '.jpg', ext));
+        const originalFile = new File([original], filename + '.jpg', ext);
+        await storage.createFile(BUCKET_ID, filename, originalFile);
+
+        const cropFile = new File([crop], cropName + '.jpg', ext);
+        await storage.createFile(BUCKET_ID, cropName, cropFile);
         // https://refine.dev/docs/api-reference/core/hooks/data/useUpdate/
         mutate({
           resource: CandidateProfiles,

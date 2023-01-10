@@ -239,7 +239,7 @@ export default function Education({
                   className="w-input-gray"
                 />
               </div>
-              {(errors.startDate?.message || errors.endDate?.message) && // @ts-ignore:next-line
+              {(errors?.startDate?.message || errors?.endDate?.message) && // @ts-ignore:next-line
                 <div className="text-xs text-w-error mt-1 pl-4">{errors.startDate?.message || errors.endDate?.message}</div>
               }
               <hr className="my-6" />

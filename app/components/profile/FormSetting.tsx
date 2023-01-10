@@ -54,7 +54,7 @@ export default function FormSetting({
           {...register("fullName")}
           disabled={disabled}
           error={!!errors.fullName}
-          helperText={errors.fullName?.message}
+          helperText={errors?.fullName?.message}
           id="fullName"
           className="w-input-gray"
           required
@@ -71,7 +71,7 @@ export default function FormSetting({
           className="w-input-gray"
           disabled={disabled}
           error={!!errors.accountName}
-          helperText={errors.accountName?.message}
+          helperText={errors?.accountName?.message}
           id="accountName"
           required
           fullWidth
@@ -93,7 +93,7 @@ export default function FormSetting({
           {...register("headLine")}
           disabled={disabled}
           error={!!errors.headLine}
-          helperText={errors.headLine?.message}
+          helperText={errors?.headLine?.message}
           className="w-input-gray"
           id="headLine"
           required
