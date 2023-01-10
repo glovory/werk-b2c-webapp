@@ -73,11 +73,17 @@ export default function LayoutLogged({
     }
     
     if(loadingDone && currentUser && userData && isSuccess){
-      setIdentity({ ...userData, ...(currentUser?.data?.[0] || {}) });
+      const userCurrent = currentUser?.data?.[0] || {};
+      setIdentity({ ...userData, ...userCurrent });
 
-      const ava = storage.getFileView(BUCKET_ID, userData.$id);
-      if(ava?.href){
-        setAvatar(ava.href);
+      if(userCurrent.avatarCropped){
+        const ava = storage.getFileView(BUCKET_ID, userCurrent.avatarCropped);
+        if(ava?.href){
+          setAvatar(ava.href);
+          setLoadingAvatar(false);
+        }
+      }else{
+        setAvatar(null);
         setLoadingAvatar(false);
       }
     }

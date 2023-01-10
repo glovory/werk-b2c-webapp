@@ -288,7 +288,7 @@ export default function WorkExperience({
                 <WorkTwoToneIcon sx={{ fontSize: 36 }} color="disabled" />
               </p>
               <p className="mb-4">Tell the company about your work experience.</p>
-              <Button onClick={onOpenModal} variant="outlined" size="large" className="min-w-40p max-md:min-w-60p">
+              <Button onClick={onOpenModal} variant="outlined" size="large" className="min-w-40p max-md:min-w-full">
                 <AddIcon fontSize="small" className="mr-2" />Add Work Experience
               </Button>
             </div>
