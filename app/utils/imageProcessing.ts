@@ -1,5 +1,4 @@
 /**
- * 
  * @param url : string | blob string (window.URL.createObjectURL(url))
  * @returns Promise
  */
@@ -10,7 +9,7 @@ export const createImage = (url: any) =>
     img.addEventListener('error', (err) => reject(err));
     img.setAttribute('crossOrigin', 'anonymous'); // needed to avoid cross-origin issues on CodeSandbox
     img.src = url;
-  })
+  });
 
 export function getRadianAngle(degreeValue: any) {
   return (degreeValue * Math.PI) / 180;
@@ -51,20 +50,20 @@ export async function getCroppedImg(
     image.width,
     image.height,
     rotation
-  )
+  );
 
   // set canvas size to match the bounding box
-  canvas.width = bBoxWidth
-  canvas.height = bBoxHeight
+  canvas.width = bBoxWidth;
+  canvas.height = bBoxHeight;
 
   // translate canvas context to a central location to allow rotating and flipping around the center
-  ctx.translate(bBoxWidth / 2, bBoxHeight / 2)
-  ctx.rotate(rotRad)
-  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1)
-  ctx.translate(-image.width / 2, -image.height / 2)
+  ctx.translate(bBoxWidth / 2, bBoxHeight / 2);
+  ctx.rotate(rotRad);
+  ctx.scale(flip.horizontal ? -1 : 1, flip.vertical ? -1 : 1);
+  ctx.translate(-image.width / 2, -image.height / 2);
 
   // draw rotated image
-  ctx.drawImage(image, 0, 0)
+  ctx.drawImage(image, 0, 0);
 
   // croppedAreaPixels values are bounding box relative
   // extract the cropped image using these values
@@ -73,14 +72,14 @@ export async function getCroppedImg(
     pixelCrop.y,
     pixelCrop.width,
     pixelCrop.height
-  )
+  );
 
   // set canvas width to final desired crop size - this will clear existing context
-  canvas.width = pixelCrop.width
-  canvas.height = pixelCrop.height
+  canvas.width = pixelCrop.width;
+  canvas.height = pixelCrop.height;
 
   // paste generated rotate image at the top left corner
-  ctx.putImageData(data, 0, 0)
+  ctx.putImageData(data, 0, 0);
 
   // As Base64 string
   // return canvas.toDataURL('image/jpeg');
@@ -88,7 +87,7 @@ export async function getCroppedImg(
   // As a blob
   return new Promise((resolve, reject) => {
     canvas.toBlob((file: any) => {
-      resolve(file); // window.URL.createObjectURL(file)
-    }, 'image/jpeg')
+      resolve(file);
+    }, 'image/jpeg');
   });
 }

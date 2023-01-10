@@ -1,13 +1,13 @@
-import { useNavigate } from "@remix-run/react";
+import { useNavigation } from "@pankod/refine-core";
 //
 import useCheckUserExist from '~/utils/hooks/useCheckUserExist';
 import LoadingPage from '~/components/LoadingPage';
 
 const ProcessSignIn: React.FC = () => {
-  const navigate = useNavigate();
+  const { replace } = useNavigation();
 
   useCheckUserExist((res: any) => {
-    navigate(res?.isExist ? '/' : '/build-profile', { replace: true });
+    replace(res?.isExist ? '/' : '/build-profile');
   });
 
   return <LoadingPage />;

@@ -15,8 +15,7 @@ import Backdrop from '@mui/material/Backdrop';
 import CircularProgress from '@mui/material/CircularProgress';
 import ExpandMoreTwoToneIcon from '@mui/icons-material/ExpandMoreTwoTone';
 import { Link } from "@remix-run/react";
-import { useGetIdentity, useList } from "@pankod/refine-core"; // useLogout
-import { useNavigate } from "@remix-run/react";
+import { useGetIdentity, useList, useNavigation } from "@pankod/refine-core"; // useLogout
 //
 import { account, storage, REDIRECT_SUCCESS, REDIRECT_FAILURE } from "~/utility";
 import { authProvider } from '~/authProvider';
@@ -57,7 +56,7 @@ export default function LayoutLogged({
     },
   });
   // const { mutate: logout } = useLogout<string>();
-  const navigate = useNavigate();
+  const { replace } = useNavigation();
   const [identity, setIdentity] = useState<any>();
   const [loadingIdentity, setLoadingIdentity] = useState<boolean>(true);
   const [loadingSignin, setLoadingSignin] = useState<boolean>(false);
@@ -110,7 +109,7 @@ export default function LayoutLogged({
       setLoadingSignin(false);
       // Redirect if not same with current pathname
       if(req !== window.location.pathname){
-        navigate(req, { replace: true });
+        replace(req);
       }
     }
   }

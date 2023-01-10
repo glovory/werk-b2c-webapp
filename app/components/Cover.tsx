@@ -120,9 +120,15 @@ export default function Cover({
   const doSave = useCallback(async () => {
     setLoadingCrop(true);
     try {
+      let fixOriginal;
+      if(fileImage?.name){
+        fixOriginal = fileImage;
+      }else{ // @ts-ignore
+        const { naturalWidth, naturalHeight, width,height  } = document.getElementById('imgCropperBg') || {};
+        fixOriginal = await getCroppedImg(fileBlob, { ...INIT_CROP, width: naturalWidth || width, height: naturalHeight || height });
+      }
       const croppedImage = await getCroppedImg(fileBlob, croppedAreaPixels);
-      // console.log('saveFile croppedImage: ', croppedImage);
-      onSave?.(croppedImage, fileImage);
+      onSave?.(croppedImage, fixOriginal);
       doCancel();
     } catch (e) {
       console.error(e)
@@ -232,8 +238,16 @@ export default function Cover({
               width: parentWidth, // Must Calc from parent width
             }}
             mediaProps={{
-              ...imgLoader('', null, onErrorLoadBg),
+              // ...imgLoader('', null, onErrorLoadBg), // @NOTE: NOT WORK???
+              onError: onErrorLoadBg,
+              // @NOTE: NOT WORK???
+              // onLoad: (e: any) => {
+              //   const { target } = e;
+              //   console.log('onLoad e: ', e);
+              //   console.log('onLoad target: ', target);
+              // },
               draggable: false,
+              id: "imgCropperBg",
             }}
             image={fileBlob || cropSrc} // fileBlob || src
             crop={crop}
@@ -259,7 +273,6 @@ export default function Cover({
         />
       }
       
-
       {editable &&
         <Dropdown
           disableAutoFocusItem

@@ -217,7 +217,7 @@ const AccountSetting: React.FC = () => {
                                 error={!!errors.email}
                                 fullWidth
                                 // @ts-ignore
-                                helperText={errors.email?.message}
+                                helperText={errors?.email?.message}
                                 id="email"
                                 type="email"
                                 required

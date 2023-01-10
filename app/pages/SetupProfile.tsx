@@ -4,7 +4,7 @@ import Button from '@mui/material/Button';
 import { useForm } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
-import { useNavigate } from "@remix-run/react";
+import { useNavigation } from "@pankod/refine-core";
 //
 /** @NOTE : Enable this comment after the test */
 // import LoadingPage from '~/components/LoadingPage';
@@ -15,7 +15,7 @@ import AvatarSetup from '~/components/AvatarSetup';
 import { enterToClick } from '~/utils/dom';
 import useCheckUserExist from '~/utils/hooks/useCheckUserExist';
 import { storage, functions } from "~/utility";
-import { BUCKET_ID, CandidateProfiles, CheckAccountAvailability } from '~/config';
+import { ACCEPT_IMG, BUCKET_ID, CandidateProfiles, CheckAccountAvailability } from '~/config';
 
 interface FormProfileInputs {
   fullName: string
@@ -32,12 +32,20 @@ const invalidAccountMessage = "Account name is already used.";
 const accountNameValidateMessage = "Invalid account name. It can't contain symbol or space with minimum character is 3.";
 
 const SetUpProfile: React.FC = () => {
-  const navigate = useNavigate();
+  /** @NOTE : Enable this comment after the test */
+  // const [loadingCheckUser, setLoadingCheckUser] = useState<boolean>(true);
+  const [fileInput, setFileInput] = useState<any>();
+  const [photoFile, setPhotoFile] = useState<any>();
+  const [photo, setPhoto] = useState<any>();
+  const [provinceValue, setProvinceValue] = useState<any>(null);
+  const [cityValue, setCityValue] = useState<any>(null);
+  const refFile = useRef();
+  const { replace } = useNavigation();
   // Prevent access this page if isExist
   const { loading: isLoadingCheck, userData, isSuccess, isLoading } = useCheckUserExist((res: any) => {
     /** @NOTE : Enable this comment after the test */
     // if(res?.isExist){
-    //   navigate('/', { replace: true });
+    //   replace('/');
     // }else{
     //   setTimeout(() => {
     //     setLoadingCheckUser(false);
@@ -76,14 +84,6 @@ const SetUpProfile: React.FC = () => {
       city: yup.string().nullable().required('Required choice for City.'),
     }).required())
   });
-  /** @NOTE : Enable this comment after the test */
-  // const [loadingCheckUser, setLoadingCheckUser] = useState<boolean>(true);
-  const [fileInput, setFileInput] = useState<any>();
-  const [photoFile, setPhotoFile] = useState<any>();
-  const [photo, setPhoto] = useState<any>();
-  const [provinceValue, setProvinceValue] = useState<any>(null);
-  const [cityValue, setCityValue] = useState<any>(null);
-  const refFile = useRef();
 
   useEffect(() => {
     // reset form with fetch data
@@ -138,7 +138,7 @@ const SetUpProfile: React.FC = () => {
       
       onFinish(fixData)
         .then(() => {
-          navigate('/', { replace: true });
+          replace('/');
         })
         .catch(() => {
           console.error('Failed setup profile');
@@ -193,10 +193,7 @@ const SetUpProfile: React.FC = () => {
                       avatarProps={{
                         sx: { width: 80, height: 80 },
                       }}
-                      iconProps={{
-                        width: 40,
-                        height: 40
-                      }}
+                      iconProps={{ width: 40, height: 40 }}
                       label={(onChangeFile: any, disabled: any) => (
                         <div className="ml-4">
                           <Button
@@ -210,7 +207,7 @@ const SetUpProfile: React.FC = () => {
                               ref={refFile as any}
                               hidden
                               type="file"
-                              accept=".jpg,.jpeg,.png"
+                              accept={ACCEPT_IMG}
                               disabled={disabled}
                               onChange={onChangeFile}
                             />
