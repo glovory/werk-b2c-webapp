@@ -6,7 +6,7 @@ import { Cx } from '~/utils/dom';
 interface LineClampProps {
   as?: ElementType,
   open?: boolean,
-  line: number,
+  line: number | string,
   id?: string | undefined,
   label?: ReactNode,
   labelShow?: ReactNode,
@@ -35,7 +35,7 @@ export default function LineClamp({
     if(line && node){
       const { lineHeight, paddingTop, paddingBottom, borderTopWidth, borderBottomWidth } = getComputedStyle(node);
       const contentSize = Number.parseFloat(paddingTop) + Number.parseFloat(paddingBottom) + Number.parseFloat(borderTopWidth) + Number.parseFloat(borderBottomWidth);
-      if(node.clientHeight > (Number.parseFloat(lineHeight) * line) + contentSize){
+      if(node.clientHeight > (Number.parseFloat(lineHeight) * (+line)) + contentSize){
         setIsOverflow(true);
       }
     }

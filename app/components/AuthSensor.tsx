@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
-import { useGetIdentity } from "@pankod/refine-core";
-import { useNavigate } from "react-router-dom";
+import { useGetIdentity, useNavigation } from "@pankod/refine-core";
 //
 import LoadingPage from '~/components/LoadingPage';
 
@@ -13,12 +12,12 @@ export default function AuthSensor({
   redirectTo = "/",
   children
 }: AuthSensorProps){
-  const navigate = useNavigate();
+  const { replace } = useNavigation();
   const { data: userData, isLoading, isSuccess } = useGetIdentity<any>();
 
   useEffect(() => {
     if(!isLoading && !isSuccess && !userData){
-      navigate(redirectTo, { replace: true });
+      replace(redirectTo);
     }
   }, [isLoading, isSuccess, userData]);
 

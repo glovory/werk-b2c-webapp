@@ -1488,10 +1488,10 @@
   dependencies:
     appwrite "^10.0.1"
 
-"@pankod/refine-cli@1.15.0":
-  version "1.15.0"
-  resolved "https://registry.yarnpkg.com/@pankod/refine-cli/-/refine-cli-1.15.0.tgz#e31060c8e079abe5ed23806c588e8f7be4b62ef8"
-  integrity sha512-i5hmiwOif+mQBFmVCucop1WjYedBnUJPT5EY6F3oSwda7A2EhkgOvMF04OxgGwp9yG7tgUf6k+7BZOaHcmxAew==
+"@pankod/refine-cli@1.17.0":
+  version "1.17.0"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-cli/-/refine-cli-1.17.0.tgz#4dab7464ede7adc9dcafb7131d411c1540505ce5"
+  integrity sha512-dIalVfivGgWbgGFlpbMlUIgWvhmMXuoukp5CALUqDbp0mjmYtiYdt8OarojMCS+UmgBdCY88bIpmRvpgUB9+2Q==
   dependencies:
     boxen "^5.1.2"
     cardinal "^2.1.1"
@@ -1522,10 +1522,10 @@
     temp "^0.9.4"
     tslib "^2.3.1"
 
-"@pankod/refine-core@3.94.0", "@pankod/refine-core@^3.94.0":
-  version "3.94.0"
-  resolved "https://registry.yarnpkg.com/@pankod/refine-core/-/refine-core-3.94.0.tgz#a7f708bdf642ff4a97e4e6fab37a44268e7d6392"
-  integrity sha512-qzEFSUn3XYkxPQ5Fh5J2owt99PM5+BfH0Fp3yC4ufmrOKJ2AhBUfEYOTlLDGY/aMBp5BTfHWmSgGDUQjge0DxQ==
+"@pankod/refine-core@3.94.2", "@pankod/refine-core@^3.94.2":
+  version "3.94.2"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-core/-/refine-core-3.94.2.tgz#49c68e01aca462650c35728c1feba1311ec5d104"
+  integrity sha512-45GUQPRYsP6VJlHb8WWfpAxxCfCmlSX8DaJ0ep0mb2wuQXv91TBoJq5f6OSXKpUYohJMF4nujr2VwIBY2M6k7w==
   dependencies:
     "@tanstack/react-query" "^4.10.1"
     "@tanstack/react-query-devtools" "^4.10.1"
@@ -1554,13 +1554,13 @@
     tslib "^2.3.1"
     warn-once "^0.1.0"
 
-"@pankod/refine-inferencer@2.0.2":
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/@pankod/refine-inferencer/-/refine-inferencer-2.0.2.tgz#7094e0832334b4bd6b02943e9dc67e6a61933379"
-  integrity sha512-HunZaM1Pzlh9Lxwb/o6kECwjvS9S2w42lcPDavgWV2Wa5ZzivJ6/wQzFpOhlapNI25r7f1Qq3St0Df0wV/S7lw==
+"@pankod/refine-inferencer@2.2.0":
+  version "2.2.0"
+  resolved "https://registry.yarnpkg.com/@pankod/refine-inferencer/-/refine-inferencer-2.2.0.tgz#4fcf9f80bf42f8240e8035f37a2d91b0f8f9b03e"
+  integrity sha512-6ne4C2+pi/d60DUvqgn3a3XT5yDkcH6rY4dlG8rvv5yT8CtgwN3smHywZn44iFSwHxXHWc5/in03UwNwmk9FpQ==
   dependencies:
     "@aliemir/react-live" "^4.0.0"
-    "@pankod/refine-core" "^3.94.0"
+    "@pankod/refine-core" "^3.94.2"
     "@tabler/icons" "^1.1.0"
     dayjs "^1.10.7"
     lodash "^4.17.21"

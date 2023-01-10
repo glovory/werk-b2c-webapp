@@ -266,7 +266,7 @@ export default function WorkExperience({
                         color: "primary",
                         className: "p-0 mt-2 underline font-normal",
                       }}
-                      className="text-sm mt-2"
+                      className="text-sm whitespace-pre-wrap mt-2"
                     >
                       {item.description}
                     </LineClamp>
@@ -296,7 +296,7 @@ export default function WorkExperience({
         }
       </div>
 
-      {editable &&
+      {editable && (
         <DialogWerk
           title="Add Work Experience"
           fullScreen={isMediaQuery}
@@ -408,7 +408,10 @@ export default function WorkExperience({
                 disableClearable
                 value={companyIndustryValue}
                 onChange={(e: any, val: any) => {
-                  setCompanyIndustryValue(val)
+                  setCompanyIndustryValue(val);
+                  if(errors.companyIndustry){
+                    clearErrors('companyIndustry');
+                  }
                 }}
                 disabled={processForm}
                 options={COMPANY_INDUSTRY}
@@ -434,7 +437,10 @@ export default function WorkExperience({
                 disableClearable
                 value={workTypeValue}
                 onChange={(e: any, val: any) => {
-                  setWorkTypeValue(val)
+                  setWorkTypeValue(val);
+                  if(errors.workType){
+                    clearErrors('workType');
+                  }
                 }}
                 disabled={processForm}
                 options={WORK_TYPE}
@@ -460,7 +466,10 @@ export default function WorkExperience({
                 disableClearable
                 value={commitmentTypeValue}
                 onChange={(e: any, val: any) => {
-                  setCommitmentTypeValue(val)
+                  setCommitmentTypeValue(val);
+                  if(errors.commitmentType){
+                    clearErrors('commitmentType');
+                  }
                 }}
                 disabled={processForm}
                 options={COMMITMENT_TYPE}
@@ -484,7 +493,6 @@ export default function WorkExperience({
                 id="description"
                 disabled={processForm}
                 multiline
-                // rows={4}
                 fullWidth
                 placeholder="Write a few sentences about your work experience..."
                 InputProps={{
@@ -516,9 +524,9 @@ export default function WorkExperience({
             </fieldset>
           </form>
         </DialogWerk>
-      }
+      )}
 
-      {editable &&
+      {editable && (
         <DialogWerk
           title="Delete Work Experience"
           fullWidth
@@ -542,7 +550,7 @@ export default function WorkExperience({
             </Button>
           </DialogActions>
         </DialogWerk>
-      }
+      )}
     </Card>
   );
 }

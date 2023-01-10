@@ -134,7 +134,7 @@ export default function App(){
   );
 }
 
-export function links() {
+export function links(){
   return [
     {
       rel: "stylesheet",
