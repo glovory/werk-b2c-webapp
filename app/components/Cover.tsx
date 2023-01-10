@@ -4,6 +4,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import LoadingButton from '@mui/lab/LoadingButton';
 import DialogActions from '@mui/material/DialogActions';
+import Skeleton from '@mui/material/Skeleton';
 import CircularProgress from '@mui/material/CircularProgress';
 import ImageTwoToneIcon from '@mui/icons-material/ImageTwoTone';
 import VisibilityTwoToneIcon from '@mui/icons-material/VisibilityTwoTone';
@@ -25,14 +26,15 @@ import { INITIAL_BG, ACCEPT_IMG } from '~/config';
 interface CoverProps {
   src?: string
   cropSrc?: string
-  hide?: boolean
+  loading?: boolean
   disabled?: boolean
+  editable?: boolean
   onSave?: (crop: any, original: any) => void
   onDelete?: (val: any) => void
 }
 
 /** 
- * ## Docs : 
+ * ### Docs : 
  * 
  * - [Cropper](https://github.com/ValentinH/react-easy-crop)
  * ## 
@@ -40,15 +42,16 @@ interface CoverProps {
 export default function Cover({
   src,
   cropSrc,
-  hide,
+  loading,
   disabled,
+  editable,
   onSave,
   onDelete,
 }: CoverProps){
   const height = 180;
   const INIT_CROP = { x: 0, y: 0 };
   const theme = useTheme();
-  const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
+  const isMediaQuery = useMediaQuery(theme.breakpoints.down('md'));
   const { open: openNotif } = useNotification(); // , close: closeNotif
   const refParent: any = useRef();
   const refFile: any = useRef();
@@ -92,7 +95,7 @@ export default function Cover({
       if(imgSrc){
         setCropSize();
         setFileImage(file);
-        setFileBlob(imgSrc); // window.URL.createObjectURL(file)
+        setFileBlob(imgSrc);
         setIsEdited(true);
       }else{
         resetFile(e); // Reset input file
@@ -161,7 +164,6 @@ export default function Cover({
   }
 
   const onClickImageUnsplash = (item: any) => {
-    // console.log('onClickImageUnsplash item: ', item);
     setCropSize();
     setFileBlob(item?.urls?.full); // full | raw | regular | small | small_s3 | thumb
     setOpenUnsplashModal(false);
@@ -177,8 +179,7 @@ export default function Cover({
   }
 
   const onErrorLoadBg = () => {
-    doCancel();
-    // @ts-ignore
+    doCancel(); // @ts-ignore
     openNotif({ type: "error", message: "Failed load image", key: "notifErrorBgFile" });
   }
 
@@ -217,7 +218,7 @@ export default function Cover({
       ref={refParent}
       className="relative select-none"
     >
-      {(fileBlob || cropSrc) && isEdited &&
+      {editable && (fileBlob || cropSrc) && isEdited && (
         <div className="relative cropper" style={{ height }} tabIndex={-1}>
           <Cropper
             classes={{
@@ -240,21 +241,26 @@ export default function Cover({
             onCropComplete={onCropComplete}
           />
         </div>
+      )}
+
+      {loading ?
+        <Skeleton className="bg-gray-300" variant="rectangular" height={height} width="100%" />
+        :
+        <img
+          // {...imgLoader("w-full object-cover text-0")}
+          className="w-full object-cover text-0"
+          hidden={!!fileBlob}
+          height={height}
+          loading="lazy"
+          decoding="async"
+          draggable={false}
+          alt="Background"
+          src={src}
+        />
       }
+      
 
-      <img
-        // {...imgLoader("w-full object-cover text-0")}
-        className="w-full object-cover text-0"
-        hidden={!!fileBlob}
-        height={height}
-        loading="lazy"
-        decoding="async"
-        draggable={false}
-        alt="Background"
-        src={src}
-      />
-
-      {!hide &&
+      {editable &&
         <Dropdown
           disableAutoFocusItem
           label={<CameraIcon />}
@@ -268,7 +274,7 @@ export default function Cover({
         </Dropdown>
       }
 
-      {fileBlob &&
+      {(editable && fileBlob) &&
         <>
           <div className="absolute top-0 right-0 mt-3 mr-3">
             <Button
@@ -291,7 +297,7 @@ export default function Cover({
           </div>
 
           <div className={`absolute inset-0 flex ${(loadingCrop || disabled) ? 'bg-gray-500/30 text-white cursor-wait' : 'pointer-events-none'}`}>
-            {(loadingCrop || disabled) && <CircularProgress color="inherit" className="absolute inset-0 m-auto z-2" />}
+            {(loadingCrop || disabled) && <CircularProgress color="inherit" className="absolute inset-0 m-auto z-1" />}
 
             <b className="text-white bg-gray-700/60 m-auto py-1 px-4 rounded-md text-xs shadow-sm">
               <MoveIcon className="align-middle mr-2" />
@@ -301,57 +307,61 @@ export default function Cover({
         </>
       }
 
-      <DialogWerk
-        title="Background Photo"
-        fullScreen={isFullScreen}
-        fullWidth
-        maxWidth="lg"
-        scroll="body"
-        open={openModal}
-        onClose={onCloseModal}
-      >
-        <div className="p-6">
-          <img
-            {...imgLoader("w-full h-auto rounded-md")}
-            src={src}
-            alt="Bg"
-            draggable={false}
-          />
-        </div>
-      </DialogWerk>
-
-      <DialogWerk
-        title="Delete Background"
-        fullWidth
-        maxWidth="xs"
-        scroll="body"
-        open={openConfirm}
-        onClose={disabled ? undefined : closeConfirm}
-      >
-        <div className="p-6">
-          Are you sure want to delete this background?
-        </div>
-        <DialogActions className="py-3 px-4 border-top">
-          <LoadingButton
-            size="large"
-            color="error"
-            variant="contained"
-            className="px-6"
-            loading={disabled}
-            onClick={() => onDelete?.(closeConfirm)}
+      {editable && (
+        <>
+          <DialogWerk
+            title="Background Photo"
+            fullScreen={isMediaQuery}
+            fullWidth
+            maxWidth="lg"
+            scroll="body"
+            open={openModal}
+            onClose={onCloseModal}
           >
-            Delete
-          </LoadingButton>
-        </DialogActions>
-      </DialogWerk>
+            <div className="p-6">
+              <img
+                {...imgLoader("w-full h-auto rounded-md")}
+                src={src}
+                alt="Bg"
+                draggable={false}
+              />
+            </div>
+          </DialogWerk>
 
-      <ModalGallery
-        open={openUnsplashModal}
-        onClose={() => setOpenUnsplashModal(false)}
-        onClickImage={onClickImageUnsplash}
-        onFetch={fetchUnsplash}
-        onDoneFetch={doneFetch}
-      />
+          <DialogWerk
+            title="Delete Background"
+            fullWidth
+            maxWidth="xs"
+            scroll="body"
+            open={openConfirm}
+            onClose={disabled ? undefined : closeConfirm}
+          >
+            <div className="p-6">
+              Are you sure want to delete this background?
+            </div>
+            <DialogActions className="py-3 px-4 border-top">
+              <LoadingButton
+                size="large"
+                color="error"
+                variant="contained"
+                className="px-6"
+                loading={disabled}
+                onClick={() => onDelete?.(closeConfirm)}
+              >
+                Delete
+              </LoadingButton>
+            </DialogActions>
+          </DialogWerk>
+
+          <ModalGallery
+            open={openUnsplashModal}
+            onClose={() => setOpenUnsplashModal(false)}
+            onClickImage={onClickImageUnsplash}
+            onFetch={fetchUnsplash}
+            onDoneFetch={doneFetch}
+          />
+        </>
+      )}
     </div>
   );
 }
