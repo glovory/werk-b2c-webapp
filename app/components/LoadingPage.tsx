@@ -1,7 +1,19 @@
 import CircularProgress from '@mui/material/CircularProgress';
 import CodeTwoToneIcon from '@mui/icons-material/CodeTwoTone';
+import WerkLogo from '~/svg/werk';
 
-export default function LoadingPage(){
+interface LoadingPageProps {
+  noscript?: boolean
+}
+
+/**
+ * React Component for Loading Page
+ * @props noscript = boolean (Default = true)
+ * @returns React Component
+ */
+export default function LoadingPage({
+  noscript = true,
+}: LoadingPageProps){
   return (
     <div
       data-nosnippet="true"
@@ -9,15 +21,17 @@ export default function LoadingPage(){
       tabIndex={-1}
       className="grid place-items-center min-h-screen"
     >
-      <div className="hideSSR relative">
-        <img src="/image/logo/werk-logo-symbol.svg" alt="Werk" className="absolute inset-0 m-auto" />
+      <div className="relative hideSSR">
+        <WerkLogo width={28} height={28} className="absolute inset-0 m-auto" focusable="false" />
         <CircularProgress size={60} />
       </div>
 
-      <noscript>
-        <CodeTwoToneIcon className="block mx-auto" />
-        Please enable JavaScript
-      </noscript>
+      {noscript && (
+        <noscript>
+          <CodeTwoToneIcon className="block mx-auto" />
+          Please enable JavaScript
+        </noscript>
+      )}
     </div>
   );
 }

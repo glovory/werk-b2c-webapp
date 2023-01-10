@@ -1,13 +1,12 @@
-// import { LayoutWrapper } from "@pankod/refine-core";
+import { useNavigation } from "@pankod/refine-core"; // LayoutWrapper
 import Button from '@mui/material/Button';
 import LinkedInIcon from '@mui/icons-material/LinkedIn';
-import { useNavigate } from "react-router-dom";
-
+//
 import AuthSensor from '~/components/AuthSensor';
 import WelcomeLayout from "~/components/WelcomeLayout";
 
 const BuildProfile: React.FC = () => {
-  const navigate = useNavigate();
+  const { push } = useNavigation();
 
   return (
     <AuthSensor>
@@ -29,14 +28,14 @@ const BuildProfile: React.FC = () => {
             <Button
               size="large"
               variant="contained"
-              // onClick={() => navigate("/linkedin-connect")}
+              // onClick={() => push("/linkedin-connect")}
             >
               <LinkedInIcon className="mr-2" />Import LinkedIn Profile
             </Button>
             <Button
               size="large"
               variant="text"
-              onClick={() => navigate("/setup-profile")}
+              onClick={() => push("/setup-profile")}
             >
               <b>Skip This Step</b>
             </Button>
