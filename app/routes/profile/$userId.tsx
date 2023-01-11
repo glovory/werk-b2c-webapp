@@ -88,7 +88,6 @@ const Profile: React.FC = () => {
   const [provinceValue, setProvinceValue] = useState<any>(null);
   const [cityValue, setCityValue] = useState<any>(null);
   const [openModalView, setOpenModalView] = useState<boolean>(false);
-  const [listWorkExperience, setListWorkExperience] = useState<any>([]);
   const [listEducation, setListEducation] = useState<any>([]);
 
   useEffect(() => {
@@ -96,7 +95,6 @@ const Profile: React.FC = () => {
       if(!accountName){
         return;
       }
-
       if(province && city){
         setProvinceValue(province);
         setCityValue(city);
@@ -204,16 +202,6 @@ const Profile: React.FC = () => {
   const doChangePositionAvatar = (close: any, openModalCrop: any) => {
     close(); // Close menu
     openModalCrop(); // Open dialog
-  }
-
-  const onSaveWorkExperience = (val: any) => {
-    setListWorkExperience([ val, ...listWorkExperience ]);
-  }
-
-  const onDeleteWorkExperience = (val: any, closeConfirm: any, closeModal: any) => {
-    setListWorkExperience(listWorkExperience.filter((f: any) => f.id !== val.id));
-    closeConfirm();
-    closeModal();
   }
 
   const onSaveEducation = (val: any) => {
@@ -347,26 +335,21 @@ const Profile: React.FC = () => {
                 <h4>Not Found</h4>
             }
 
+            <WorkExperience
+              editable={isLoggedInUser}
+              candidateId={candidateId}
+              loading={isLoading || isLoadingCurrentUser}
+            />
+
             {isLoading || isLoadingCurrentUser ?
-              [1, 2, 3, 4].map((v: number) => <CardSection key={v} contentSize={200} headerClass="py-3" />)
+              [1, 2, 3].map((v: number) => <CardSection key={v} contentSize={200} headerClass="py-3" />)
               :
               accountName && (
                 <>
-                  <WorkExperience
+                  {/* <WorkExperience
                     editable={isLoggedInUser}
-                    list={listWorkExperience}
-                    // list={[
-                    //   { 
-                    //     id: 1, jobPosition: 'jobPosition', joinDate: 'joinDate', endDate: '', 
-                    //     companyName: 'companyName', country: 'country', 
-                    //     province: 'province', city: 'city', companyIndustry: 'companyIndustry', 
-                    //     workType: 'workType',
-                    //     commitmentType: 'commitmentType',
-                    //   }
-                    // ]}
-                    onSave={onSaveWorkExperience}
-                    onDelete={onDeleteWorkExperience}
-                  />
+                    candidateId={candidateId}
+                  /> */}
 
                   <Education
                     editable={isLoggedInUser}

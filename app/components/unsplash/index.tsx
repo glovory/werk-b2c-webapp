@@ -141,15 +141,15 @@ export default function ModalGallery({
         <div className="flex flex-row flex-wrap gap-3 mt-3 min-h-[504px]">
           {loadingUnsplash ?
             Array.from({ length: perPage }).map((v: any, idx: number) => ( //  max-md:w-full
-              <div key={idx} className="md:w-[calc(25%-9px)]">
-                <Skeleton variant="rounded" width="100%" height={136} className="bg-gray-200" />
+              <div key={idx} className="w-[calc(50%-9px)] md:w-[calc(25%-9px)]">
+                <Skeleton variant="rounded" width="100%" height={136} className="bg-gray-200 max-md:h-full" />
                 <Skeleton width="40%" className="bg-gray-200" />
               </div>
             ))
             :
             !!images.length ?
               images.map((li: any) => ( //  max-md:w-full
-                <figure key={li.id} className="md:w-[calc(25%-9px)]">
+                <figure key={li.id} className="w-[calc(50%-9px)] md:w-[calc(25%-9px)]">
                   <div
                     onClick={() => onClickImage?.(li)}
                     onKeyDown={enterToClick}
