@@ -1,9 +1,10 @@
 import { useState } from 'react';
-import Autocomplete from '@mui/material/Autocomplete';
+// import Autocomplete from '@mui/material/Autocomplete';
 import TextField from '@mui/material/TextField';
 import CircularProgress from '@mui/material/CircularProgress';
 //
 import fetchApi from '~/utils/fetchApi';
+import AutocompleteWerk from '~/components/form/AutocompleteWerk';
 
 const COUNTRIES = [
   'Indonesia', // 'Malaysia', 'Thailand', 'Singapore', 'Saudi Arabia', 'Philippines',
@@ -85,7 +86,7 @@ export default function CountryProvinceCity({
 
   return (
     <>
-      <Autocomplete
+      <AutocompleteWerk
         {...register("country", { value: COUNTRIES[0] })}
         className="w-input-gray w-multiline"
         fullWidth
@@ -94,7 +95,7 @@ export default function CountryProvinceCity({
         disabled={disabled}
         defaultValue={COUNTRIES[0]}
         options={COUNTRIES}
-        renderInput={(props) => (
+        renderInput={(props: any) => (
           <TextField
             {...props}
             required
@@ -106,7 +107,7 @@ export default function CountryProvinceCity({
         )}
       />
 
-      <Autocomplete
+      <AutocompleteWerk
         {...register("province", { value: provinceValue })}
         className="w-input-gray w-multiline mt-4"
         fullWidth
@@ -118,9 +119,9 @@ export default function CountryProvinceCity({
         onChange={onChangeStates}
         onOpen={onOpenGetBased}
         onClose={() => setOpenStates(false)}
-        isOptionEqualToValue={(option, value) => option === value}
+        isOptionEqualToValue={(option: any, value: any) => option === value}
         options={states}
-        renderInput={(props) => (
+        renderInput={(props: any) => (
           <TextField
             {...props}
             required
@@ -143,7 +144,7 @@ export default function CountryProvinceCity({
       />
 
       {provinceValue &&
-        <Autocomplete
+        <AutocompleteWerk
           {...register("city", { value: cityValue })}
           className="w-input-gray w-multiline mt-4"
           fullWidth
@@ -155,10 +156,10 @@ export default function CountryProvinceCity({
           onChange={doChangeCity}
           onOpen={onOpenCity}
           onClose={() => setOpenCity(false)}
-          isOptionEqualToValue={(option, value) => !(option !== value && !!getCityByProvince().find((f: any) => f.name === value))}
+          isOptionEqualToValue={(option: any, value: any) => !(option !== value && !!getCityByProvince().find((f: any) => f.name === value))}
           // noOptionsText={provinceValue ? 'No Options' : 'Please Select Province/States'}
           options={getCityByProvince().map((f: any) => f.name)}
-          renderInput={(props) => (
+          renderInput={(props: any) => (
             <TextField
               {...props}
               required

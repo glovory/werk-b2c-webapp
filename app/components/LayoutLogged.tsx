@@ -7,8 +7,6 @@ import Avatar from '@mui/material/Avatar';
 import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import FormControl from '@mui/material/FormControl';
-import Select, { SelectChangeEvent } from '@mui/material/Select';
 import Button from '@mui/material/Button';
 import Skeleton from '@mui/material/Skeleton';
 import Backdrop from '@mui/material/Backdrop';
@@ -22,6 +20,7 @@ import { authProvider } from '~/authProvider';
 import { BUCKET_ID, CandidateProfiles } from '~/config';
 import { imgLoader } from '~/utils/dom';
 import FooterMain from './FooterMain';
+import SelectWerk from '~/components/form/SelectWerk';
 import Dropdown, { menuRight } from "./Dropdown";
 import WerkLogo from '~/svg/werk';
 
@@ -61,7 +60,6 @@ export default function LayoutLogged({
   const [loadingIdentity, setLoadingIdentity] = useState<boolean>(true);
   const [loadingSignin, setLoadingSignin] = useState<boolean>(false);
   const [loadingAvatar, setLoadingAvatar] = useState<any>(true);
-  const [firstRenderMenuLang, setFirstRenderMenuLang] = useState<boolean>(false);
   const [avatar, setAvatar] = useState<any>();
   const [language, setLanguage] = useState<string>('en');
 
@@ -88,7 +86,7 @@ export default function LayoutLogged({
     }
   }, [userData, isSuccess, isLoading, isLoadingCurrentUser, currentUser]);
 
-  const languageChange = (e: SelectChangeEvent) => {
+  const languageChange = (e: any) => {
     setLanguage(e.target.value);
   }
 
@@ -112,10 +110,6 @@ export default function LayoutLogged({
         replace(req);
       }
     }
-  }
-
-  const openMenuLang = () => {
-    !firstRenderMenuLang && setFirstRenderMenuLang(true);
   }
 
   return (
@@ -145,52 +139,49 @@ export default function LayoutLogged({
                 </Typography>
                 :
                 <>
-                  <FormControl
-                    variant="standard"
-                    size="small"
-                    className="mr-5"
-                    sx={{ width: 72.5 }}
+                  <SelectWerk
+                    value={language}
+                    onChange={languageChange}
+                    displayEmpty
+                    IconComponent={ExpandMoreTwoToneIcon}
+                    className="w-select-sm"
+                    MenuProps={{
+                      ...menuRight,
+                      sx: { mt: '5px' },
+                      id: "menuAppLang",
+                    }}
+                    formControlProps={{
+                      variant: "standard",
+                      size: "small",
+                      className: "mr-5",
+                      sx: { width: 72.5 },
+                    }}
+                    renderValue={(val) => ( // @ts-ignore:next-line
+                      <div className="flex items-center uppercase">
+                        <Avatar
+                          sx={{ width: 20, height: 20 }}
+                          variant="square" // @ts-ignore:next-line
+                          alt={val}
+                          src={`/image/flags/${val === 'en' ? 'us' : val}.svg`}
+                          className="mr-2"
+                        />
+                        {val}
+                      </div>
+                    )}
                   >
-                    <Select
-                      value={language}
-                      onChange={languageChange}
-                      onOpen={openMenuLang}
-                      displayEmpty
-                      IconComponent={ExpandMoreTwoToneIcon}
-                      // @ts-ignore:next-line
-                      MenuProps={{
-                        ...menuRight,
-                        sx: { mt: '5px' },
-                        id: "menuAppLang",
-                        keepMounted: firstRenderMenuLang,
-                      }}
-                      className="w-select-sm"
-                      renderValue={(val) => (
-                        <div className="flex items-center uppercase">
-                          <Avatar
-                            sx={{ width: 20, height: 20 }}
-                            variant="square"
-                            alt={val}
-                            src={`/image/flags/${val === 'en' ? 'us' : val}.svg`}
-                            className="mr-2"
-                          />
-                          {val}
-                        </div>
-                      )}
-                    >
-                      {LANGUAGE.map((lang) => 
-                        <MenuItem key={lang.value} value={lang.value}>
-                          <img
-                            height="22"
-                            className="text-0 mr-2"
-                            alt={lang.label}
-                            src={`/image/flags/${lang.value === 'en' ? 'us' : lang.value}.svg`}
-                          />
-                          {lang.label}
-                        </MenuItem>
-                      )}
-                    </Select>
-                  </FormControl>
+                    {LANGUAGE.map((lang) => 
+                      <MenuItem key={lang.value} value={lang.value}>
+                        <Avatar
+                          sx={{ width: 22, height: 22 }}
+                          variant="square"
+                          alt={lang.label}
+                          src={`/image/flags/${lang.value === 'en' ? 'us' : lang.value}.svg`}
+                          className="mr-2"
+                        />
+                        {lang.label}
+                      </MenuItem>
+                    )}
+                  </SelectWerk>
                 
                   {isSuccess && identity ?
                     <Dropdown

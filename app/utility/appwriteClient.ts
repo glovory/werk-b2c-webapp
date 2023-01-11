@@ -1,4 +1,4 @@
-import { Account, Appwrite, Storage, Functions } from "@pankod/refine-appwrite";
+import { Account, Appwrite, Storage, Functions, Databases } from "@pankod/refine-appwrite";
 
 import { APPWRITE_URL, APPWRITE_PROJECT, TOKEN_KEY, REDIRECT_SUCCESS, REDIRECT_FAILURE } from '~/config';
 
@@ -14,12 +14,15 @@ const storage = new Storage(appwriteClient);
 
 //
 const functions = new Functions(appwriteClient);
+//
+const databases = new Databases(appwriteClient);
 
 export {
   appwriteClient,
   account,
   storage,
   functions,
+  databases,
   TOKEN_KEY,
   REDIRECT_SUCCESS,
   REDIRECT_FAILURE,

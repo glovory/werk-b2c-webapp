@@ -7,7 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigation } from "@pankod/refine-core";
 //
 /** @NOTE : Enable this comment after the test */
-// import LoadingPage from '~/components/LoadingPage';
+import LoadingPage from '~/components/LoadingPage';
 import AuthSensor from '~/components/AuthSensor';
 import WelcomeLayout from "~/components/WelcomeLayout";
 import FormSetting from '~/components/profile/FormSetting';
@@ -32,8 +32,6 @@ const invalidAccountMessage = "Account name is already used.";
 const accountNameValidateMessage = "Invalid account name. It can't contain symbol or space with minimum character is 3.";
 
 const SetUpProfile: React.FC = () => {
-  /** @NOTE : Enable this comment after the test */
-  // const [loadingCheckUser, setLoadingCheckUser] = useState<boolean>(true);
   const [fileInput, setFileInput] = useState<any>();
   const [photoFile, setPhotoFile] = useState<any>();
   const [photo, setPhoto] = useState<any>();
@@ -41,16 +39,18 @@ const SetUpProfile: React.FC = () => {
   const [cityValue, setCityValue] = useState<any>(null);
   const refFile = useRef();
   const { replace } = useNavigation();
+  /** @NOTE : Enable this comment after the test */
+  const [loadingCheckUser, setLoadingCheckUser] = useState<boolean>(true);
   // Prevent access this page if isExist
   const { loading: isLoadingCheck, userData, isSuccess, isLoading } = useCheckUserExist((res: any) => {
     /** @NOTE : Enable this comment after the test */
-    // if(res?.isExist){
-    //   replace('/');
-    // }else{
-    //   setTimeout(() => {
-    //     setLoadingCheckUser(false);
-    //   }, 95);
-    // }
+    if(res?.isExist){
+      replace('/');
+    }else{
+      setTimeout(() => {
+        setLoadingCheckUser(false);
+      }, 95);
+    }
   });
   const {
     refineCore: { onFinish, formLoading },
@@ -104,7 +104,6 @@ const SetUpProfile: React.FC = () => {
     try {
       const res = await functions.createExecution(CheckAccountAvailability, `{"accountName":"${data.accountName}"}`);
       const { isAvailability, isAvailable }: any = res?.response ? JSON.parse(res.response) : {};
-      // console.log('isAvailable: ', isAvailable);
       if(isAvailability || isAvailable){
         isAvailableName = true;
         clearErrors?.("accountName");
@@ -112,7 +111,7 @@ const SetUpProfile: React.FC = () => {
         setError?.('accountName', { type: "manual", message: invalidAccountMessage });
       }
     } catch(err) {
-      console.log('err: ', err); // type: manual | custom | focus
+      // console.log('err: ', err); // type: manual | custom | focus
       setError?.('accountName', { type: "manual", message: `Failed check account name${navigator.onLine ? '.' : ', please check Your internet connection.'}` });
     }
 
@@ -151,9 +150,9 @@ const SetUpProfile: React.FC = () => {
   }
 
   /** @NOTE : Enable this comment after the test */
-  // if(isLoadingCheck || isLoading || loadingCheckUser){
-  //   return <LoadingPage />;
-  // }
+  if(isLoadingCheck || isLoading || loadingCheckUser){
+    return <LoadingPage />;
+  }
 
   return (
     <AuthSensor>
