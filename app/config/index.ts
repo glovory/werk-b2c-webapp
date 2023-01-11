@@ -4,6 +4,7 @@ export * from '../../config';
 export const DOMAIN = 'https://werk.id';
 export const INITIAL_BG = '/image/bg/cover.svg';
 export const ACCEPT_IMG = '.jpg,.jpeg,.png';
+export const MAX_FILE_SIZE = 5e+6; // 5000000 byte / 5 MB
 
 // DEV      = http://localhost:3000
 // STAGING  = https://staging.werk.id

@@ -22,17 +22,13 @@ export default function SoftSkill({
         className="py-3 border-bottom"
         avatar={<LightbulbTwoToneIcon />}
         title="Soft Skill"
-        titleTypographyProps={{
-          className: "text-lg font-medium",
-        }}
-        // action={
-        //   editable && !!list?.length && (
-        //     <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
-        //       <EditTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
-        //       {!isMediaQuery && 'Edit Hard Skill'}
-        //     </Button>
-        //   )
-        // }
+        titleTypographyProps={{ className: "text-lg font-medium" }}
+        // action={editable && !!list?.length && (
+        //   <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
+        //     <EditTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
+        //     {!isMediaQuery && 'Edit Hard Skill'}
+        //   </Button>
+        // )}
       />
 
       <div className="py-6 px-4">
