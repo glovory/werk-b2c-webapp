@@ -7,7 +7,6 @@ import TextField from '@mui/material/TextField';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import Autocomplete from '@mui/material/Autocomplete';
-// import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import DialogActions from '@mui/material/DialogActions';
 import IconButton from '@mui/material/IconButton';
 import DomainTwoToneIcon from '@mui/icons-material/DomainTwoTone';
@@ -60,11 +59,6 @@ interface FormWorkExperienceInputs {
   commitmentType: string
   description: string
 }
-
-// if(typeof window !== 'undefined'){
-//   // @ts-ignore
-//   window.dayjs = dayjs;
-// }
 
 export default function WorkExperience({
   editable,
@@ -142,7 +136,7 @@ export default function WorkExperience({
         onSave?.(value);
         onCloseModal();
         resolve();
-      }, 500);
+      }, 1e3);
     });
   }
 
@@ -157,7 +151,7 @@ export default function WorkExperience({
   }
 
   const onClickEdit = (item: any) => {
-    console.log('onClickEdit item: ', item);
+    // console.log('onClickEdit item: ', item);
     setItemToEditDelete(item);
     setProvinceValue(item.province);
     setCityValue(item.city);
@@ -166,7 +160,7 @@ export default function WorkExperience({
     setCommitmentTypeValue(item.commitmentType);
     setIsCurrentWork(!item.endDate);
     setOpenModal(true);
-    // reset(item);
+    reset(item);
   }
 
   const clickDelete = (item: any) => {
@@ -209,17 +203,13 @@ export default function WorkExperience({
         className="py-3 border-bottom"
         avatar={<WorkTwoToneIcon />}
         title="Work Experience"
-        titleTypographyProps={{
-          className: "text-lg font-medium",
-        }}
-        action={
-          editable && !!list?.length && (
-            <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
-              <AddCircleTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
-              {!isMediaQuery && 'Add Work Experience'}
-            </Button>
-          )
-        }
+        titleTypographyProps={{ className: "text-lg font-medium" }}
+        action={editable && !!list?.length && (
+          <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
+            <AddCircleTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
+            {!isMediaQuery && 'Add Work Experience'}
+          </Button>
+        )}
       />
 
       <div className="py-6 px-4">
@@ -230,7 +220,6 @@ export default function WorkExperience({
                 <div className="grid place-items-center rounded-full w-16 h-16 bg-w-blue-1 flex-none">
                   <DomainTwoToneIcon fontSize="large" color="primary" />
                 </div>
-                
                 <div className="grow ml-4">
                   <div className="flex flex-row items-start">
                     <div className="grow pt-1 text-sm text-gray-500">
@@ -255,7 +244,7 @@ export default function WorkExperience({
                     )}
                   </div>
           
-                  {item.description &&
+                  {item.description && (
                     <LineClamp
                       id={item.id}
                       line={3}
@@ -270,7 +259,7 @@ export default function WorkExperience({
                     >
                       {item.description}
                     </LineClamp>
-                  }
+                  )}
                 </div>
               </section>
             )}
@@ -298,7 +287,7 @@ export default function WorkExperience({
 
       {editable && (
         <DialogWerk
-          title="Add Work Experience"
+          title={itemToEditDelete.id ? "Edit Work Experience" : "Add Work Experience"}
           fullScreen={isMediaQuery}
           fullWidth
           maxWidth="xs"
@@ -307,20 +296,18 @@ export default function WorkExperience({
           onClose={processForm ? undefined : onCloseModal}
         >
           <form
-            className="p-6"
             noValidate
             onSubmit={handleSubmit(doSave)}
           >
             <fieldset
               disabled={processForm}
-              className="min-w-0 p-0 m-0 border-0 text-sm"
+              className="min-w-0 p-6 m-0 border-0 text-sm"
             >
               <label htmlFor="jobPosition" className="font-medium w-required">Job Position</label>
               <TextField
                 {...register("jobPosition")}
                 disabled={processForm}
-                error={!!errors.jobPosition}
-                // @ts-ignore:next-line
+                error={!!errors.jobPosition} // @ts-ignore:next-line
                 helperText={errors?.jobPosition?.message}
                 id="jobPosition"
                 className="w-input-gray mt-2"
@@ -373,8 +360,7 @@ export default function WorkExperience({
               <TextField
                 {...register("companyName")}
                 disabled={processForm}
-                error={!!errors.companyName}
-                // @ts-ignore:next-line
+                error={!!errors.companyName} // @ts-ignore:next-line
                 helperText={errors?.companyName?.message}
                 id="companyName"
                 className="w-input-gray mt-2"
@@ -409,9 +395,7 @@ export default function WorkExperience({
                 value={companyIndustryValue}
                 onChange={(e: any, val: any) => {
                   setCompanyIndustryValue(val);
-                  if(errors.companyIndustry){
-                    clearErrors('companyIndustry');
-                  }
+                  (val && errors.companyIndustry) && clearErrors('companyIndustry');
                 }}
                 disabled={processForm}
                 options={COMPANY_INDUSTRY}
@@ -419,8 +403,7 @@ export default function WorkExperience({
                   <TextField
                     {...props}
                     name="companyIndustry"
-                    error={!!errors.companyIndustry}
-                    // @ts-ignore:next-line
+                    error={!!errors.companyIndustry} // @ts-ignore:next-line
                     helperText={errors?.companyIndustry?.message}
                     placeholder="Select company industry"
                   />
@@ -438,9 +421,7 @@ export default function WorkExperience({
                 value={workTypeValue}
                 onChange={(e: any, val: any) => {
                   setWorkTypeValue(val);
-                  if(errors.workType){
-                    clearErrors('workType');
-                  }
+                  (val && errors.workType) && clearErrors('workType');
                 }}
                 disabled={processForm}
                 options={WORK_TYPE}
@@ -448,8 +429,7 @@ export default function WorkExperience({
                   <TextField
                     {...props}
                     name="workType"
-                    error={!!errors.workType}
-                    // @ts-ignore:next-line
+                    error={!!errors.workType} // @ts-ignore:next-line
                     helperText={errors?.workType?.message}
                     placeholder="Select work type"
                   />
@@ -467,9 +447,7 @@ export default function WorkExperience({
                 value={commitmentTypeValue}
                 onChange={(e: any, val: any) => {
                   setCommitmentTypeValue(val);
-                  if(errors.commitmentType){
-                    clearErrors('commitmentType');
-                  }
+                  (val && errors.commitmentType) && clearErrors('commitmentType');
                 }}
                 disabled={processForm}
                 options={COMMITMENT_TYPE}
@@ -477,8 +455,7 @@ export default function WorkExperience({
                   <TextField
                     {...props}
                     name="commitmentType"
-                    error={!!errors.commitmentType}
-                    // @ts-ignore:next-line
+                    error={!!errors.commitmentType} // @ts-ignore:next-line
                     helperText={errors?.commitmentType?.message}
                     placeholder="Select commitment type"
                   />
@@ -495,9 +472,7 @@ export default function WorkExperience({
                 multiline
                 fullWidth
                 placeholder="Write a few sentences about your work experience..."
-                InputProps={{
-                  className: "p-0",
-                }}
+                InputProps={{ className: "p-0" }}
                 inputProps={{
                   className: "py-3 px-4 resize-y",
                   sx: { overflow: 'auto!important', minHeight: 120, maxHeight: 300 },

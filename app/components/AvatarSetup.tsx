@@ -15,6 +15,7 @@ import DialogWerk from '~/components/DialogWerk';
 import { Cx, imgLoader } from '~/utils/dom';
 import { getCroppedImg } from '~/utils/imageProcessing';
 import { isImage } from '~/utils/typeChecking';
+import { MAX_FILE_SIZE } from '~/config';
 
 interface AvatarSetupProps {
   src?: string
@@ -88,6 +89,13 @@ export default function AvatarSetup({
   const onChangeFile = async (e: any) => {
     const file = e.target.files[0];
     if(file){
+      if(file.size > MAX_FILE_SIZE){
+        resetFile(e); // Reset input file
+        // @ts-ignore
+        openNotif({ type: "error", message: "File too big, maximum size is 5 MB", key: "notifErrorAvatarFile" });
+        return;
+      }
+
       const imgSrc: any = await isImage(file); // , ACCEPT_IMG
       if(imgSrc){
         setFileInput(file);
@@ -112,8 +120,8 @@ export default function AvatarSetup({
       // console.log('saveFile croppedImage: ', croppedImage);
       onSave?.(croppedImage, fileInput);
       onCloseModal();
-    } catch (e) {
-      console.error(e)
+    } catch (e) { // @ts-ignore
+      openNotif({ type: "error", message: "Failed save Avatar", key: "notifErrorAvatarFile" });
     } finally {
       setLoadingCrop(false);
     }

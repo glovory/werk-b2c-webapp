@@ -22,7 +22,7 @@ export type DateValueType = Dayjs | null | undefined;
 
 /** 
  * @props custom props
- * - mountOnOpen: boolean, default = false (for render first open, next toggle hide)
+ * - mountOnOpen: boolean, default = true (for render first open, next toggle hide)
  * 
  * ### Docs : 
  * 
@@ -33,7 +33,6 @@ export type DateValueType = Dayjs | null | undefined;
 const DatePickerWerk = forwardRef(
   (
     {
-      open = false,
       value,
       onChange,
       className,
@@ -52,38 +51,28 @@ const DatePickerWerk = forwardRef(
       keepMounted,
       mountOnOpen = true, // Custom for render first open, next toggle hide
       onOpen,
-      onClose,
       ...etc
     }: any, // DatePickerWerkProps
     ref
   ) => {
     const [val, setVal] = useState<DateValueType>(value);
-    const [show, setShow] = useState<boolean>(open);
     const [firstRender, setFirstRender] = useState<boolean>(false);
 
     const doOpen = () => {
       (mountOnOpen && !firstRender) && setFirstRender(true);
-      setShow(true);
       onOpen?.();
     }
 
-    const doClose = () => {
-      setShow(false);
-      onClose?.();
-    }
-
-    const change = (value: DateValueType, keyboardInputValue: string) => {
-      setVal(value);
-      onChange?.(value, keyboardInputValue);
+    const change = (newValue: DateValueType, keyboardInputValue: string) => {
+      setVal(newValue);
+      onChange?.(newValue, keyboardInputValue);
     }
 
     return (
       <DatePicker
         {...etc}
         ref={ref}
-        open={show}
         onOpen={doOpen}
-        onClose={doClose}
         value={val}
         onChange={change}
         className={Cx("w-input-group w-datepicker", className)}
