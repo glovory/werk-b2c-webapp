@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState } from 'react'; // , useEffect
 import Card from '@mui/material/Card';
 import CardHeader from '@mui/material/CardHeader';
 import Button from '@mui/material/Button';
@@ -17,21 +17,22 @@ import AddCircleTwoToneIcon from '@mui/icons-material/AddCircleTwoTone';
 import DeleteTwoToneIcon from '@mui/icons-material/DeleteTwoTone';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import { useTheme } from '@mui/material/styles';
-import { useForm } from "@pankod/refine-react-hook-form";
+import { useList, useUpdate, useDelete } from "@pankod/refine-core"; // , useNotification, useNavigation
+import { useForm, Controller } from "@pankod/refine-react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from '@hookform/resolvers/yup';
 //
+import { CardSection } from '~/components/profile/Loader';
 import DialogWerk from '~/components/DialogWerk';
 import LineClamp from '~/components/LineClamp';
 import Time from '~/components/Time';
 import DatePickerWerk from '~/components/form/DatePickerWerk';
 import CountryProvinceCity from '~/components/form/CountryProvinceCity';
-import incrementId from '~/utils/incrementId';
+import InputIndustry from '~/components/profile/InputIndustry';
 import dayjs from '~/utils/dayjs';
+// import { databases } from '~/utility';
+import { CandidateWorkExperience } from '~/config'; // DATABASE_ID, MasterIndustries
 
-const COMPANY_INDUSTRY = [
-  'Information Technology',
-];
 const WORK_TYPE = [
   'Onsite', 'Remote Work', 'Hybrid',
 ];
@@ -40,10 +41,9 @@ const COMMITMENT_TYPE = [
 ];
 
 interface WorkExperienceProps {
-  editable?: boolean,
-  list: Array<any>,
-  onSave?: (val: any) => void
-  onDelete?: (val: any, closeConfirm: any, closeModal: any) => void
+  editable?: boolean
+  candidateId?: string
+  loading?: boolean
 }
 
 interface FormWorkExperienceInputs {
@@ -54,7 +54,7 @@ interface FormWorkExperienceInputs {
   country: string
   province: string
   city: string
-  companyIndustry: string
+  industry: string
   workType: string
   commitmentType: string
   description: string
@@ -62,23 +62,40 @@ interface FormWorkExperienceInputs {
 
 export default function WorkExperience({
   editable,
-  list,
-  onSave,
-  onDelete,
+  candidateId,
+  loading,
 }: WorkExperienceProps){
   const theme = useTheme();
   const isMediaQuery = useMediaQuery(theme.breakpoints.down('md'));
   const [openModal, setOpenModal] = useState<boolean>(false);
-  const [isCurrentWork, setIsCurrentWork] = useState<boolean>(false);
+  const [isCurrentRole, setIsCurrentRole] = useState<boolean>(false);
   const [openConfirm, setOpenConfirm] = useState<boolean>(false);
   const [itemToEditDelete, setItemToEditDelete] = useState<any>({});
   const [provinceValue, setProvinceValue] = useState<any>(null);
   const [cityValue, setCityValue] = useState<any>(null);
-  const [companyIndustryValue, setCompanyIndustryValue] = useState<any>();
+  const [industryValue, setIndustryValue] = useState<any>();
   const [workTypeValue, setWorkTypeValue] = useState<any>();
   const [commitmentTypeValue, setCommitmentTypeValue] = useState<any>();
+  const { data: list, isLoading: isLoadingList } = useList({
+    errorNotification: false,
+    liveMode: "off",
+    resource: CandidateWorkExperience,
+    config: {
+      pagination: { current: 1, pageSize: 3 },
+      filters: [
+        {
+          field: "candidateId",
+          operator: "eq",
+          value: candidateId,
+        },
+      ],
+    },
+  });
+  const { mutate: updateData } = useUpdate();
+  const { mutate: deleteData } = useDelete();
   const {
-    refineCore: { formLoading }, // onFinish, 
+    refineCore: { onFinish, formLoading }, // , queryResult
+    control,
     reset,
     register,
     handleSubmit,
@@ -87,23 +104,36 @@ export default function WorkExperience({
     clearErrors,
     formState: { errors, isSubmitting },
   } = useForm<FormWorkExperienceInputs>({
-    // refineCoreProps: {
-    //   resource: CandidateProfiles,
-    //   redirect: false,
-    // },
+    refineCoreProps: {
+      resource: CandidateWorkExperience,
+      redirect: false,
+      successNotification: () => { // data, values, resource
+        // console.log('successNotification data: ', data);
+        return {
+          message: 'Work Experience saved successfully',
+          // description: "Success with no errors",
+          type: "success",
+        };
+      },
+      // onMutationSuccess: ({ data }) => {
+      //   console.log('onMutationSuccess data: ', data);
+      // }
+    }, // @ts-ignore
+    // action: itemToEditDelete.id ? "edit" : "create", // NOT WORK FOR TOGGLE edit / create
+    // id: itemToEditDelete.id, // NOT WORK FOR TOGGLE edit / create
     defaultValues: itemToEditDelete,
     resolver: yupResolver(yup.object({
       jobPosition: yup.string().trim().required('Job Position is required.'),
       joinDate: yup.string().trim().required("Join Date is required and can't be empty."),
       endDate: yup.string().when([], {
-        is: () => !isCurrentWork,
+        is: () => !isCurrentRole,
         then: yup.string().trim().required('End Date is required.'),
       }),
       companyName: yup.string().trim().required('Company Name is required.').max(100, 'Maximum 100 characters.'),
       country: yup.string().trim().required('Required choice for Country.'),
       province: yup.string().nullable().required('Required choice for Province/States.'),
       city: yup.string().nullable().required('Required choice for City.'),
-      companyIndustry: yup.string().required('Required choice for Company Industry.'),
+      industry: yup.string().nullable().required('Required choice for Company Industry.'),
       workType: yup.string().required('Required choice for Work Type.'),
       commitmentType: yup.string().required('Required choice for Commitment Type.'),
     }).required())
@@ -115,10 +145,10 @@ export default function WorkExperience({
     setItemToEditDelete({});
     setProvinceValue(null);
     setCityValue(null);
-    setCompanyIndustryValue(null);
+    setIndustryValue(null);
     setWorkTypeValue(null);
     setCommitmentTypeValue(null);
-    setIsCurrentWork(false);
+    setIsCurrentRole(false);
     setOpenModal(true);
   }
 
@@ -128,21 +158,42 @@ export default function WorkExperience({
   }
 
   const doSave = (val: any) => {
-    const value = { ...val, id: incrementId() };
-    console.log('doSave value: ', value);
-    return new Promise((resolve: any) => {
-      setTimeout(() => {
-        // onFinish(value);
-        onSave?.(value);
+    const { country, province, city, id, $collectionId, $createdAt, $databaseId, $permissions, $updatedAt, ...rest } = val;
+    const fixValue = {
+      ...rest,
+      candidateId,
+      companyCountry: country,
+      companyProvince: province,
+      companyCity: city,
+      isCurrentRole,
+    };
+    // console.log('doSave fixValue: ', fixValue);
+    if(id){
+      // https://refine.dev/docs/api-reference/core/hooks/data/useUpdate/
+      updateData({
+        resource: CandidateWorkExperience,
+        id,
+        values: fixValue,
+        errorNotification: false,
+        successNotification: () => ({
+          message: 'Work Experience saved successfully',
+          type: "success",
+        }),
+      });
+      onCloseModal();
+    }else{
+      onFinish(fixValue).then(() => { // res
         onCloseModal();
-        resolve();
-      }, 1e3);
-    });
+      })
+      // .catch(() => {
+      //   // console.log('e: ', e);
+      // });
+    }
   }
 
-  const onChangeIsCurrentWork = (e: any) => {
+  const onChangeIsCurrentRole = (e: any) => {
     const checked = e.target.checked;
-    setIsCurrentWork(checked);
+    setIsCurrentRole(checked);
     checked && clearErrors('endDate'); // Reset / clear error field endDate
   }
 
@@ -152,15 +203,15 @@ export default function WorkExperience({
 
   const onClickEdit = (item: any) => {
     // console.log('onClickEdit item: ', item);
+    reset(item);
     setItemToEditDelete(item);
-    setProvinceValue(item.province);
-    setCityValue(item.city);
-    setCompanyIndustryValue(item.companyIndustry);
+    setProvinceValue(item.companyProvince);
+    setCityValue(item.companyCity);
+    setIndustryValue(item.industry); //  || null
     setWorkTypeValue(item.workType);
     setCommitmentTypeValue(item.commitmentType);
-    setIsCurrentWork(!item.endDate);
+    setIsCurrentRole(item.isCurrentRole); // !item.endDate
     setOpenModal(true);
-    reset(item);
   }
 
   const clickDelete = (item: any) => {
@@ -169,21 +220,27 @@ export default function WorkExperience({
   }
 
   const changeDate = (val: any, field: string) => {
-    // console.log('changeDate val: ', val);
     setValue(field, val?.$d?.toISOString());
     clearErrors(field); // Manual clear error
+  }
+
+  const onDelete = () => {
+    deleteData({
+      resource: CandidateWorkExperience,
+      id: itemToEditDelete.id,
+    });
+    closeConfirm();
+    onCloseModal();
   }
 
   const renderEndDate = (joinDate: any, endDate: any) => {
     // const years = dayjs(endDate).diff(oldDate, 'year');
     // const months = newDate.diff(oldDate, 'month') - years * 12;
     // const days = newDate.diff(oldDate.add(years, 'year').add(months, 'month'), 'day');
-
     let diffMonth = dayjs(endDate || new Date()).diff(joinDate, 'M');
     let years = parseInt('' + diffMonth / 12);
     let modMonth = diffMonth % 12;
     let fixValue = years ? ` | ${years} Years${modMonth ? ` ${modMonth} Months` : ''}` : diffMonth ? ` | ${diffMonth} Months` : '';
-    
     if(endDate){
       return (
         <Time
@@ -197,6 +254,10 @@ export default function WorkExperience({
     return 'Now' + fixValue;
   }
 
+  if(loading || isLoadingList){
+    return <CardSection contentSize={200} headerClass="py-3" />;
+  }
+
   return (
     <Card variant="outlined" className="max-md:rounded-none w-card">
       <CardHeader
@@ -204,7 +265,7 @@ export default function WorkExperience({
         avatar={<WorkTwoToneIcon />}
         title="Work Experience"
         titleTypographyProps={{ className: "text-lg font-medium" }}
-        action={editable && !!list?.length && (
+        action={editable && !!list?.data?.length && (
           <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
             <AddCircleTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
             {!isMediaQuery && 'Add Work Experience'}
@@ -213,9 +274,9 @@ export default function WorkExperience({
       />
 
       <div className="py-6 px-4">
-        {!!list?.length ?
+        {!!list?.data?.length ?
           <div className="flex flex-col gap-6">
-            {list.map((item: any) =>
+            {list.data.map((item: any) =>
               <section key={item.id} className="flex flex-row items-start">
                 <div className="grid place-items-center rounded-full w-16 h-16 bg-w-blue-1 flex-none">
                   <DomainTwoToneIcon fontSize="large" color="primary" />
@@ -226,15 +287,14 @@ export default function WorkExperience({
                       <h6 className="text-gray-700">{item.jobPosition}</h6>
                       <p>{item.companyName}</p>
                       <p>{item.workType} | {item.commitmentType}</p>
-                      {/* Mar 2022 - Now | 9 Months */}
-                      <p>
+                      <p>{/* Mar 2022 - Now | 9 Months */}
                         <Time
                           format="MMM YYYY"
                           value={item.joinDate}
                           dateTime={item.joinDate}
                         /> - {renderEndDate(item.joinDate, item.endDate)}
                       </p>
-                      <p>{item.city}, {item.province}, {item.country}</p>
+                      <p>{item.companyCity}, {item.companyProvince}, {item.companyCountry}</p>
                     </div>
 
                     {editable && (
@@ -253,9 +313,9 @@ export default function WorkExperience({
                       labelProps={{
                         disableRipple: true,
                         color: "primary",
-                        className: "p-0 mt-2 underline font-normal",
+                        className: "p-0 mt-3 underline font-normal",
                       }}
-                      className="text-sm whitespace-pre-wrap mt-2"
+                      className="text-sm whitespace-pre-wrap mt-3"
                     >
                       {item.description}
                     </LineClamp>
@@ -263,10 +323,9 @@ export default function WorkExperience({
                 </div>
               </section>
             )}
-
-            {list.length > 3 && (
+            {list?.total > 3 && (
               <Button size="large" className="px-6 mx-auto bg-gray-100 text-gray-500">
-                View All {list.length} Work Experiences
+                View All {list.total} Work Experiences
               </Button>
             )}
           </div>
@@ -324,7 +383,6 @@ export default function WorkExperience({
                 onChange={(val: any) => changeDate(val, 'joinDate')}
                 // disableFuture
                 // disableHighlightToday
-                // views={['year', 'day', 'month']}
                 inputFormat="DD/MM/YYYY"
                 fullWidth
                 required
@@ -344,14 +402,14 @@ export default function WorkExperience({
                 inputFormat="DD/MM/YYYY"
                 fullWidth
                 required
-                disabled={processForm || isCurrentWork}
+                disabled={processForm || isCurrentRole}
                 error={!!errors.endDate}
                 helperText={errors?.endDate?.message}
                 id="endDate"
                 className="w-input-gray mt-2"
               />
               <FormControlLabel
-                control={<Checkbox checked={isCurrentWork} onChange={onChangeIsCurrentWork} size="small" />}
+                control={<Checkbox checked={isCurrentRole} onChange={onChangeIsCurrentRole} size="small" />}
                 label="I'm currently working in this role."
               />
               <hr className="my-6" />
@@ -385,79 +443,97 @@ export default function WorkExperience({
               />
               <hr className="my-6" />
 
-              <label htmlFor="companyIndustry" className="font-medium w-required">Company Industry</label>
-              <Autocomplete
-                {...register("companyIndustry")}
-                id="companyIndustry"
-                className="w-input-gray w-multiline mt-2"
-                fullWidth
-                disableClearable
-                value={companyIndustryValue}
-                onChange={(e: any, val: any) => {
-                  setCompanyIndustryValue(val);
-                  (val && errors.companyIndustry) && clearErrors('companyIndustry');
-                }}
-                disabled={processForm}
-                options={COMPANY_INDUSTRY}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    name="companyIndustry"
-                    error={!!errors.companyIndustry} // @ts-ignore:next-line
-                    helperText={errors?.companyIndustry?.message}
+              <label htmlFor="industry" className="font-medium w-required">Company Industry</label>
+              <Controller
+                control={control}
+                name="industry" // @ts-ignore
+                value={industryValue}
+                render={({ field: { ref, onChange, ...field } }) => (
+                  <InputIndustry
+                    fullWidth
+                    disableClearable
+                    disabled={processForm}
+                    id="industry"
+                    className="w-input-gray w-multiline mt-2"
+                    field={field}
+                    inputRef={ref}
+                    error={!!errors.industry} // @ts-ignore:next-line
+                    helperText={errors?.industry?.message}
                     placeholder="Select company industry"
+                    value={industryValue}
+                    onChange={(e: any, val: any) => {
+                      setIndustryValue(val);
+                      onChange(val);
+                    }}
                   />
                 )}
               />
               <hr className="my-6" />
 
               <label htmlFor="workType" className="font-medium w-required">Work Type</label>
-              <Autocomplete
-                {...register("workType")}
-                id="workType"
-                className="w-input-gray w-multiline mt-2"
-                fullWidth
-                disableClearable
-                value={workTypeValue}
-                onChange={(e: any, val: any) => {
-                  setWorkTypeValue(val);
-                  (val && errors.workType) && clearErrors('workType');
-                }}
-                disabled={processForm}
-                options={WORK_TYPE}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    name="workType"
-                    error={!!errors.workType} // @ts-ignore:next-line
-                    helperText={errors?.workType?.message}
-                    placeholder="Select work type"
+              <Controller
+                control={control}
+                name="workType" // @ts-ignore
+                value={workTypeValue} // workTypeValue | itemToEditDelete.workType
+                render={({ field: { ref, onChange, ...field } }) => (
+                  <Autocomplete
+                    fullWidth
+                    disableClearable
+                    disabled={processForm}
+                    id="workType"
+                    className="w-input-gray w-multiline mt-2"
+                    options={WORK_TYPE}
+                    isOptionEqualToValue={(option, value) => option === value}
+                    value={workTypeValue} // defaultValue
+                    onChange={(_, val) => {
+                      setWorkTypeValue(val);
+                      onChange(val);
+                    }}
+                    renderInput={(props) => (
+                      <TextField
+                        {...props}
+                        {...field}
+                        inputRef={ref}
+                        error={!!errors.workType} // @ts-ignore:next-line
+                        helperText={errors?.workType?.message}
+                        placeholder="Select work type"
+                      />
+                    )}
                   />
                 )}
               />
               <hr className="my-6" />
 
               <label htmlFor="commitmentType" className="font-medium w-required">Commitment Type</label>
-              <Autocomplete
-                {...register("commitmentType")}
-                id="commitmentType"
-                className="w-input-gray w-multiline mt-2"
-                fullWidth
-                disableClearable
+              <Controller
+                control={control}
+                name="commitmentType" // @ts-ignore
                 value={commitmentTypeValue}
-                onChange={(e: any, val: any) => {
-                  setCommitmentTypeValue(val);
-                  (val && errors.commitmentType) && clearErrors('commitmentType');
-                }}
-                disabled={processForm}
-                options={COMMITMENT_TYPE}
-                renderInput={(props) => (
-                  <TextField
-                    {...props}
-                    name="commitmentType"
-                    error={!!errors.commitmentType} // @ts-ignore:next-line
-                    helperText={errors?.commitmentType?.message}
-                    placeholder="Select commitment type"
+                render={({ field: { ref, onChange, ...field } }) => (
+                  <Autocomplete
+                    fullWidth
+                    disableClearable
+                    disabled={processForm}
+                    id="commitmentType"
+                    className="w-input-gray w-multiline mt-2"
+                    options={COMMITMENT_TYPE}
+                    isOptionEqualToValue={(option, value) => option === value}
+                    value={commitmentTypeValue}
+                    onChange={(_, val) => {
+                      setCommitmentTypeValue(val);
+                      // (val && errors.commitmentType) && clearErrors('commitmentType');
+                      onChange(val);
+                    }}
+                    renderInput={(props) => (
+                      <TextField
+                        {...props}
+                        {...field}
+                        inputRef={ref}
+                        error={!!errors.commitmentType} // @ts-ignore:next-line
+                        helperText={errors?.commitmentType?.message}
+                        placeholder="Select commitment type"
+                      />
+                    )}
                   />
                 )}
               />
@@ -519,7 +595,7 @@ export default function WorkExperience({
               color="error"
               variant="contained"
               className="px-6"
-              onClick={() => onDelete?.(itemToEditDelete, closeConfirm, onCloseModal)}
+              onClick={onDelete}
             >
               Delete
             </Button>
@@ -529,3 +605,7 @@ export default function WorkExperience({
     </Card>
   );
 }
+
+// const COMPANY_INDUSTRY = [
+//   'Information Technology',
+// ];
