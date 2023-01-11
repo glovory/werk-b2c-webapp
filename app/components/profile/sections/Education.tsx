@@ -87,7 +87,7 @@ export default function Education({
         onSave?.(value);
         onCloseModal();
         resolve();
-      }, 500);
+      }, 1e3);
     });
   }
 
@@ -118,17 +118,13 @@ export default function Education({
         className="py-3 border-bottom"
         avatar={<SchoolTwoToneIcon />}
         title="Education"
-        titleTypographyProps={{
-          className: "text-lg font-medium",
-        }}
-        action={
-          editable && !!list?.length && (
-            <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
-              <AddCircleTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
-              {!isMediaQuery && 'Add Education'}
-            </Button>
-          )
-        }
+        titleTypographyProps={{ className: "text-lg font-medium" }}
+        action={editable && !!list?.length && (
+          <Button onClick={onOpenModal} color="primary" className="min-w-0 font-bold">
+            <AddCircleTwoToneIcon fontSize="small" className={isMediaQuery ? "" : "mr-2"} />
+            {!isMediaQuery && 'Add Education'}
+          </Button>
+        )}
       />
 
       <div className="py-6 px-4">
@@ -172,8 +168,8 @@ export default function Education({
       </div>
 
       {editable &&
-        <DialogWerk
-          title="Add Education"
+        <DialogWerk // itemToEditDelete.educationTitle | itemToEditDelete.schoolName | itemToEditDelete.startDate
+          title={itemToEditDelete.id ? "Edit Education" : "Add Education"}
           fullScreen={isMediaQuery}
           fullWidth
           maxWidth="xs"
@@ -194,8 +190,7 @@ export default function Education({
               <TextField
                 {...register("educationTitle")}
                 disabled={processForm}
-                error={!!errors.educationTitle}
-                // @ts-ignore:next-line
+                error={!!errors.educationTitle} // @ts-ignore:next-line
                 helperText={errors?.educationTitle?.message}
                 id="educationTitle"
                 className="w-input-gray mt-2"
@@ -209,7 +204,7 @@ export default function Education({
               <div className="flex flex-row items-center mt-2">
                 <DatePickerWerk
                   {...register("startDate")}
-                  value=""
+                  value={itemToEditDelete?.startDate || ''}
                   onChange={(val: any) => changeYear(val, 'startDate')}
                   // disableFuture
                   // disableHighlightToday
@@ -226,7 +221,7 @@ export default function Education({
                 <b className="p-2">-</b>
                 <DatePickerWerk
                   {...register("endDate")}
-                  value=""
+                  value={itemToEditDelete?.endDate || ''}
                   onChange={(val: any) => changeYear(val, 'endDate')}
                   openTo="year"
                   views={['year']}
@@ -248,8 +243,7 @@ export default function Education({
               <TextField
                 {...register("schoolName")}
                 disabled={processForm}
-                error={!!errors.schoolName}
-                // @ts-ignore:next-line
+                error={!!errors.schoolName} // @ts-ignore:next-line
                 helperText={errors?.schoolName?.message}
                 id="schoolName"
                 className="w-input-gray mt-2"
@@ -260,11 +254,11 @@ export default function Education({
               <hr className="my-6" />
 
               <div className="flex">
-                {itemToEditDelete?.educationTitle &&
+                {itemToEditDelete.id && (
                   <Button onClick={() => clickDelete(itemToEditDelete)} size="large" color="error">
                     <DeleteTwoToneIcon className="mr-1" />Delete
                   </Button>
-                }
+                )}
                 <LoadingButton
                   size="large"
                   variant="contained"
@@ -280,7 +274,7 @@ export default function Education({
         </DialogWerk>
       }
 
-      {editable &&
+      {editable && (
         <DialogWerk
           title="Delete Education"
           fullWidth
@@ -304,7 +298,7 @@ export default function Education({
             </Button>
           </DialogActions>
         </DialogWerk>
-      }
+      )}
     </Card>
   );
 }
