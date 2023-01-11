@@ -21,6 +21,14 @@ interface FormSkillsProps {
   onSuccessSave?: (data: any) => void
 }
 
+const OPTIONS_EXPERIENCE_LEVEL = [
+  'Entry (0-1 year of experience)',
+  'Junior (1-2 years of experience)',
+  'Intermediate (3-5 years of experience)',
+  'Senior (6-10 years of experience)',
+  'Master (10++ years of experience)',
+];
+
 export default function FormSkills({
   title,
   values,
@@ -50,14 +58,6 @@ export default function FormSkills({
           then: yup.string().required('Required choice for experience level.'),
         }),
       })).min(1, 'Please select at least one hard skill.'),
-      // fullName: yup.string().trim()
-      //   .required('Full name is required.')
-      //   .min(3, "The name must be at least 3 characters or more."),
-      // accountName: yup.string()
-      //   .required("Account name is required and can't be empty.")
-      //   .min(3, accountNameValidateMessage)
-      //   .matches(/^[aA-zZ0-9._]+$/, accountNameValidateMessage),
-      // country: yup.string().nullable().required('Required choice for Country.'),
     }).required())
   });
   // swap, move, prepend, insert
@@ -71,6 +71,7 @@ export default function FormSkills({
     if(step === 1){
       setStep(2);
       console.log('doSubmit step 1 data: ', data);
+      return;
     }
 
     return new Promise((resolve: any) => {
@@ -80,15 +81,13 @@ export default function FormSkills({
           onSuccessSave?.(data);
         }
         resolve();
-      }, 300);
+      }, 1e3);
     });
   }
 
   const checkedSkill = (name: string) => {
     return fields.find((f: any) => f.name === name);
   }
-  // console.log('errors: ', errors);
-  // console.log('fields: ', fields);
 
   const findIndexChecked = (name: string) => {
     return fields.findIndex((f: any) => f.name === name);
@@ -179,13 +178,7 @@ export default function FormSkills({
                     helperText={errors?.skill?.[idx]?.experienceLevel.message}
                   >
                     <option value="">Select experience level</option>
-                    {[
-                      'Entry (0-1 year of experience)',
-                      'Junior (1-2 years of experience)',
-                      'Intermediate (3-5 years of experience)',
-                      'Senior (6-10 years of experience)',
-                      'Master (10++ years of experience)',
-                    ].map((option: any) =>
+                    {OPTIONS_EXPERIENCE_LEVEL.map((option: any) =>
                       <option key={option} value={option}>{option}</option>
                     )}
                   </TextField>

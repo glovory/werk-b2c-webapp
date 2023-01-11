@@ -27,6 +27,7 @@ export default function ModalGallery({
   onFetch,
   onDoneFetch,
 }: ModalGalleryUnsplash){
+  const perPage = 12;
   const theme = useTheme();
   const isFullScreen = useMediaQuery(theme.breakpoints.down('md'));
   const refController: any = useRef();
@@ -48,8 +49,8 @@ export default function ModalGallery({
      // query: "work" | username: "surface"
     unsplashApi.search // search | users
       .getPhotos({
+        perPage,
         orientation: "landscape",
-        perPage: 12,
         query: searching ? query : "work",
       }, { signal })
       .then((res) => {
@@ -81,7 +82,7 @@ export default function ModalGallery({
     const val = e.target.value;
     const valTrim = val.trim();
     setQueryValue(val);
-    if(valTrim.length > 2){ //  && /^[aA-zZ0-9._]+$/.test(val)
+    if(valTrim.length > 1){ //  && /^[aA-zZ0-9._]+$/.test(val)
       debouncedSearch(valTrim);
       return;
     }
@@ -96,6 +97,8 @@ export default function ModalGallery({
       refController.current = null;
     }
   }
+
+  const images = dataUnsplash?.response?.results || [];
 
   return (
     <DialogWerk
@@ -134,39 +137,42 @@ export default function ModalGallery({
             <RefreshTwoToneIcon />
           </LoadingButton>
         </div>
-
-        <div className="flex flex-row flex-wrap gap-3 mt-3 min-h-[470px]">
+        {/* 470 */}
+        <div className="flex flex-row flex-wrap gap-3 mt-3 min-h-[504px]">
           {loadingUnsplash ?
-            Array.from({ length: 12 }).map((v: any, idx: number) => (
-              <div key={idx} className="w-[calc(25%-9px)] max-md:w-full">
-                <Skeleton variant="rounded" width="100%" height={120} className="bg-gray-200" />
-                <Skeleton width="40%" className="bg-gray-200 mt-1" />
+            Array.from({ length: perPage }).map((v: any, idx: number) => ( //  max-md:w-full
+              <div key={idx} className="md:w-[calc(25%-9px)]">
+                <Skeleton variant="rounded" width="100%" height={136} className="bg-gray-200" />
+                <Skeleton width="40%" className="bg-gray-200" />
               </div>
             ))
             :
-            (dataUnsplash?.response?.results || []).map((li: any) => (
-              <figure key={li.id} className="w-[calc(25%-9px)] max-md:w-full">
-                <div
-                  onClick={() => onClickImage?.(li)}
-                  onKeyDown={enterToClick}
-                  tabIndex={0}
-                  className="rounded-md overflow-hidden cursor-pointer focus:outline-none focus:ring focus:ring-blue-300 active:ring active:ring-blue-500"
-                >
-                  <img
-                    {...imgLoader("w-full object-cover text-0 transition-all hover:scale-150")}
-                    loading="lazy"
-                    decoding="async"
-                    draggable={false}
-                    height={120}
-                    alt={li.alt_description}
-                    src={li.urls?.regular} // full | raw | regular | small | small_s3 | thumb
-                  />
-                </div>
-                <figcaption className="text-sm max-w-full truncate mt-1">
-                  by {li.user?.name ? <span className="underline" title={li.user.name}>{li.user.name}</span> : 'No Author'}
-                </figcaption>
-              </figure>
-            ))
+            !!images.length ?
+              images.map((li: any) => ( //  max-md:w-full
+                <figure key={li.id} className="md:w-[calc(25%-9px)]">
+                  <div
+                    onClick={() => onClickImage?.(li)}
+                    onKeyDown={enterToClick}
+                    tabIndex={0}
+                    className="rounded-md overflow-hidden cursor-pointer focus:outline-none focus:ring focus:ring-blue-300 active:ring active:ring-blue-500"
+                  >
+                    <img
+                      {...imgLoader("block w-full max-md:h-full object-cover text-0 transition-all hover:scale-150")}
+                      loading="lazy"
+                      decoding="async"
+                      draggable={false}
+                      height={136}
+                      alt={li.alt_description}
+                      src={li.urls?.regular} // full | raw | regular | small | small_s3 | thumb
+                    />
+                  </div>
+                  <figcaption className="text-sm max-w-full truncate mt-1">
+                    by {li.user?.name ? <span className="underline" title={li.user.name}>{li.user.name}</span> : 'No Author'}
+                  </figcaption>
+                </figure>
+              ))
+              :
+              <h5 className="m-auto">Not Found</h5>
           }
         </div>
       </div>

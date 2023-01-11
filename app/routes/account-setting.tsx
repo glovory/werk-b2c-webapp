@@ -88,7 +88,7 @@ const AccountSetting: React.FC = () => {
         loadingIdentity ? 
           <LoadingPage />
           :
-          !isSuccess || !identity ?
+          (!isSuccess || !identity ?
             <ErrorComponent
               className="py-4"
               code={403}
@@ -215,8 +215,7 @@ const AccountSetting: React.FC = () => {
                               <TextField
                                 {...register("email")}
                                 error={!!errors.email}
-                                fullWidth
-                                // @ts-ignore
+                                fullWidth // @ts-ignore
                                 helperText={errors?.email?.message}
                                 id="email"
                                 type="email"
@@ -246,7 +245,7 @@ const AccountSetting: React.FC = () => {
                 </Grid>
               </Container>
 
-              {hasDeletedAccount &&
+              {hasDeletedAccount && (
                 <Portal container={document.getElementById('werkPortalPrepend')}>
                   <Alert
                     icon={false}
@@ -257,8 +256,9 @@ const AccountSetting: React.FC = () => {
                     You have 15 days left to permanently deletion of your account. You can cancel by <b className="underline">restoring your account</b>.
                   </Alert>
                 </Portal>
-              }
+              )}
             </>
+          )
       )}
     </LayoutLogged>
   );
